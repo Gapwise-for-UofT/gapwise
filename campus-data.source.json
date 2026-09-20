@@ -12,7 +12,7 @@
     "defaultSiblingPath": "../data/data/utm"
   },
   "ownership": {
-    "gapwiseData": "Canonical UTM campus facts, geometry, entrances, routing graph inputs, evidence, provenance, and generated data artifacts.",
+    "gapwiseData": "Canonical University of Toronto campus facts and geometry; this compatibility contract mirrors the UTM entrance, routing, evidence, provenance, and generated-data subtree.",
     "gapwise": "Deterministic routing algorithms, timetable and gap-planning behavior, public API orchestration, SDK contracts, map UI, and product presentation."
   },
   "compatibility": "The core repository vendors a build-time snapshot so production routing never depends on data.gapwise.ca or GitHub at runtime."

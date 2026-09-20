@@ -38,6 +38,7 @@ export function createResidenceMeeting({
     weekday,
     buildingCode,
     room: null,
+    campus: "UTM",
     term,
     locationUnknown: false,
     locationType: "physical",

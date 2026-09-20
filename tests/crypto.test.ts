@@ -156,6 +156,7 @@ describe("versioned private-data encryption", () => {
       ],
       preferences: {
         ...DEFAULT_USER_PREFERENCES,
+        mainCampus: "utm",
         dayOrigin: "residence",
         residenceBuildingCode: "OPH",
       },

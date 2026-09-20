@@ -1,8 +1,8 @@
 # Campus data and documentation boundaries
 
-Canonical public UTM campus facts, geometry, routing graph inputs, provenance, and data-maintenance guidance live in [`Gapwise-for-UofT/data`](https://github.com/Gapwise-for-UofT/data).
+Canonical public University of Toronto campus facts, geometry, provenance, and data-maintenance guidance live in [`Gapwise-for-UofT/data`](https://github.com/Gapwise-for-UofT/data). The compatibility snapshot and reviewed routing graph mirrored by this repository currently cover UTM.
 
-Public human-readable data documentation lives at **https://docs.gapwise.ca/data/** and the raw first-party distribution lives at **https://data.gapwise.ca/datasets/utm/latest/**.
+Public human-readable data documentation lives at **https://docs.gapwise.ca/data/**. The currently published raw UTM distribution lives at **https://data.gapwise.ca/datasets/utm/latest/**.
 
 This repository intentionally retains only:
 

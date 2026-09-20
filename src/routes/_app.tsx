@@ -167,16 +167,17 @@ function AppLayout() {
   const [arrivalSettingsRequest, setArrivalSettingsRequest] = useState(0);
   const replacementInputRef = useRef<HTMLInputElement>(null);
   const authenticatedUserId = user?.id ?? null;
-  const arrivalResidence = getResidenceBuildingForCampus(
-    preferences.mainCampus,
-    preferences.residenceBuildingCode,
-  );
+  const arrivalResidence = preferences.mainCampus
+    ? getResidenceBuildingForCampus(preferences.mainCampus, preferences.residenceBuildingCode)
+    : null;
   const arrivalAccessPoint =
     preferences.mainCampus === "utm" ? getCampusAccessPoint(preferences.campusAccessPointId) : null;
   const arrivalLabel =
     arrivalResidence?.code || arrivalAccessPoint?.label
-      ? `${CAMPUS_SHORT_LABELS[preferences.mainCampus]} · ${arrivalResidence?.code ?? arrivalAccessPoint?.label}`
-      : CAMPUS_SHORT_LABELS[preferences.mainCampus];
+      ? `${preferences.mainCampus ? CAMPUS_SHORT_LABELS[preferences.mainCampus] : "Campus"} · ${arrivalResidence?.code ?? arrivalAccessPoint?.label}`
+      : preferences.mainCampus
+        ? CAMPUS_SHORT_LABELS[preferences.mainCampus]
+        : "Choose campus";
   const {
     destination,
     selectedBuildingCode,
@@ -549,7 +550,7 @@ function AppLayout() {
         <div className="mx-auto flex min-h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link
             to="/"
-            aria-label="Gapwise for UofT home"
+            aria-label="Gapwise home"
             className="brand-lockup group flex min-w-0 items-center gap-3"
           >
             <span className="brand-mark-shell">
@@ -557,7 +558,7 @@ function AppLayout() {
             </span>
             <div className="min-w-0">
               <p className="flex items-center gap-2 truncate font-display text-base font-semibold tracking-[-0.035em]">
-                Gapwise <span className="brand-utm-pill">UofT</span>
+                Gapwise <span className="brand-scope-pill">U of T</span>
               </p>
             </div>
           </Link>
@@ -631,13 +632,13 @@ function AppLayout() {
         ) : !meetings ? (
           <>
             <section className="rise-in mb-5">
-              <p className="eyebrow text-accent">UTM campus explorer</p>
+              <p className="eyebrow text-accent">U of T campus explorer</p>
               <h1 className="mt-2 font-display text-3xl font-medium tracking-[-0.045em] sm:text-4xl">
                 Find your way around campus
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Search or select a mapped UTM building. You can explore campus without uploading a
-                timetable.
+                Choose UTM, UTSG, or UTSC, then search a source-backed campus building. You can
+                explore without uploading a timetable.
               </p>
             </section>
             <Suspense

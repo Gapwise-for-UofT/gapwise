@@ -22,14 +22,19 @@ function commutePreferences(
   commuteMode: "transit" | "parking",
   campusAccessPointId: string,
 ): UserPreferences {
-  return { ...DEFAULT_USER_PREFERENCES, commuteMode, campusAccessPointId };
+  return { ...DEFAULT_USER_PREFERENCES, mainCampus: "utm", commuteMode, campusAccessPointId };
 }
 
 describe("complete campus day routes", () => {
   test("wraps residence, transit, and parking days without consuming class numbers", () => {
     const cases: Array<[UserPreferences, string, string]> = [
       [
-        { ...DEFAULT_USER_PREFERENCES, dayOrigin: "residence", residenceBuildingCode: "OPH" },
+        {
+          ...DEFAULT_USER_PREFERENCES,
+          mainCampus: "utm",
+          dayOrigin: "residence",
+          residenceBuildingCode: "OPH",
+        },
         "Start at home",
         "Return home",
       ],

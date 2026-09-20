@@ -13,6 +13,8 @@ const twoTermFixturePath = path.join(
 test("landing page is usable without an account", async ({ page }, testInfo) => {
   const guard = watchForAppFailures(page, String(testInfo.project.use.baseURL));
   await expectLanding(page);
+  await expect(page).toHaveTitle("Gapwise — University of Toronto");
+  await expect(page.getByText("For University of Toronto", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Import ACORN" })).toBeVisible();
   guard.assertClean();
 });
@@ -71,22 +73,22 @@ test("first-class product URLs load directly with intentional empty states", asy
   const routes = [
     {
       path: "/timetable",
-      title: "Timetable — Gapwise for UofT",
+      title: "Timetable — Gapwise",
       heading: "Add your timetable",
     },
     {
       path: "/gaps",
-      title: "Gap Plan — Gapwise for UofT",
+      title: "Gap Plan — Gapwise",
       heading: "Add a timetable to plan your gaps",
     },
     {
       path: "/today",
-      title: "Today — Gapwise for UofT",
+      title: "Today — Gapwise",
       heading: "Add a timetable to see today",
     },
     {
       path: "/route",
-      title: "Campus Route — Gapwise for UofT",
+      title: "Campus Route — Gapwise",
       heading: "Find your way around campus",
     },
   ] as const;
@@ -143,7 +145,7 @@ test("route-driven navigation preserves a loaded timetable through history", asy
   await expect(page).toHaveURL(/\/route\/?$/);
   await expect(page.getByRole("heading", { name: "Route preferences" })).toBeVisible();
 
-  await page.getByRole("link", { name: "Gapwise for UofT home" }).click();
+  await page.getByRole("link", { name: "Gapwise home" }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(
     page.getByRole("heading", { name: "Make every gap on campus count." }),
@@ -252,6 +254,7 @@ test("campus-day arrival settings route transit and parking through the map", as
   await expect(page.getByRole("heading", { name: "Route preferences" })).toBeVisible();
 
   await page.getByRole("button", { name: "Campus arrival settings" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "UTM", exact: true }).click();
   await page.getByRole("radio", { name: /Public transit/ }).click();
   await page.getByLabel("Campus arrival point").selectOption("miway-utm-bus-station");
   await page.keyboard.press("Escape");
@@ -304,6 +307,7 @@ test("live map location appears only for accurate on-campus positions", async ({
     if (body) postBodies.push(body);
   });
   await page.goto("/route");
+  await page.getByRole("button", { name: "UTM", exact: true }).click();
   await expect(page.getByRole("button", { name: "Use my location for routes" })).toBeVisible();
   await expect(page.getByTestId("user-location-marker")).toHaveCount(0);
   await page.getByRole("button", { name: "Use my location for routes" }).click();

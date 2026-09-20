@@ -10,7 +10,7 @@ export type UserPreferences = RoutePreferences & {
   avoidStairs: boolean;
   preferIndoor: boolean;
   dayOrigin: DayOrigin;
-  mainCampus: GapwiseCampusId;
+  mainCampus: GapwiseCampusId | null;
   residenceBuildingCode: string | null;
   commuteMode: CampusAccessKind | null;
   campusAccessPointId: string | null;
@@ -24,7 +24,7 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   avoidStairs: false,
   preferIndoor: false,
   dayOrigin: "commute",
-  mainCampus: "utm",
+  mainCampus: null,
   residenceBuildingCode: null,
   commuteMode: null,
   campusAccessPointId: null,
@@ -35,13 +35,16 @@ export function sanitizeUserPreferences(
 ): UserPreferences {
   const route = sanitizeRoutePreferences(value);
   const mainCampus =
-    value?.mainCampus === "utsg" || value?.mainCampus === "utsc" ? value.mainCampus : "utm";
+    value?.mainCampus === "utm" || value?.mainCampus === "utsg" || value?.mainCampus === "utsc"
+      ? value.mainCampus
+      : null;
   const requestedResidence = value?.residenceBuildingCode?.trim().toUpperCase() ?? null;
   const residenceBuildingCode =
-    getResidenceBuildingForCampus(mainCampus, requestedResidence)?.code ?? null;
+    (mainCampus && getResidenceBuildingForCampus(mainCampus, requestedResidence)?.code) ?? null;
   const dayOrigin =
     value?.dayOrigin === "residence" && residenceBuildingCode ? "residence" : "commute";
   const commuteMode =
+    mainCampus &&
     dayOrigin === "commute" &&
     (value?.commuteMode === "transit" ||
       value?.commuteMode === "parking" ||

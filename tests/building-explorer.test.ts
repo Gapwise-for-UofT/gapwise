@@ -9,24 +9,24 @@ import { validateRouteSearch } from "@/routes/_app/route/index";
 
 describe("UTM campus building explorer", () => {
   test("searches canonical buildings by code, name, and aliases", () => {
-    expect(searchCampusBuildings("MN")[0]?.building.code).toBe("MN");
-    expect(searchCampusBuildings("Maanjiwe")[0]?.building.code).toBe("MN");
-    expect(searchCampusBuildings("Deerfield")[0]?.building.code).toBe("DH");
-    expect(searchCampusBuildings("Instructional Centre")[0]?.building.code).toBe("IB");
-    expect(searchCampusBuildings("Kaneff")[0]?.building.code).toBe("KN");
-    expect(searchCampusBuildings("Student Centre")[0]?.building.code).toBe("XR");
+    expect(searchCampusBuildings("MN", "utm")[0]?.building.code).toBe("MN");
+    expect(searchCampusBuildings("Maanjiwe", "utm")[0]?.building.code).toBe("MN");
+    expect(searchCampusBuildings("Deerfield", "utm")[0]?.building.code).toBe("DH");
+    expect(searchCampusBuildings("Instructional Centre", "utm")[0]?.building.code).toBe("IB");
+    expect(searchCampusBuildings("Kaneff", "utm")[0]?.building.code).toBe("KN");
+    expect(searchCampusBuildings("Student Centre", "utm")[0]?.building.code).toBe("XR");
   });
 
   test("maps every supported building search to its own canonical footprint", () => {
     for (const building of UTM_BUILDINGS) {
-      const byCode = searchCampusBuildings(building.code)[0];
+      const byCode = searchCampusBuildings(building.code, "utm")[0];
       expect(byCode?.building.code, `${building.code} code search`).toBe(building.code);
 
-      const byName = searchCampusBuildings(building.name)[0];
+      const byName = searchCampusBuildings(building.name, "utm")[0];
       expect(byName?.building.code, `${building.name} name search`).toBe(building.code);
 
       for (const alias of building.aliases ?? []) {
-        const byAlias = searchCampusBuildings(alias)[0];
+        const byAlias = searchCampusBuildings(alias, "utm")[0];
         expect(byAlias?.building.code, `${alias} alias search`).toBe(building.code);
       }
 
@@ -38,17 +38,17 @@ describe("UTM campus building explorer", () => {
 
   test("keeps official identity-only facilities searchable without inventing routing", () => {
     for (const code of ["WC", "CUP", "FCSH", "GF", "NSB", "PL", "BG", "LH", "IC"] as const) {
-      const result = searchCampusBuildings(code)[0];
+      const result = searchCampusBuildings(code, "utm")[0];
       expect(result?.building.code).toBe(code);
       expect(getCampusBuildingFootprint(code)).not.toBeNull();
-      const details = getBuildingExplorerDetails(code);
+      const details = getBuildingExplorerDetails(code, "utm");
       expect(details?.building.code).toBe(code);
       if (!details?.campus) expect(details?.verifiedEntrances).toBe(0);
     }
   });
 
   test("resolves room-like searches to a building and supported floor inference only", () => {
-    const result = searchCampusBuildings("MN 3120")[0];
+    const result = searchCampusBuildings("MN 3120", "utm")[0];
     expect(result).toMatchObject({
       building: { code: "MN", name: "Maanjiwe nendamowinan" },
       room: "3120",
@@ -56,7 +56,7 @@ describe("UTM campus building explorer", () => {
       floorVerification: "inferred",
     });
     expect(result).not.toHaveProperty("roomCoordinate");
-    expect(searchCampusBuildings("IB 245")[0]).toMatchObject({
+    expect(searchCampusBuildings("IB 245", "utm")[0]).toMatchObject({
       building: { code: "IB" },
       room: "245",
       floor: "2",
@@ -65,7 +65,7 @@ describe("UTM campus building explorer", () => {
   });
 
   test("returns canonical entrance, accessibility, and verification details", () => {
-    const details = getBuildingExplorerDetails("DH");
+    const details = getBuildingExplorerDetails("DH", "utm");
     expect(details?.campus?.entrances.length).toBeGreaterThan(0);
     expect(details?.verifiedEntrances).toBe(details?.campus?.entrances.length);
     expect(details?.campus?.indoorMapped).toBeFalse();
@@ -75,19 +75,19 @@ describe("UTM campus building explorer", () => {
   });
 
   test("fails closed on building-level entrance coverage", () => {
-    const dh = getBuildingExplorerDetails("DH");
+    const dh = getBuildingExplorerDetails("DH", "utm");
     expect(dh?.mappedEntrances).toBeGreaterThan(0);
     expect(dh?.coverageStatus).toBe("partial");
 
-    const wc = getBuildingExplorerDetails("WC");
+    const wc = getBuildingExplorerDetails("WC", "utm");
     expect(wc?.mappedEntrances).toBe(0);
     expect(wc?.coverageStatus).toBe("unmapped");
 
-    expect(getBuildingExplorerDetails("IB")?.officialBarrierFreeEntranceInstances).toBe(3);
-    expect(getBuildingExplorerDetails("EH")?.officialBarrierFreeEntranceInstances).toBe(3);
+    expect(getBuildingExplorerDetails("IB", "utm")?.officialBarrierFreeEntranceInstances).toBe(3);
+    expect(getBuildingExplorerDetails("EH", "utm")?.officialBarrierFreeEntranceInstances).toBe(3);
 
     for (const building of UTM_BUILDINGS) {
-      const details = getBuildingExplorerDetails(building.code);
+      const details = getBuildingExplorerDetails(building.code, "utm");
       expect(details?.coverageStatus, `${building.code} must not imply complete coverage`).not.toBe(
         "complete",
       );
@@ -101,7 +101,7 @@ describe("UTM campus building explorer", () => {
     expect(normalizePublicBuildingCode("R")).toBe("LL");
     expect(normalizePublicBuildingCode("SB")).toBe("NSB");
     expect(normalizePublicBuildingCode("not-a-building")).toBeNull();
-    expect(getBuildingExplorerDetails("not-a-building")).toBeNull();
+    expect(getBuildingExplorerDetails("not-a-building", "utm")).toBeNull();
     expect(validateRouteSearch({ building: "dh" })).toEqual({ building: "DH" });
     expect(validateRouteSearch({ building: "not-a-building" })).toEqual({});
     expect(validateRouteSearch({ building: ["MN"] })).toEqual({});

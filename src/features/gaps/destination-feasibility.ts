@@ -87,6 +87,7 @@ function destinationMeeting(gap: Gap, buildingCode: string, buildingName: string
     weekday: gap.weekday,
     buildingCode,
     room: null,
+    campus: "UTM",
     term: gap.term,
     locationUnknown: false,
     locationType: "physical",

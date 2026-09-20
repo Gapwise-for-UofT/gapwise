@@ -86,6 +86,7 @@ test("campus explorer has an accessible keyboard path with reduced motion", asyn
 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/route");
+  await page.getByRole("button", { name: "UTM", exact: true }).click();
   const search = page.getByRole("searchbox", { name: "Search UTM buildings" });
   await search.focus();
   await search.fill("Instructional Centre");

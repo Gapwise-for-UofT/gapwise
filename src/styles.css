@@ -1177,7 +1177,7 @@
     height: 1.35rem;
   }
 
-  .brand-utm-pill {
+  .brand-scope-pill {
     border: 1px solid color-mix(in oklab, var(--color-accent) 24%, var(--color-border));
     border-radius: 999px;
     background: color-mix(in oklab, var(--color-accent) 8%, transparent);
@@ -1950,7 +1950,7 @@
     width: 2rem;
     height: 2rem;
   }
-  .desktop-brand .brand-utm-pill {
+  .desktop-brand .brand-scope-pill {
     margin-left: auto;
   }
   .desktop-sidebar nav {

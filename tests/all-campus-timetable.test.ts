@@ -140,6 +140,25 @@ describe("all-campus timetable compatibility", () => {
     expect(resolveMeetingLocation(utm).status).toBe("known");
   });
 
+  test("does not assign an unknown-campus location to UTM", () => {
+    expect(
+      resolveMeetingLocation({
+        courseCode: "SPECIAL",
+        campus: "UNKNOWN",
+        sourceLocation: "MN 1270",
+        buildingCode: "MN",
+        room: "1270",
+        locationUnknown: false,
+        locationType: "physical",
+      }),
+    ).toMatchObject({
+      status: "unknown",
+      buildingCode: null,
+      buildingName: null,
+      routingDataStatus: "unverified",
+    });
+  });
+
   test("preserves campus identity and source locations through encrypted-sync serialization", () => {
     const meetings = parseIcs(crossCampusCalendar()).meetings;
     const restored = deserializeSchedule(serializeSchedule(meetings));

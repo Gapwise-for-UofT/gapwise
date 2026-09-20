@@ -14,7 +14,10 @@ import {
 } from "@/data/campuses";
 import { formatTime, locationLabel, meetingCampus } from "@/lib/timetable-types";
 
-type CampusExplorerProps = Omit<CampusMapProps, "selectedBuildingCode" | "onSelectBuilding"> & {
+type CampusExplorerProps = Omit<
+  CampusMapProps,
+  "campusId" | "selectedBuildingCode" | "onSelectBuilding"
+> & {
   selectedBuildingCode: string | null;
   onSelectBuilding: (code: string | null) => void;
 };
@@ -25,16 +28,17 @@ function meetingGapwiseCampus(meeting: CampusMapProps["meetings"][number]): Gapw
   return gapwiseCampusIdForCampus(meetingCampus(meeting));
 }
 
-function inferredCampusForMeetings(meetings: CampusMapProps["meetings"]): GapwiseCampusId {
+function inferredCampusForMeetings(meetings: CampusMapProps["meetings"]): GapwiseCampusId | null {
   const counts = new Map<GapwiseCampusId, number>(CAMPUS_IDS.map((campus) => [campus, 0]));
   for (const meeting of meetings) {
     const campus = meetingGapwiseCampus(meeting);
     if (campus) counts.set(campus, (counts.get(campus) ?? 0) + 1);
   }
   return (
-    [...counts.entries()].sort(
-      (a, b) => b[1] - a[1] || CAMPUS_IDS.indexOf(a[0]) - CAMPUS_IDS.indexOf(b[0]),
-    )[0]?.[0] ?? "utm"
+    [...counts.entries()]
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1] || CAMPUS_IDS.indexOf(a[0]) - CAMPUS_IDS.indexOf(b[0]))[0]?.[0] ??
+    null
   );
 }
 
@@ -51,7 +55,9 @@ export function CampusExplorer({
   ...mapProps
 }: CampusExplorerProps) {
   const [query, setQuery] = useState("");
-  const [campusOverride, setCampusOverride] = useState<GapwiseCampusId | null>(null);
+  const [campusOverride, setCampusOverride] = useState<GapwiseCampusId | null>(() =>
+    selectedBuildingCode ? "utm" : null,
+  );
   const [activeEntranceId, setActiveEntranceId] = useState<string | null>(null);
   const [mapDetailMeetingId, setMapDetailMeetingId] = useState<string | null>(null);
   const [focusPadding, setFocusPadding] = useState<MapFocusPadding>({
@@ -63,6 +69,7 @@ export function CampusExplorer({
   const explorerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLElement>(null);
+  const previousSelectedMeetingIdRef = useRef(mapProps.selectedMeetingId);
   const selectedMeeting = useMemo(
     () => mapProps.meetings.find((meeting) => meeting.id === mapProps.selectedMeetingId) ?? null,
     [mapProps.meetings, mapProps.selectedMeetingId],
@@ -72,9 +79,18 @@ export function CampusExplorer({
     () => inferredCampusForMeetings(mapProps.meetings),
     [mapProps.meetings],
   );
-  const activeCampusId = campusOverride ?? selectedMeetingCampus ?? inferredCampusId;
+  // A public UTM building deep link is explicitly campus-scoped. Otherwise an empty or
+  // unresolved schedule must ask the user instead of silently turning "unknown" into UTM.
+  const activeCampusId =
+    campusOverride ??
+    selectedMeetingCampus ??
+    inferredCampusId ??
+    (selectedBuildingCode ? "utm" : null);
   const activeMeetings = useMemo(
-    () => mapProps.meetings.filter((meeting) => meetingGapwiseCampus(meeting) === activeCampusId),
+    () =>
+      activeCampusId
+        ? mapProps.meetings.filter((meeting) => meetingGapwiseCampus(meeting) === activeCampusId)
+        : [],
     [activeCampusId, mapProps.meetings],
   );
   // UTSG/UTSC building maps are live before their pedestrian graphs are promoted
@@ -91,11 +107,12 @@ export function CampusExplorer({
   );
   const previousRouteContentKeyRef = useRef(routeContentKey);
   const results = useMemo(
-    () => searchCampusBuildings(query, 6, activeCampusId),
+    () => (activeCampusId ? searchCampusBuildings(query, activeCampusId) : []),
     [activeCampusId, query],
   );
   const details = useMemo(
-    () => getBuildingExplorerDetails(selectedBuildingCode, activeCampusId),
+    () =>
+      activeCampusId ? getBuildingExplorerDetails(selectedBuildingCode, activeCampusId) : null,
     [activeCampusId, selectedBuildingCode],
   );
   const mapDetailMeeting = useMemo(
@@ -116,6 +133,8 @@ export function CampusExplorer({
   }, [selectedBuildingCode]);
 
   useEffect(() => {
+    if (previousSelectedMeetingIdRef.current === mapProps.selectedMeetingId) return;
+    previousSelectedMeetingIdRef.current = mapProps.selectedMeetingId;
     setCampusOverride(null);
   }, [mapProps.selectedMeetingId]);
 
@@ -198,6 +217,33 @@ export function CampusExplorer({
   }
 
   const mapDetailLocation = mapDetailMeeting ? getCampusLocationDisplay(mapDetailMeeting) : null;
+
+  if (!activeCampusId) {
+    return (
+      <section className="surface flex min-h-96 flex-col items-center justify-center p-6 text-center">
+        <p className="eyebrow text-accent">University of Toronto</p>
+        <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight">
+          Choose a campus map
+        </h2>
+        <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+          Gapwise could not infer a campus from this schedule. Select the campus you want to
+          explore; unknown locations will stay unknown.
+        </p>
+        <div className="mt-5 grid w-full max-w-sm grid-cols-3 gap-2" aria-label="Campus map">
+          {CAMPUS_IDS.map((campus) => (
+            <button
+              key={campus}
+              type="button"
+              onClick={() => setCampusOverride(campus)}
+              className="button-secondary min-h-11 px-3 font-mono text-xs font-bold tracking-[0.08em]"
+            >
+              {CAMPUS_SHORT_LABELS[campus]}
+            </button>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div ref={explorerRef} className="campus-explorer relative">

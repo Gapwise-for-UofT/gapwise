@@ -80,10 +80,10 @@ function searchScore(building: BuildingConfiguration, query: string): number | n
 
 function resultFor(
   building: BuildingConfiguration,
+  campusId: GapwiseCampusId,
   room: string | null = null,
   floor: string | null = null,
   floorVerification: VerificationStatus = "unknown",
-  campusId: GapwiseCampusId = "utm",
 ): BuildingSearchResult | null {
   if (!getBuildingFootprintForCampus(campusId, building.code)) return null;
   const campus = campusId === "utm" ? getCampusBuilding(building.code) : null;
@@ -93,8 +93,8 @@ function resultFor(
 /** Campus-scoped building search. Room-like queries resolve to a building, never a room pin. */
 export function searchCampusBuildings(
   query: string,
+  campusId: GapwiseCampusId,
   limit = 6,
-  campusId: GapwiseCampusId = "utm",
 ): BuildingSearchResult[] {
   const normalized = normalizeSearchText(query);
   if (!normalized) return [];
@@ -104,7 +104,7 @@ export function searchCampusBuildings(
     if (location.status === "known" && location.buildingCode) {
       const building = getRecognizedBuilding(location.buildingCode);
       const direct = building
-        ? resultFor(building, location.room, location.floor, location.floorVerification, campusId)
+        ? resultFor(building, campusId, location.room, location.floor, location.floorVerification)
         : null;
       if (direct) return [direct];
     }
@@ -118,10 +118,10 @@ export function searchCampusBuildings(
         null;
       const direct = resultFor(
         location.building,
+        campusId,
         location.room,
         floor,
         floor ? "inferred" : "unknown",
-        campusId,
       );
       if (direct) return [direct];
     }
@@ -140,7 +140,7 @@ export function searchCampusBuildings(
         a.building.code.localeCompare(b.building.code, "en", { sensitivity: "base" }),
     )
     .flatMap(({ building }) => {
-      const result = resultFor(building, null, null, "unknown", campusId);
+      const result = resultFor(building, campusId);
       return result ? [result] : [];
     })
     .slice(0, Math.max(0, limit));
@@ -162,7 +162,7 @@ function currentCoverageStatus(mappedEntrances: number): EntranceCoverageStatus 
 
 export function getBuildingExplorerDetails(
   code: string | null,
-  campusId: GapwiseCampusId = "utm",
+  campusId: GapwiseCampusId,
 ): BuildingExplorerDetails | null {
   if (!code) return null;
   const building =

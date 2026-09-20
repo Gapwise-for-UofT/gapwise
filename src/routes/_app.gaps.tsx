@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/_app/gaps")({
   head: () => ({
     meta: [
-      { title: "Gap Plan — Gapwise for UofT" },
+      { title: "Gap Plan — Gapwise" },
       {
         name: "description",
         content: "Plan useful time between classes with route-aware gap guidance where available.",

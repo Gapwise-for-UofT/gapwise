@@ -15,7 +15,7 @@ import { useTheme } from "@/hooks/use-preferences";
 export const Route = createFileRoute("/developers")({
   head: () => ({
     meta: [
-      { title: "Gapwise Developers — UTM campus intelligence API" },
+      { title: "Gapwise Developers — Campus Intelligence API" },
       {
         name: "description",
         content:
@@ -97,7 +97,7 @@ function DevelopersPage() {
               <img src="/logo-mark.svg" alt="" aria-hidden="true" />
             </span>
             <span className="font-display text-base font-semibold tracking-[-0.035em]">
-              Gapwise <span className="brand-utm-pill">UTM</span>
+              Gapwise <span className="brand-scope-pill">U of T</span>
             </span>
           </Link>
           <ThemeToggle theme={theme} onToggle={toggleTheme} />

@@ -136,6 +136,7 @@ describe("encrypted client sync boundary", () => {
       ],
       preferences: {
         ...DEFAULT_USER_PREFERENCES,
+        mainCampus: "utm",
         dayOrigin: "residence",
         residenceBuildingCode: "OPH",
       },

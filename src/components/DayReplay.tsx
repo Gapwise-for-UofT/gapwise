@@ -320,6 +320,7 @@ export function DayReplay({
 
         <section className="surface overflow-hidden p-2 sm:p-3">
           <CampusMap
+            campusId="utm"
             meetings={dayMeetings}
             segments={visibleSegments}
             selectedMeetingId={snapshot.selectedMeetingId}

@@ -75,11 +75,10 @@ export function ResidenceSettings({
 }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const residences = campusResidenceBuildings(preferences.mainCampus);
-  const selectedResidence = getResidenceBuildingForCampus(
-    preferences.mainCampus,
-    preferences.residenceBuildingCode,
-  );
+  const residences = preferences.mainCampus ? campusResidenceBuildings(preferences.mainCampus) : [];
+  const selectedResidence = preferences.mainCampus
+    ? getResidenceBuildingForCampus(preferences.mainCampus, preferences.residenceBuildingCode)
+    : null;
   const selectedAccessPoint =
     preferences.mainCampus === "utm" ? getCampusAccessPoint(preferences.campusAccessPointId) : null;
   const activeOption = ARRIVAL_OPTIONS.find(
@@ -110,8 +109,9 @@ export function ResidenceSettings({
       update({
         dayOrigin: "residence",
         residenceBuildingCode:
-          getResidenceBuildingForCampus(preferences.mainCampus, preferences.residenceBuildingCode)
-            ?.code ??
+          (preferences.mainCampus &&
+            getResidenceBuildingForCampus(preferences.mainCampus, preferences.residenceBuildingCode)
+              ?.code) ??
           residences[0]?.code ??
           null,
         commuteMode: null,
@@ -133,8 +133,10 @@ export function ResidenceSettings({
       : [];
   const triggerLabel =
     selectedResidence?.code || selectedAccessPoint?.label
-      ? `${CAMPUS_SHORT_LABELS[preferences.mainCampus]} · ${selectedResidence?.code ?? selectedAccessPoint?.label}`
-      : CAMPUS_SHORT_LABELS[preferences.mainCampus];
+      ? `${preferences.mainCampus ? CAMPUS_SHORT_LABELS[preferences.mainCampus] : "Campus"} · ${selectedResidence?.code ?? selectedAccessPoint?.label}`
+      : preferences.mainCampus
+        ? CAMPUS_SHORT_LABELS[preferences.mainCampus]
+        : "Choose campus";
 
   useEffect(() => {
     if (openRequest > 0) setOpen(true);
@@ -231,13 +233,18 @@ export function ResidenceSettings({
             <span className="mt-2 block text-xs font-normal leading-relaxed text-muted-foreground">
               {preferences.mainCampus === "utm"
                 ? "Residence approaches come from the bundled campus map. Unverified doors are clearly marked in route details."
-                : `${CAMPUS_SHORT_LABELS[preferences.mainCampus]} residence selection is saved now. Residence-to-class routing is only enabled when that campus route data is supported.`}
+                : preferences.mainCampus
+                  ? `${CAMPUS_SHORT_LABELS[preferences.mainCampus]} residence selection is saved now. Residence-to-class routing is only enabled when that campus route data is supported.`
+                  : "Choose a campus before selecting a residence."}
             </span>
           </label>
-        ) : preferences.mainCampus !== "utm" && preferences.commuteMode ? (
+        ) : preferences.mainCampus &&
+          preferences.mainCampus !== "utm" &&
+          preferences.commuteMode ? (
           <p className="rounded-lg border border-border bg-muted/45 p-3 text-sm text-muted-foreground">
-            Verified {CAMPUS_SHORT_LABELS[preferences.mainCampus]} arrival points aren&apos;t mapped
-            yet. Your main campus is still saved.
+            Verified{" "}
+            {preferences.mainCampus ? CAMPUS_SHORT_LABELS[preferences.mainCampus] : "campus"}{" "}
+            arrival points aren&apos;t mapped yet. Your main campus is still saved.
           </p>
         ) : preferences.commuteMode === "pickup" && points.length === 0 ? (
           <p className="rounded-lg border border-border bg-muted/45 p-3 text-sm text-muted-foreground">

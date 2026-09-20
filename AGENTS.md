@@ -23,14 +23,14 @@ When Codex substantially authors a Git commit in this repository:
 
 ## Project
 
-Gapwise for UofT is a privacy-first web application for University of Toronto students, served from `https://gapwise.ca`. Timetable identity supports UTM, UTSG, UTSC, and mixed-campus schedules; the current first-party map, routing, and public campus-data layer remains UTM-focused.
+Gapwise is a privacy-first web application for University of Toronto students, served from `https://gapwise.ca`. Timetable identity and building-map coverage support UTM, UTSG, UTSC, and mixed-campus schedules. Reviewed pedestrian routing, entrances, places, and the public campus API currently cover UTM.
 
 The current product:
 
 - parses ACORN `.ics` timetable exports locally in the browser;
 - provides Today, Timetable, Gap Plan, and Day Route/campus-explorer surfaces;
 - supports mobile-first timetable and route flows;
-- uses canonical source-backed UTM building geometry and conservative route confidence;
+- uses canonical source-backed tri-campus building geometry plus conservative UTM route confidence;
 - supports opt-in foreground live location without background tracking;
 - supports Microsoft, Google, and GitHub OAuth through Supabase Auth;
 - supports optional **browser-encrypted** private-data sync and privacy-preserving friend overlap;

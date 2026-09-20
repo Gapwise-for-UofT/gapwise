@@ -14,12 +14,12 @@ import { useTheme } from "@/hooks/use-preferences";
 import { chooseDefaultTerm } from "@/lib/calendar-awareness";
 import { DEMO_MEETINGS } from "@/lib/demo-timetable";
 import { IcsParseError, MAX_ICS_FILE_BYTES, parseIcs } from "@/lib/ics-parser";
-import { TERMS, type Meeting, type Term } from "@/lib/timetable-types";
+import { meetingCampus, TERMS, type Meeting, type Term } from "@/lib/timetable-types";
 
 export const Route = createFileRoute("/replay")({
   head: () => ({
     meta: [
-      { title: "Day Replay — Gapwise for UofT" },
+      { title: "Day Replay — Gapwise" },
       {
         name: "description",
         content:
@@ -64,14 +64,25 @@ function ReplayPage() {
     };
   }, []);
 
-  const planTransition = useMemo(
-    () => createScheduleTransitionPlanner(UTM_ROUTING_GRAPH, meetings ?? []),
+  const replayMeetings = useMemo(
+    () => (meetings ?? []).filter((meeting) => meetingCampus(meeting) === "UTM"),
     [meetings],
+  );
+  const omittedMeetingCount = (meetings?.length ?? 0) - replayMeetings.length;
+  const planTransition = useMemo(
+    () => createScheduleTransitionPlanner(UTM_ROUTING_GRAPH, replayMeetings),
+    [replayMeetings],
   );
   const availableTerms = useMemo(
-    () => TERMS.filter((item) => meetings?.some((meeting) => meeting.term === item)),
-    [meetings],
+    () => TERMS.filter((item) => replayMeetings.some((meeting) => meeting.term === item)),
+    [replayMeetings],
   );
+
+  useEffect(() => {
+    if (availableTerms.length > 0 && !availableTerms.includes(term)) {
+      setTerm(chooseDefaultTerm(replayMeetings, new Date()));
+    }
+  }, [availableTerms, replayMeetings, term]);
 
   async function importCalendar(file: File) {
     const token = ++selectionTokenRef.current;
@@ -130,7 +141,7 @@ function ReplayPage() {
               <img src="/logo-mark.svg" alt="" aria-hidden="true" />
             </span>
             <span className="font-display text-base font-semibold tracking-[-0.035em]">
-              Gapwise <span className="brand-utm-pill">UTM</span>
+              Gapwise <span className="brand-scope-pill">U of T</span>
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -228,7 +239,11 @@ function ReplayPage() {
                       : "Local ACORN import"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {meetings.length} meetings available · replay calculations stay on this device
+                  {replayMeetings.length} UTM meetings available
+                  {omittedMeetingCount > 0
+                    ? ` · ${omittedMeetingCount} non-UTM ${omittedMeetingCount === 1 ? "meeting" : "meetings"} kept off this map`
+                    : ""}
+                  {" · replay calculations stay on this device"}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -270,13 +285,21 @@ function ReplayPage() {
               </section>
             ) : null}
 
-            <DayReplay
-              meetings={meetings}
-              term={term}
-              preferences={DEFAULT_USER_PREFERENCES}
-              gapPreferences={DEFAULT_GAP_PREFERENCES}
-              planTransition={planTransition}
-            />
+            {replayMeetings.length > 0 ? (
+              <DayReplay
+                meetings={replayMeetings}
+                term={term}
+                preferences={{ ...DEFAULT_USER_PREFERENCES, mainCampus: "utm" }}
+                gapPreferences={DEFAULT_GAP_PREFERENCES}
+                planTransition={planTransition}
+              />
+            ) : (
+              <StatePanel
+                icon={<Play className="h-5 w-5" aria-hidden="true" />}
+                title="No UTM meetings to replay"
+                description="Day Replay currently uses the reviewed UTM pedestrian graph. UTSG, UTSC, and unknown-campus meetings stay in their original campus namespaces and are not plotted on the UTM map."
+              />
+            )}
           </div>
         )}
 

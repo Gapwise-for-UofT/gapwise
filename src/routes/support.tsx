@@ -4,7 +4,7 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support — Gapwise for UofT" },
+      { title: "Support — Gapwise" },
       {
         name: "description",
         content:

@@ -52,7 +52,7 @@ export type MapFocusPadding = {
 };
 
 export type CampusMapProps = {
-  campusId?: GapwiseCampusId;
+  campusId: GapwiseCampusId;
   meetings: Meeting[];
   segments: MapSegment[];
   selectedMeetingId: string | null;
@@ -980,7 +980,7 @@ function showCampusOverview(map: MapLibreMap, campusId: GapwiseCampusId) {
 }
 
 export function CampusMap({
-  campusId = "utm",
+  campusId,
   meetings,
   segments,
   selectedMeetingId,

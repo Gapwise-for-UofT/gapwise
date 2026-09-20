@@ -19,7 +19,7 @@ export const PUBLIC_FEATURE_PAGES = {
     path: "/about",
     eyebrow: "About Gapwise",
     title: "A campus planner built around the time between classes.",
-    seoTitle: "About Gapwise for UofT — Student Planning",
+    seoTitle: "About Gapwise — University of Toronto Student Planning",
     description:
       "See how Gapwise connects University of Toronto timetables, gap planning, and source-backed campus context in one focused student-built product.",
     lead: "Gapwise is built for the part of university life a timetable leaves blank: what to do next, how much time you actually have, and where you need to go.",
@@ -30,7 +30,7 @@ export const PUBLIC_FEATURE_PAGES = {
         bullets: [
           "ACORN timetable import",
           "Gap budgets between classes",
-          "UTM building and route context",
+          "UTM, UTSG, and UTSC building maps",
           "Academic work planning",
         ],
       },
@@ -40,7 +40,7 @@ export const PUBLIC_FEATURE_PAGES = {
       },
       {
         title: "Made for U of T",
-        body: "Timetable identity supports UTM, UTSG, UTSC, and mixed-campus schedules. Current source-backed map and routing coverage remains focused on UTM.",
+        body: "Timetable identity and source-backed building maps cover UTM, UTSG, UTSC, and mixed-campus schedules. Pedestrian routing, verified entrances, and campus places are currently available for UTM.",
       },
     ],
   },
@@ -70,19 +70,19 @@ export const PUBLIC_FEATURE_PAGES = {
   map: {
     path: "/campus-map",
     eyebrow: "Campus map",
-    title: "Explore UTM with a map built around your day.",
-    seoTitle: "UTM Campus Map — Gapwise",
+    title: "Explore U of T with a map built around your day.",
+    seoTitle: "University of Toronto Campus Map — Gapwise",
     description:
-      "Explore University of Toronto Mississauga buildings, entrances, campus places, and route context with the Gapwise UofT campus map.",
-    lead: "The Gapwise map connects UTM buildings, entrances, routes, and schedule context so campus navigation feels like part of the planner instead of a separate map tab.",
+      "Explore source-backed UTM, UTSG, and UTSC building maps, with UTM entrances, campus places, pedestrian routes, and schedule context where supported.",
+    lead: "The Gapwise map connects campus buildings and schedule context across U of T. Verified entrance, place, and pedestrian-route coverage is currently specific to UTM.",
     sections: [
       {
         title: "Explore without setup",
-        body: "Open the campus explorer, search a building, and move around UTM even before you import a timetable.",
+        body: "Open the campus explorer, choose UTM, UTSG, or UTSC, and search source-backed buildings even before you import a timetable.",
       },
       {
         title: "Buildings and routes connected",
-        body: "Canonical building identities and campus routes feed the same model used by Today and Gap Plan.",
+        body: "Canonical building identities across all three campuses feed the same model used by Today and Gap Plan. UTM also has first-party pedestrian routing.",
       },
       {
         title: "Made for the next move",
@@ -94,9 +94,9 @@ export const PUBLIC_FEATURE_PAGES = {
     path: "/gap-planner",
     eyebrow: "Gap planner",
     title: "A two-hour gap is not always two hours of usable time.",
-    seoTitle: "UTM Gap Planner — Gapwise",
+    seoTitle: "University of Toronto Gap Planner — Gapwise",
     description:
-      "See usable time between UTM classes after travel, transition buffers, setup, pack-up, meals, and campus context with Gapwise.",
+      "See usable time between University of Toronto classes after supported travel, transition buffers, setup, pack-up, meals, and campus context with Gapwise.",
     lead: "Gap Plan turns the empty space between classes into a practical time budget, with the next commitment already accounted for.",
     sections: [
       {
@@ -139,7 +139,7 @@ export const PUBLIC_FEATURE_PAGES = {
   acorn: {
     path: "/acorn-import",
     eyebrow: "ACORN import",
-    title: "Get your UTM timetable into Gapwise in a few clicks.",
+    title: "Get your U of T timetable into Gapwise in a few clicks.",
     seoTitle: "Import an ACORN Timetable into Gapwise",
     description:
       "Export your University of Toronto ACORN timetable as an .ics calendar and turn it into a Gapwise weekly schedule.",

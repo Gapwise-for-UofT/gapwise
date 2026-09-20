@@ -11,6 +11,7 @@ import { meeting } from "./fixtures";
 
 const residentPreferences = {
   ...DEFAULT_USER_PREFERENCES,
+  mainCampus: "utm" as const,
   dayOrigin: "residence" as const,
   residenceBuildingCode: "EH",
 };

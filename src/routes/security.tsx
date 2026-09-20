@@ -6,7 +6,7 @@ const PRIVATE_REPORT_URL = "https://github.com/Gapwise-for-UofT/gapwise/security
 export const Route = createFileRoute("/security")({
   head: () => ({
     meta: [
-      { title: "Vulnerability Disclosure — Gapwise for UofT" },
+      { title: "Vulnerability Disclosure — Gapwise" },
       {
         name: "description",
         content: "How to report a suspected Gapwise security vulnerability privately and safely.",

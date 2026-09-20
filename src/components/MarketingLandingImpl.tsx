@@ -87,7 +87,7 @@ export function MarketingLandingImpl({
     <div ref={rootRef} className="marketing-home" data-active-product={activeProduct}>
       <section className="marketing-hero" aria-labelledby="marketing-title">
         <div className="marketing-hero-copy">
-          <p className="marketing-eyebrow">Gapwise for UofT</p>
+          <p className="marketing-eyebrow">For University of Toronto</p>
           <h1 id="marketing-title">
             Make every <span>gap</span> on campus count.
           </h1>

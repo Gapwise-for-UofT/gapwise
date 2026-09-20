@@ -49,12 +49,18 @@ describe("guest-safe cloud services", () => {
 
   test("uses safe user preference defaults", () => {
     expect(sanitizeUserPreferences(undefined)).toEqual(DEFAULT_USER_PREFERENCES);
+    expect(DEFAULT_USER_PREFERENCES.mainCampus).toBeNull();
+    expect(sanitizeUserPreferences({ mainCampus: "invalid" as never }).mainCampus).toBeNull();
     expect(sanitizeUserPreferences({ walkingSpeedMps: 99 }).walkingSpeedMps).toBe(1.35);
   });
 
   test("accepts only a residence that belongs to the selected main campus", () => {
     expect(
-      sanitizeUserPreferences({ dayOrigin: "residence", residenceBuildingCode: "OPH" }),
+      sanitizeUserPreferences({
+        mainCampus: "utm",
+        dayOrigin: "residence",
+        residenceBuildingCode: "OPH",
+      }),
     ).toMatchObject({
       mainCampus: "utm",
       dayOrigin: "residence",
@@ -94,10 +100,18 @@ describe("guest-safe cloud services", () => {
       residenceBuildingCode: null,
     });
     expect(
-      sanitizeUserPreferences({ dayOrigin: "residence", residenceBuildingCode: "NOT-A-HOME" }),
+      sanitizeUserPreferences({
+        mainCampus: "utm",
+        dayOrigin: "residence",
+        residenceBuildingCode: "NOT-A-HOME",
+      }),
     ).toMatchObject({ dayOrigin: "commute", residenceBuildingCode: null });
     expect(
-      sanitizeUserPreferences({ dayOrigin: "commute", residenceBuildingCode: "OPH" }),
+      sanitizeUserPreferences({
+        mainCampus: "utm",
+        dayOrigin: "commute",
+        residenceBuildingCode: "OPH",
+      }),
     ).toMatchObject({ dayOrigin: "commute", residenceBuildingCode: null });
   });
 
@@ -109,6 +123,7 @@ describe("guest-safe cloud services", () => {
     });
     expect(
       sanitizeUserPreferences({
+        mainCampus: "utm",
         dayOrigin: "commute",
         commuteMode: "transit",
         campusAccessPointId: "miway-utm-bus-station",
@@ -128,6 +143,7 @@ describe("guest-safe cloud services", () => {
     });
     expect(
       sanitizeUserPreferences({
+        mainCampus: "utm",
         dayOrigin: "commute",
         commuteMode: "parking",
         campusAccessPointId: "parking-p8",
@@ -135,6 +151,7 @@ describe("guest-safe cloud services", () => {
     ).toMatchObject({ commuteMode: "parking", campusAccessPointId: "parking-p8" });
     expect(
       sanitizeUserPreferences({
+        mainCampus: "utm",
         dayOrigin: "commute",
         commuteMode: "transit",
         campusAccessPointId: "parking-p8",
@@ -142,6 +159,7 @@ describe("guest-safe cloud services", () => {
     ).toMatchObject({ commuteMode: "transit", campusAccessPointId: null });
     expect(
       sanitizeUserPreferences({
+        mainCampus: "utm",
         dayOrigin: "commute",
         commuteMode: "parking",
         campusAccessPointId: "not-a-point",
@@ -149,6 +167,7 @@ describe("guest-safe cloud services", () => {
     ).toMatchObject({ commuteMode: "parking", campusAccessPointId: null });
     expect(
       sanitizeUserPreferences({
+        mainCampus: "utm",
         dayOrigin: "residence",
         residenceBuildingCode: "OPH",
         commuteMode: "parking",

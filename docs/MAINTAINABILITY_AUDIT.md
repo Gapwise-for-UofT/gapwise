@@ -6,7 +6,7 @@
 
 ## 1. Gapwise in one page
 
-Gapwise is a local-first UTM schedule and campus-intelligence application. The browser owns the active timetable. Deterministic modules derive gaps, route-aware timing, recommendations, and replay state from that schedule. Optional surrounding systems add encrypted persistence, public campus APIs and SDKs, and explicitly delegated AI context without becoming the student app's primary source of truth.
+Gapwise is a local-first University of Toronto schedule and campus-intelligence application. The browser owns the active timetable, including UTM, UTSG, UTSC, and mixed-campus schedules. Deterministic modules derive gaps, route-aware timing where routing data exists, recommendations, and replay state from that schedule. Optional surrounding systems add encrypted persistence, public UTM campus APIs and SDKs, and explicitly delegated AI context without becoming the student app's primary source of truth.
 
 ```text
 ACORN .ics

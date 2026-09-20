@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const TITLE = "Gapwise for UofT";
+const TITLE = "Gapwise — University of Toronto";
 const DESCRIPTION =
   "Plan University of Toronto timetables, useful gaps, and source-backed campus routes in one precise workspace.";
 

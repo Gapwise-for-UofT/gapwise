@@ -1,13 +1,13 @@
-# Contributing to Gapwise for UofT
+# Contributing to Gapwise
 
-Gapwise for UofT is an independent student project. Contributions should preserve its local-first privacy model, accessibility, honest campus-data confidence, and sustainable free-tier operating model.
+Gapwise is an independent student project for the University of Toronto. Contributions should preserve its local-first privacy model, accessibility, honest campus-data confidence, and sustainable free-tier operating model.
 
 ## Before starting
 
 1. Search existing GitHub issues and pull requests.
 2. Use the repository issue forms for public bug/feature reports.
 3. Report security vulnerabilities privately through the repository security policy.
-4. Maintainer-planned implementation work is tracked in the **Gapwise for UofT** Linear project.
+4. Maintainer-planned implementation work is tracked in the **Gapwise** Linear project.
 
 GitHub is the public engineering record. Linear is the maintainer's planning/execution system; contributors do not need Linear access to report a problem.
 

@@ -31,12 +31,12 @@ const FEATURE_PAGES: readonly SeoPage[] = Object.values(PUBLIC_FEATURE_PAGES).ma
 const PAGES: readonly SeoPage[] = [
   {
     path: "/",
-    title: "Gapwise for UofT — Timetable, Gap Planner & Campus Routes",
+    title: "Gapwise — University of Toronto",
     description:
-      "Gapwise for UofT is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto.",
+      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto.",
     heading: "Make the time between classes count.",
     detail:
-      "Import an ACORN .ics timetable in your browser, preserve UTM, UTSG, UTSC, or mixed-campus context, understand the usable time between classes, and navigate source-backed UTM campus routes. Guest mode and a demo work without an account.",
+      "Import an ACORN .ics timetable in your browser, preserve UTM, UTSG, UTSC, or mixed-campus context, understand the usable time between classes, and explore source-backed campus maps. Pedestrian routing is currently available for UTM. Guest mode and a demo work without an account.",
     sections: [
       {
         title: "Your timetable, connected to campus context",
@@ -168,7 +168,7 @@ const PAGES: readonly SeoPage[] = [
     path: "/terms",
     title: "Terms — Gapwise",
     description:
-      "Terms and important notices for the independent Gapwise for UofT timetable, gap-planning, and campus-routing application.",
+      "Terms and important notices for the independent Gapwise timetable, gap-planning, and campus-routing application for University of Toronto students.",
     heading: "Gapwise terms and notices",
     detail:
       "Gapwise is an independent student project. Review the current product terms and notices without implying University of Toronto approval or endorsement.",
@@ -205,7 +205,6 @@ function homepageStructuredData(page: SeoPage) {
         "@type": "Organization",
         "@id": organizationId,
         name: "Gapwise",
-        alternateName: ["Gapwise UofT", "Gapwise for UofT"],
         url: `${SITE_ORIGIN}/`,
         description:
           "Privacy-first timetable intelligence and day planning for University of Toronto students.",
@@ -227,7 +226,6 @@ function homepageStructuredData(page: SeoPage) {
         "@type": "WebSite",
         "@id": websiteId,
         name: "Gapwise",
-        alternateName: ["Gapwise UofT", "Gapwise for UofT"],
         url: `${SITE_ORIGIN}/`,
         description: page.description,
         inLanguage: "en-CA",
@@ -237,7 +235,6 @@ function homepageStructuredData(page: SeoPage) {
         "@type": "WebApplication",
         "@id": appId,
         name: "Gapwise",
-        alternateName: ["Gapwise UofT", "Gapwise for UofT"],
         url: `${SITE_ORIGIN}/`,
         description: page.description,
         applicationCategory: "EducationalApplication",
@@ -258,7 +255,8 @@ function homepageStructuredData(page: SeoPage) {
         featureList: [
           "Browser-local ACORN timetable import",
           "UTM, UTSG, UTSC, and mixed-campus timetable identity",
-          "Source-backed UTM campus map and routing",
+          "Source-backed UTM, UTSG, and UTSC building maps",
+          "Source-backed UTM pedestrian routing",
           "Optional encrypted private sync",
         ],
         sameAs: [GITHUB_CORE],
@@ -330,12 +328,12 @@ function fallback(page: SeoPage) {
     .join("\n");
 
   return `<main data-gapwise-search-fallback style="max-width:60rem;margin:0 auto;padding:3rem 1.25rem;font-family:system-ui,sans-serif;line-height:1.65">
-      <p><strong>Gapwise for UofT</strong> · University of Toronto</p>
+      <p><strong>Gapwise</strong> · University of Toronto</p>
       <h1>${escapeHtml(page.heading)}</h1>
       <p>${escapeHtml(page.description)}</p>
       <p>${escapeHtml(page.detail)}</p>
       ${sections}
-      <p>Gapwise for UofT is an independent student project for University of Toronto students. It is not an official University of Toronto service and does not claim university approval, sponsorship, or endorsement.</p>
+      <p>Gapwise is an independent student project for University of Toronto students. It is not an official University of Toronto service and does not claim university approval, sponsorship, or endorsement.</p>
       <nav aria-label="Gapwise public pages">${navigation}</nav>
     </main>`;
 }

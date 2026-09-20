@@ -1181,14 +1181,15 @@
     border: 1px solid color-mix(in oklab, var(--color-accent) 24%, var(--color-border));
     border-radius: 999px;
     background: color-mix(in oklab, var(--color-accent) 8%, transparent);
-    color: var(--color-accent);
-    font-family: var(--font-code);
-    font-size: 0.58rem;
-    font-weight: 650;
-    letter-spacing: 0.1em;
+    color: var(--color-muted-foreground);
+    font-family: inherit;
+    font-size: 0.65rem;
+    font-weight: 550;
+    letter-spacing: 0.03em;
     line-height: 1;
-    padding: 0.28rem 0.42rem;
-    text-transform: uppercase;
+    padding: 0.2rem 0.38rem;
+    text-transform: none;
+    white-space: nowrap;
   }
 
   .surface,
@@ -1949,9 +1950,6 @@
   .desktop-brand .brand-mark-shell {
     width: 2rem;
     height: 2rem;
-  }
-  .desktop-brand .brand-scope-pill {
-    margin-left: auto;
   }
   .desktop-sidebar nav {
     display: grid;

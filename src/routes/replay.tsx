@@ -140,7 +140,7 @@ function ReplayPage() {
             <span className="brand-mark-shell">
               <img src="/logo-mark.svg" alt="" aria-hidden="true" />
             </span>
-            <span className="font-display text-base font-semibold tracking-[-0.035em]">
+            <span className="inline-flex items-center gap-2 font-display text-base font-semibold tracking-[-0.035em]">
               Gapwise <span className="brand-scope-pill">U of T</span>
             </span>
           </Link>

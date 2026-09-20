@@ -100,8 +100,7 @@ body:has(main.landing-stage) .product-story-nav {
     transition: none !important;
   }
 
-  .desktop-app-header .brand-mark-shell,
-  .desktop-app-header .brand-scope-pill {
+  .desktop-app-header .brand-mark-shell {
     color: var(--landing-chrome-accent, var(--color-accent)) !important;
     transition: none !important;
   }
@@ -179,7 +178,6 @@ body:has(main.landing-stage) .product-story-nav {
 
 @media (prefers-reduced-motion: reduce) {
   body:has(main.landing-stage) .desktop-app-header .brand-mark-shell,
-  body:has(main.landing-stage) .desktop-app-header .brand-scope-pill,
   .product-story-nav::after,
   .product-story-nav a {
     transition: none !important;

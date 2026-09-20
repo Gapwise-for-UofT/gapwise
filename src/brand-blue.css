@@ -159,8 +159,7 @@ body:has(main.landing-stage)
 
 body:has(main.landing-stage) .app-shell,
 body:has(main.landing-stage) .desktop-app-header,
-body:has(main.landing-stage) .brand-mark-shell,
-body:has(main.landing-stage) .brand-scope-pill {
+body:has(main.landing-stage) .brand-mark-shell {
   transition:
     background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -236,15 +235,6 @@ body:has(main.landing-stage) .desktop-app-header .brand-mark-shell img {
   opacity: 0;
 }
 
-html[data-landing-product] body:has(main.landing-stage) .brand-scope-pill {
-  color: var(--landing-chrome-accent) !important;
-  border-color: color-mix(
-    in oklab,
-    var(--landing-chrome-accent) 20%,
-    var(--color-border)
-  ) !important;
-}
-
 body:has(main.landing-stage) .brand-lockup:hover {
   transform: none !important;
 }
@@ -276,8 +266,7 @@ main.landing-stage .hero-word {
   .button-secondary,
   body:has(main.landing-stage) .app-shell,
   body:has(main.landing-stage) .desktop-app-header,
-  body:has(main.landing-stage) .brand-mark-shell,
-  body:has(main.landing-stage) .brand-scope-pill {
+  body:has(main.landing-stage) .brand-mark-shell {
     transition: none !important;
   }
 }

@@ -67,12 +67,9 @@ export function DesktopSidebar({
         <span className="brand-mark-shell">
           <img src="/logo-mark.svg" alt="" aria-hidden="true" />
         </span>
-        <span>Gapwise</span>
-        <span
-          className="brand-scope-pill"
-          style={{ color: "light-dark(var(--color-primary), var(--color-accent))" }}
-        >
-          U of T
+        <span className="inline-flex items-center gap-2">
+          <span>Gapwise</span>
+          <span className="brand-scope-pill">U of T</span>
         </span>
       </Link>
 

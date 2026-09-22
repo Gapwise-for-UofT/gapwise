@@ -223,8 +223,9 @@ function homepageStructuredData(page: SeoPage) {
         "@type": "Person",
         "@id": founderId,
         name: "Andrew Muratov",
-        url: "https://donotdisconnect.online/",
-        description: "University of Toronto student and creator and lead engineer of Gapwise.",
+        url: "https://www.donotdisconnect.online/",
+        description:
+          "University of Toronto student, creator of Gapwise, and the project's lead engineer.",
         sameAs: ["https://github.com/andrewmuratov", "https://www.linkedin.com/in/andrewmuratov"],
         knowsAbout: [
           "Gapwise",
@@ -344,7 +345,7 @@ function fallback(page: SeoPage) {
       <h1>${escapeHtml(page.heading)}</h1>
       <p>${escapeHtml(page.description)}</p>
       <p>${escapeHtml(page.detail)}</p>
-      ${page.path === "/" ? '<p>Gapwise was created by <a href="https://donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/Gapwise-for-UofT">Gapwise is open source on GitHub</a>.</p>' : ""}
+      ${page.path === "/" ? '<p>Gapwise was created by <a href="https://www.donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/Gapwise-for-UofT/gapwise">Gapwise is open source on GitHub</a>.</p>' : ""}
       ${sections}
       <p>Gapwise is an independent student project for University of Toronto students. It is not an official University of Toronto service and does not claim university approval, sponsorship, or endorsement.</p>
       <nav aria-label="Gapwise public pages">${navigation}</nav>

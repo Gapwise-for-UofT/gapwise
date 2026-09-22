@@ -198,6 +198,7 @@ function homepageStructuredData(page: SeoPage) {
   const organizationId = `${SITE_ORIGIN}/#organization`;
   const websiteId = `${SITE_ORIGIN}/#website`;
   const appId = `${SITE_ORIGIN}/#app`;
+  const founderId = `${SITE_ORIGIN}/#andrew-muratov`;
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -214,13 +215,21 @@ function homepageStructuredData(page: SeoPage) {
           width: 512,
           height: 512,
         },
-        founder: {
-          "@type": "Person",
-          name: "Andrew Muratov",
-          url: "https://github.com/andrewmuratov",
-        },
+        founder: { "@id": founderId },
         email: "support@gapwise.ca",
         sameAs: [GITHUB_ORGANIZATION],
+      },
+      {
+        "@type": "Person",
+        "@id": founderId,
+        name: "Andrew Muratov",
+        url: "https://donotdisconnect.online/",
+        description: "University of Toronto student and creator and lead engineer of Gapwise.",
+        sameAs: [
+          "https://github.com/andrewmuratov",
+          "https://www.linkedin.com/in/andrewmuratov",
+        ],
+        knowsAbout: ["Gapwise", "Computer science", "Information security", "Mathematics", "Software engineering"],
       },
       {
         "@type": "WebSite",
@@ -241,7 +250,7 @@ function homepageStructuredData(page: SeoPage) {
         operatingSystem: "Any",
         isAccessibleForFree: true,
         inLanguage: "en-CA",
-        creator: { "@id": organizationId },
+        creator: { "@id": founderId },
         publisher: { "@id": organizationId },
         offers: {
           "@type": "Offer",
@@ -332,6 +341,7 @@ function fallback(page: SeoPage) {
       <h1>${escapeHtml(page.heading)}</h1>
       <p>${escapeHtml(page.description)}</p>
       <p>${escapeHtml(page.detail)}</p>
+      ${page.path === "/" ? '<p>Gapwise was created by <a href="https://donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/Gapwise-for-UofT">Gapwise is open source on GitHub</a>.</p>' : ""}
       ${sections}
       <p>Gapwise is an independent student project for University of Toronto students. It is not an official University of Toronto service and does not claim university approval, sponsorship, or endorsement.</p>
       <nav aria-label="Gapwise public pages">${navigation}</nav>

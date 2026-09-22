@@ -225,11 +225,14 @@ function homepageStructuredData(page: SeoPage) {
         name: "Andrew Muratov",
         url: "https://donotdisconnect.online/",
         description: "University of Toronto student and creator and lead engineer of Gapwise.",
-        sameAs: [
-          "https://github.com/andrewmuratov",
-          "https://www.linkedin.com/in/andrewmuratov",
+        sameAs: ["https://github.com/andrewmuratov", "https://www.linkedin.com/in/andrewmuratov"],
+        knowsAbout: [
+          "Gapwise",
+          "Computer science",
+          "Information security",
+          "Mathematics",
+          "Software engineering",
         ],
-        knowsAbout: ["Gapwise", "Computer science", "Information security", "Mathematics", "Software engineering"],
       },
       {
         "@type": "WebSite",

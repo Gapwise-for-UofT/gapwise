@@ -154,7 +154,11 @@ test("entrance markers keep MapLibre projection isolated from interactive stylin
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium", "map marker projection regression runs once");
+  test.setTimeout(90_000);
   const guard = watchForAppFailures(page, String(testInfo.project.use.baseURL));
+  // A theme reload can briefly leave an old marker in the document while its
+  // MapLibre container is replaced. Only probe markers attached to the live map.
+  const markerAnchors = page.locator(".maplibregl-map .map-entrance-marker-anchor");
 
   await expectLanding(page);
   await page.addInitScript(() => {
@@ -185,7 +189,7 @@ test("entrance markers keep MapLibre projection isolated from interactive stylin
   await expect(page.getByRole("heading", { name: "Route preferences" })).toBeVisible();
 
   await selectBuilding(page, "MN", "Maanjiwe nendamowinan");
-  const mnAnchor = page.locator(".map-entrance-marker-anchor").first();
+  const mnAnchor = markerAnchors.first();
   const mnButton = mnAnchor.locator(":scope > .map-entrance-marker");
   await expect(mnAnchor).toHaveClass(/maplibregl-marker/);
   await expect(mnButton).not.toHaveClass(/maplibregl-marker/);
@@ -239,14 +243,14 @@ test("entrance markers keep MapLibre projection isolated from interactive stylin
   // not move. This catches reattachment bugs that preserve IDs but shift pixels.
   const themeToggle = page.getByRole("button", { name: /Switch to (dark|light) mode/ });
   await themeToggle.click();
-  const themedMnAnchor = page.locator(".map-entrance-marker-anchor").first();
+  const themedMnAnchor = markerAnchors.first();
   const themed = await waitForProjectionSettled(themedMnAnchor);
   expectStationaryProjection(panned, themed);
   expectAuditedMnCoordinate(themed);
 
   await selectBuilding(page, "Deerfield", "Deerfield Hall");
-  await expect(page.locator(".map-entrance-marker-anchor")).toHaveCount(2);
-  for (const anchor of await page.locator(".map-entrance-marker-anchor").all()) {
+  await expect(markerAnchors).toHaveCount(2);
+  for (const anchor of await markerAnchors.all()) {
     await waitForProjectionSettled(anchor);
   }
 
@@ -254,19 +258,19 @@ test("entrance markers keep MapLibre projection isolated from interactive stylin
   // MN fits under the same current UI/theme state: the earlier pre-route MN
   // selection can legitimately use different focus padding/camera state.
   await selectBuilding(page, "MN", "Maanjiwe nendamowinan");
-  const restoredMnAnchor = page.locator(".map-entrance-marker-anchor").first();
+  const restoredMnAnchor = markerAnchors.first();
   const restored = await waitForProjectionSettled(restoredMnAnchor);
   expectSameGeographicAnchor(original, restored);
   expectAuditedMnCoordinate(restored);
 
   await selectBuilding(page, "Deerfield", "Deerfield Hall");
-  await expect(page.locator(".map-entrance-marker-anchor")).toHaveCount(2);
-  for (const anchor of await page.locator(".map-entrance-marker-anchor").all()) {
+  await expect(markerAnchors).toHaveCount(2);
+  for (const anchor of await markerAnchors.all()) {
     await waitForProjectionSettled(anchor);
   }
 
   await selectBuilding(page, "MN", "Maanjiwe nendamowinan");
-  const repeatedMnAnchor = page.locator(".map-entrance-marker-anchor").first();
+  const repeatedMnAnchor = markerAnchors.first();
   const repeated = await waitForProjectionSettled(repeatedMnAnchor);
   expectSameGeographicAnchor(restored, repeated);
   expectAuditedMnCoordinate(repeated);

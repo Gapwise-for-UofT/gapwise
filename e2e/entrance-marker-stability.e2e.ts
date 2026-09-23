@@ -45,36 +45,42 @@ async function markerGeometry(anchor: Locator): Promise<MarkerGeometry> {
 }
 
 async function expectExactMapLibreProjection(anchor: Locator) {
-  const delta = await anchor.evaluate((element) => {
-    const mapContainer = element.closest<HTMLElement>(".maplibregl-map");
-    if (!mapContainer) throw new Error("Entrance marker is not attached to a MapLibre map.");
+  await expect(async () => {
+    // Theme changes replace the MapLibre container. Retry if a marker is
+    // detached between locator resolution and the projection probe.
+    const delta = await anchor.evaluate((element) => {
+      const mapContainer = element.closest<HTMLElement>(".maplibregl-map");
+      if (!mapContainer) throw new Error("Entrance marker is not attached to a MapLibre map.");
 
-    const projected: { x?: number; y?: number } = {};
-    const pageWindow = element.ownerDocument.defaultView;
-    if (!pageWindow) throw new Error("Entrance marker document has no window.");
-    element.dispatchEvent(new pageWindow.CustomEvent("gapwise-map-project", { detail: projected }));
-    if (typeof projected.x !== "number" || typeof projected.y !== "number") {
-      throw new Error("MapLibre projection probe is unavailable for this entrance marker.");
-    }
+      const projected: { x?: number; y?: number } = {};
+      const pageWindow = element.ownerDocument.defaultView;
+      if (!pageWindow) throw new Error("Entrance marker document has no window.");
+      element.dispatchEvent(
+        new pageWindow.CustomEvent("gapwise-map-project", { detail: projected }),
+      );
+      if (typeof projected.x !== "number" || typeof projected.y !== "number") {
+        throw new Error("MapLibre projection probe is unavailable for this entrance marker.");
+      }
 
-    const anchorRect = element.getBoundingClientRect();
-    const mapRect = mapContainer.getBoundingClientRect();
-    const anchorCenter = {
-      x: anchorRect.left + anchorRect.width / 2,
-      y: anchorRect.top + anchorRect.height / 2,
-    };
-    const expectedCenter = {
-      x: mapRect.left + projected.x,
-      y: mapRect.top + projected.y,
-    };
-    return {
-      x: Math.abs(anchorCenter.x - expectedCenter.x),
-      y: Math.abs(anchorCenter.y - expectedCenter.y),
-    };
-  });
+      const anchorRect = element.getBoundingClientRect();
+      const mapRect = mapContainer.getBoundingClientRect();
+      const anchorCenter = {
+        x: anchorRect.left + anchorRect.width / 2,
+        y: anchorRect.top + anchorRect.height / 2,
+      };
+      const expectedCenter = {
+        x: mapRect.left + projected.x,
+        y: mapRect.top + projected.y,
+      };
+      return {
+        x: Math.abs(anchorCenter.x - expectedCenter.x),
+        y: Math.abs(anchorCenter.y - expectedCenter.y),
+      };
+    });
 
-  expect(delta.x).toBeLessThan(0.75);
-  expect(delta.y).toBeLessThan(0.75);
+    expect(delta.x).toBeLessThan(0.75);
+    expect(delta.y).toBeLessThan(0.75);
+  }).toPass({ timeout: 10_000 });
 }
 
 function isNeutralTransformLonghand(value: string) {

@@ -17,6 +17,16 @@ const dataRepoRoot = resolve(sourceRoot, "../..");
 const ignoredFiles = new Set(["SHA256SUMS"]);
 const sourceSnapshot = resolve(dataRepoRoot, "public/data/utm-campus-v1.json");
 const targetSnapshot = resolve(repoRoot, "public/data/utm-campus-v1.json");
+const campusSnapshots = [
+  "utsg/buildings.json",
+  "utsg/buildings.geojson",
+  "utsc/buildings.json",
+  "utsc/buildings.geojson",
+].map((path) => ({
+  path,
+  source: resolve(dataRepoRoot, "data", path),
+  target: resolve(repoRoot, "src/data/campuses", path),
+}));
 
 if ([checkOnly, write, publish].filter(Boolean).length !== 1) {
   console.error("Choose exactly one mode: --check, --write, or --publish.");
@@ -134,6 +144,20 @@ if (!existsSync(sourceSnapshot)) {
   }
 }
 
+for (const snapshot of campusSnapshots) {
+  if (!existsSync(snapshot.source)) {
+    differences.push(`canonical campus snapshot is missing: ${snapshot.path}`);
+  } else if (!existsSync(snapshot.target)) {
+    differences.push(`campus snapshot is missing in gapwise: ${snapshot.path}`);
+  } else {
+    const [sourceBytes, targetBytes] = await Promise.all([
+      readFile(snapshot.source),
+      readFile(snapshot.target),
+    ]);
+    if (!sourceBytes.equals(targetBytes)) differences.push(`content differs: ${snapshot.path}`);
+  }
+}
+
 if (checkOnly) {
   if (differences.length > 0) {
     console.error("Campus data mirror differs from Gapwise-for-UofT/data:");
@@ -148,10 +172,20 @@ if (!existsSync(sourceSnapshot)) {
   console.error(`Canonical public snapshot was not found at ${sourceSnapshot}.`);
   process.exit(2);
 }
+for (const snapshot of campusSnapshots) {
+  if (!existsSync(snapshot.source)) {
+    console.error(`Canonical campus snapshot was not found at ${snapshot.source}.`);
+    process.exit(2);
+  }
+}
 const snapshotBytes = await readFile(sourceSnapshot);
 await mirror(sourceRoot, targetRoot, sourceFiles, targetFiles);
 await mkdir(dirname(targetSnapshot), { recursive: true });
 await writeFile(targetSnapshot, snapshotBytes);
+for (const snapshot of campusSnapshots) {
+  await mkdir(dirname(snapshot.target), { recursive: true });
+  await copyFile(snapshot.source, snapshot.target);
+}
 console.log(
-  `Synced ${sourceFiles.length} canonical campus data files and public/data/utm-campus-v1.json.`,
+  `Synced ${sourceFiles.length} canonical UTM files, the public UTM snapshot, and ${campusSnapshots.length} UTSG/UTSC snapshots.`,
 );

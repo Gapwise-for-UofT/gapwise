@@ -47,14 +47,5 @@ jobs:
         with:
           bun-version: 1.3.14
 
-      - name: Verify UTM canonical mirror
+      - name: Verify canonical campus mirrors
         run: bun scripts/sync-campus-data.ts --check --source=.canonical-data/data/utm
-
-      - name: Verify UTSG and UTSC canonical snapshots
-        run: |
-          set -euo pipefail
-          cmp .canonical-data/data/utsg/buildings.json src/data/campuses/utsg/buildings.json
-          cmp .canonical-data/data/utsg/buildings.geojson src/data/campuses/utsg/buildings.geojson
-          cmp .canonical-data/data/utsc/buildings.json src/data/campuses/utsc/buildings.json
-          cmp .canonical-data/data/utsc/buildings.geojson src/data/campuses/utsc/buildings.geojson
-          echo "UTM, UTSG, and UTSC canonical campus snapshots are in sync."

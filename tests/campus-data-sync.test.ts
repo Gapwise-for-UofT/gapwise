@@ -17,6 +17,10 @@ async function fixture() {
     "gapwise/public/data",
     "data/data/utm",
     "data/public/data",
+    "data/data/utsg",
+    "data/data/utsc",
+    "gapwise/src/data/campuses/utsg",
+    "gapwise/src/data/campuses/utsc",
   ]) {
     await mkdir(join(root, directory), { recursive: true });
   }
@@ -29,6 +33,12 @@ async function fixture() {
   await put("gapwise/src/data/utm/entrances.geojson", "old mirror\n");
   await put("gapwise/src/data/utm/obsolete.json", "obsolete\n");
   await put("gapwise/public/data/utm-campus-v1.json", "old snapshot\n");
+  for (const campus of ["utsg", "utsc"]) {
+    for (const name of ["buildings.json", "buildings.geojson"]) {
+      await put(`data/data/${campus}/${name}`, `${campus} canonical ${name}\n`);
+      await put(`gapwise/src/data/campuses/${campus}/${name}`, "old campus snapshot\n");
+    }
+  }
   const run = async (mode: string) => {
     const process = Bun.spawn([Bun.which("bun")!, "scripts/sync-campus-data.ts", mode], {
       cwd: join(root, "gapwise"),
@@ -51,12 +61,21 @@ describe("canonical campus mirror CLI", () => {
     expect(await f.read("gapwise/public/data/utm-campus-v1.json")).toBe(
       await f.read("data/public/data/utm-campus-v1.json"),
     );
+    for (const campus of ["utsg", "utsc"]) {
+      for (const name of ["buildings.json", "buildings.geojson"]) {
+        expect(await f.read(`gapwise/src/data/campuses/${campus}/${name}`)).toBe(
+          await f.read(`data/data/${campus}/${name}`),
+        );
+      }
+    }
     expect(await Bun.file(join(f.root, "gapwise/src/data/utm/obsolete.json")).exists()).toBe(false);
     expect(await Bun.file(join(f.root, "gapwise/src/data/utm/SHA256SUMS")).exists()).toBe(false);
     expect((await f.run("--write")).code).toBe(0);
     expect((await f.run("--check")).code).toBe(0);
     await f.put("gapwise/public/data/utm-campus-v1.json", "snapshot-only drift\n");
     expect((await f.run("--check")).error).toContain("public/data/utm-campus-v1.json");
+    await f.put("gapwise/src/data/campuses/utsg/buildings.json", "campus-only drift\n");
+    expect((await f.run("--check")).error).toContain("utsg/buildings.json");
   });
 
   test("rejects a missing canonical snapshot before modifying any mirror file", async () => {
@@ -66,6 +85,16 @@ describe("canonical campus mirror CLI", () => {
     expect(await f.read("gapwise/src/data/utm/entrances.geojson")).toBe("old mirror\n");
     expect(await f.read("gapwise/src/data/utm/obsolete.json")).toBe("obsolete\n");
     expect(await f.read("gapwise/public/data/utm-campus-v1.json")).toBe("old snapshot\n");
+  });
+
+  test("rejects a missing canonical campus snapshot before modifying any mirror file", async () => {
+    const f = await fixture();
+    await rm(join(f.root, "data/data/utsc/buildings.geojson"));
+    expect((await f.run("--write")).code).toBe(2);
+    expect(await f.read("gapwise/src/data/utm/entrances.geojson")).toBe("old mirror\n");
+    expect(await f.read("gapwise/src/data/campuses/utsc/buildings.json")).toBe(
+      "old campus snapshot\n",
+    );
   });
 
   test("rejects publishing a missing snapshot before changing canonical data or checksums", async () => {

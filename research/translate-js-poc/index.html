@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gapwise translate.js research fixture</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, sans-serif;
+      }
+      body {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 1.5rem;
+        line-height: 1.6;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+      }
+      select,
+      button {
+        min-height: 2.75rem;
+        padding: 0.5rem 0.75rem;
+        font: inherit;
+      }
+      select:focus-visible,
+      button:focus-visible {
+        outline: 3px solid #3b82f6;
+        outline-offset: 2px;
+      }
+      main {
+        margin-top: 2rem;
+      }
+      .card {
+        border: 1px solid currentColor;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+      }
+      .notranslate {
+        font-family: ui-monospace, monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Gapwise research fixture</strong>
+      <div>
+        <label for="language">Display language</label>
+        <select id="language" aria-label="Display language">
+          <option value="english">English</option>
+          <option value="french">Français</option>
+          <option value="spanish">Español</option>
+        </select>
+      </div>
+    </header>
+    <main>
+      <p>This page contains invented examples only. It is not part of the Gapwise application.</p>
+      <section id="public-copy" class="card" aria-label="Synthetic public text">
+        <h1>Explore campus places</h1>
+        <p id="sample-copy">Find a quiet study space.</p>
+        <p>
+          Example route from <span class="notranslate">MN</span> to
+          <span class="notranslate">IB</span>.
+        </p>
+        <p>Example course: <code>CSC110Y5</code></p>
+        <div id="dynamic-copy"></div>
+      </section>
+      <button id="add-copy" type="button">Add synthetic public text</button>
+      <button id="navigate-copy" type="button">Open synthetic public view</button>
+      <aside id="outside-scope" class="card" aria-label="Excluded synthetic private text">
+        Synthetic private timetable: MAT157H5, room MN 2100.
+      </aside>
+      <p id="translation-status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="./translate.min.js"></script>
+    <script src="./poc.js"></script>
+  </body>
+</html>

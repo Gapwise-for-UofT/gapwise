@@ -17,6 +17,7 @@ src/data/campuses/utsc/buildings.json
 src/data/campuses/utsc/buildings.geojson
 public/openapi.json
 public/data/utm-campus-v1.json
+research/translate-js-poc/translate.min.js
 
 AGENTS.md
 README.md

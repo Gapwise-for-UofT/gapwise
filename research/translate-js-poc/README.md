@@ -12,6 +12,8 @@ The fixture sets English as the source language, hides the upstream selector, an
 
 The `client.edge` service posts scanned text to `https://edge.microsoft.com/translate/translatetext`. The library's other modes/configuration can contact `api.translate.zvo.cn`, `america.api.translate.zvo.cn`, other ZVO service hosts, and `res.zvo.cn`; this fixture disables its init, host-probe, and IP calls. The upstream script also has optional code paths for other hosts. Do not enter personal data into this fixture.
 
+The library stores the target language and translation cache values under `hash_*` keys in `localStorage`; it also contains an optional IndexedDB cache path. That would retain translated student-specific text on a device if private application content were scanned.
+
 ## Production gate
 
 The main React app renders timetable entries, course enrollment details, account information, personalized recommendations, route state, and other private text in its DOM. Translating the whole document, or observing shared application roots, would send that content to a third party. CSS exclusions alone cannot prove that future React components, dialogs, and portal content remain outside the scanner. The application CSP permits neither the Edge translation endpoint nor ZVO API hosts. Adding them to `connect-src` would expand network access for the whole application.

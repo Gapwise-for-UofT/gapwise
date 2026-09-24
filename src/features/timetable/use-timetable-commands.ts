@@ -95,7 +95,7 @@ export function useTimetableCommands(input: TimetableCommandInput) {
         input.setWarnings(result.warnings);
         input.setIsDemo(false);
       } catch (error) {
-        const message = timetableImportError(error);
+        const message = timetableImportError(error, input.institutionId);
         if (previousMeetings?.length) {
           input.setRestorationMessage(`Timetable update failed · ${message}`);
         } else {

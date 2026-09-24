@@ -1,7 +1,8 @@
 import { CalendarClock, CalendarRange, LayoutGrid, MapPinned, Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import "./mobile-integrated.css";\nimport { currentInstitution } from "@/config/institution";
+import "./mobile-integrated.css";
+import { currentInstitution } from "@/config/institution";
 
 export type MobileTab = "today" | "timetable" | "route" | "gaps";
 
@@ -48,7 +49,8 @@ export function MobileShell({
   moreOpen: boolean;
   children: ReactNode;
 }) {
-  const [routeTargetId, setRouteTargetId] = useState<string | null>(null);\n  const institution = currentInstitution();
+  const [routeTargetId, setRouteTargetId] = useState<string | null>(null);
+  const institution = currentInstitution();
   const routeTargetContext = useMemo(() => ({ routeTargetId, setRouteTargetId }), [routeTargetId]);
 
   return (

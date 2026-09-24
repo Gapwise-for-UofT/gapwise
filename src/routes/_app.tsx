@@ -84,6 +84,7 @@ function ProductEmptyState({
   onImport: () => void;
   onDemo: () => void;
 }) {
+  const institution = currentInstitution();
   const title =
     destination === "gaps"
       ? "Add a timetable to plan your gaps"
@@ -132,6 +133,7 @@ function ProductEmptyState({
 }
 
 function AppLayout() {
+  const institution = currentInstitution();
   const { theme, toggleTheme } = useTheme();
   const { dismissed, dismiss } = useIntroDismissed();
   const { user, loading: authLoading, error: authError } = useAuth();

@@ -269,7 +269,7 @@ export function MarketingLandingImpl({
               <span>AI / MCP</span>
             </div>
             <pre>
-              <code>{`const gapwise = new GapwiseClient()\n\nawait gapwise.routes.create({\n  from: "MN",\n  to: "IB"\n})`}</code>
+              <code>{`import { Gapwise } from "@gapwise/sdk";\n\nconst gapwise = new Gapwise();\nawait gapwise.routes.calculate({\n  from: "MN",\n  to: "IB"\n});`}</code>
             </pre>
           </div>
         </article>

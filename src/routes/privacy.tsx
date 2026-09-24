@@ -85,15 +85,13 @@ function PrivacyPage() {
       <section>
         <h2>Analytics, cookies, and local storage</h2>
         <p>
-          Gapwise uses Vercel Web Analytics and Speed Insights for aggregate operational and
-          performance measurements. Vercel currently describes Web Analytics as cookie-free and
-          anonymized, but ordinary hosting and provider logs can still contain technical network
-          metadata. Gapwise does not intentionally send raw timetable entries, rooms, coursework
-          details, friend data, authentication tokens, or precise location as analytics events.
-          Gapwise also uses browser storage needed for guest data, preferences, sessions, encrypted
-          records, and device keys. Gapwise does not add a consent banner merely for appearance; if
-          non-essential tracking or advertising technology is introduced, its consent requirements
-          must be reassessed before deployment.
+          Gapwise does not currently initialize product analytics or Speed Insights in the web app.
+          Ordinary hosting and provider logs can still contain technical network metadata. Gapwise
+          does not send raw timetable entries, rooms, coursework details, friend data,
+          authentication tokens, or precise location as analytics events. Gapwise uses browser
+          storage for guest data, preferences, sessions, encrypted records, and device keys. Any
+          future optional analytics must be reviewed for data minimization and applicable consent
+          requirements before deployment.
         </p>
       </section>
       <section>
@@ -153,7 +151,7 @@ function PrivacyPage() {
         <p>
           This notice is updated when material data handling changes. Material new uses or providers
           should be assessed and reflected here before they are promoted to users. Last materially
-          reviewed: September 1, 2026.
+          reviewed: September 24, 2026.
         </p>
       </section>
     </LegalPage>

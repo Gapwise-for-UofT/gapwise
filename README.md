@@ -212,7 +212,7 @@ Gapwise deterministic truth  →  permissioned MCP  →  assistant reasoning/adv
 
 AI access to private student context is opt-in and minimized. The delegated boundary excludes raw ACORN files, friend data, precise/live location, credentials, primary private-data encryption keys, and unrelated browser state.
 
-Academic meetings remain read-only to AI. Bounded personal-item or preference mutations are typed, permission-checked, revision-bound, and queued for Gapwise rather than granting an assistant arbitrary timetable-write access.
+Academic meetings remain read-only to AI. The current MCP write surface can queue only a bounded gap-preference update with explicit permission and the current revision. Personal Item tools are retired; legacy records remain decodable for compatibility.
 
 Gapwise AI is not presented as a second timetable engine or as a universal LLM backend. It exists so compatible assistants can reason over exact Gapwise context while the platform remains the source of truth.
 

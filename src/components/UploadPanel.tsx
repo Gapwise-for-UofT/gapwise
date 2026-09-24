@@ -123,7 +123,8 @@ export function UploadPanel({
           Start with your timetable.
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Upload the .ics export from ACORN or open a demo schedule.
+          Download the calendar export (.ics) from ACORN&apos;s Timetable &amp; Exams, then choose
+          it here. Your file stays in this browser; no account is needed.
         </p>
 
         {loading ? (
@@ -152,6 +153,12 @@ export function UploadPanel({
                 Try Demo Schedule
               </button>
             </div>
+            <a
+              href="/acorn-import"
+              className="mt-3 inline-block text-xs font-medium text-accent underline-offset-4 hover:underline"
+            >
+              Need help importing?
+            </a>
             {errorMessage ? <div className="mt-3">{errorMessage}</div> : null}
           </>
         )}
@@ -201,7 +208,10 @@ export function UploadPanel({
       <h2 id="upload-heading" className="font-display text-xl font-medium">
         Upload your timetable
       </h2>
-      <p className="mt-1 text-sm text-muted-foreground">Choose the .ics export from ACORN.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Choose the calendar export (.ics) from ACORN&apos;s Timetable &amp; Exams. The file stays in
+        this browser.
+      </p>
       {loading ? (
         <ScheduleSkeleton />
       ) : (
@@ -229,6 +239,9 @@ export function UploadPanel({
               Try Demo Schedule
             </button>
             {rememberControl}
+            <a href="/acorn-import" className="inline-block text-xs text-accent hover:underline">
+              Need help importing?
+            </a>
             {errorMessage}
           </div>
         </>

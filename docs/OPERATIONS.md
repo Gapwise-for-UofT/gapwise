@@ -101,16 +101,34 @@ Use [`LAUNCH_READINESS.md`](LAUNCH_READINESS.md) before a stable release or majo
 Keep monitoring lightweight and privacy-preserving:
 
 - review Vercel runtime errors and function status codes after deployments;
-- use Vercel Analytics and Speed Insights for the web telemetry currently implemented by the product;
+- review the currently available Vercel request and runtime diagnostics; the web app does not
+  currently initialize Web Analytics, Speed Insights, or product events;
 - do not add a duplicate analytics provider without a specific need, privacy review, and CSP review;
 - monitor Vercel function invocations/transfer and Supabase database size/egress;
 - review Supabase Security and Performance Advisors after migrations;
 - review Supabase Auth logs after Auth/SMTP/Turnstile configuration changes;
 - check Resend delivery events when authentication mail is implicated;
-- verify `status.gapwise.ca` manually when publishing incident/service communication; it is not a synthetic monitor;
+- verify `status.gapwise.ca` when publishing incident/service communication; its independent
+  workflow probes public services every 15 minutes, while private services require operator state;
 - watch encrypted revision health with aggregate queries only;
 - never dump production ciphertext, timetable plaintext, keys, tokens, emails or relationship contents to logs/analytics;
 - do not add polling or background location tracking merely for monitoring.
+
+### Aggregate product measurement proposal
+
+The current app cannot report successful or failed imports, navigation starts, feature adoption,
+or broad returning use from product events. `status.gapwise.ca` observes public service health,
+not these browser actions. Do not infer student adoption from uptime or hosting request counts.
+
+Before enabling any browser telemetry, review the exact transmitted URL fields, production
+dashboard settings, retention, access, and applicable consent requirements. An implementation
+should use only fixed event names without timetable, building, room, route, account, or precise
+location properties. It should never transmit a raw `.ics` file or use a persistent user identifier.
+Vercel's [current custom-events documentation](https://vercel.com/docs/analytics/custom-events)
+limits custom events to paid plans, so it does not meet Gapwise's free-service constraint today.
+Free page-view analytics could be considered separately after route/query redaction and privacy
+review; it would not measure import outcomes or navigation starts. Speed Insights could supply
+aggregate performance measurements within the free allowance after the same review.
 
 ## Troubleshooting
 

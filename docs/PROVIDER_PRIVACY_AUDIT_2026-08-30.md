@@ -98,8 +98,8 @@ The hosted privacy notice must name OpenFreeMap because opening a map can theref
 
 ## Analytics and cookie posture
 
-- **Repository:** Vercel Web Analytics and Speed Insights are mounted in the application shell.
-- **Provider:** current Vercel Web Analytics documentation describes that product as cookie-free and anonymized. That supports the existing statement that Gapwise does not need a cosmetic cookie banner merely because Web Analytics is mounted.
+- **Repository correction (2026-09-24):** the current web application does not mount Vercel Web Analytics or Speed Insights. A package dependency and unused event helper were previously mistaken for runtime initialization.
+- **Provider:** Vercel describes Web Analytics as cookie-free and anonymized, but those product-specific properties do not describe the current Gapwise browser runtime because the script is not initialized.
 - **Boundary:** this does not create a permanent exemption from consent rules. If Gapwise introduces advertising, cross-site tracking, persistent identifiers, session replay, or another non-essential tracker, the legal/consent assessment must be redone before deployment.
 - **Boundary:** ordinary provider request/runtime logs are separate from Web Analytics and can contain technical network metadata even when Web Analytics itself is cookie-free.
 
@@ -108,7 +108,7 @@ The hosted privacy notice must name OpenFreeMap because opening a map can theref
 This audit supports the following public statements and limitations:
 
 1. Vercel, Supabase, the selected identity provider, OpenFreeMap, and any explicitly connected AI provider are real service/data recipients in the shipped architecture.
-2. Web Analytics is currently cookie-free, but provider infrastructure can still process normal request metadata.
+2. The app does not currently initialize Web Analytics; provider infrastructure can still process normal request metadata.
 3. Supabase's primary project region is Canada Central, but Gapwise must not turn that into a claim that all provider processing is Canada-only.
 4. The current Vercel Hobby plan must not be described as covered by Vercel's Pro/Enterprise DPA.
 5. Account deletion removes the application's current user-owned cloud records through the shipped deletion path; provider logs/backups and independently retained third-party records can follow separate cycles.

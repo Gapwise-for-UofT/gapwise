@@ -1,6 +1,6 @@
 # Gapwise Privacy Notice
 
-_Last updated: 2026-08-30_
+_Last updated: 2026-09-24_
 
 Gapwise is an independent student project for University of Toronto students. It is not affiliated with, endorsed by, or an official service of the University of Toronto.
 
@@ -51,13 +51,13 @@ Optional community features may also store account-linked crowd reports, rate-li
 
 ## Operational analytics, diagnostics, maps, and cookies
 
-Gapwise uses Vercel Web Analytics and Speed Insights for aggregate operational and performance measurements. Timetable contents, AI-delegated snapshot plaintext, AI action plaintext, friend data, precise live location, and authentication tokens are not intentionally sent to those analytics products.
+The current Gapwise web app does not initialize Vercel Web Analytics, Speed Insights, or custom product events. It does not send timetable contents, AI-delegated snapshot plaintext, AI action plaintext, friend data, precise live location, or authentication tokens as analytics events.
 
-Vercel currently documents Web Analytics as cookie-free and anonymized. Ordinary Vercel hosting/runtime logs are a separate provider surface and can still contain technical request metadata. The connected production account is currently on Vercel's Hobby plan; the project does not claim that Vercel's Pro/Enterprise Data Processing Addendum applies to that Hobby account.
+Ordinary Vercel hosting/runtime logs can still contain technical request metadata. The connected production account is currently on Vercel's Hobby plan; the project does not claim that Vercel's Pro/Enterprise Data Processing Addendum applies to that Hobby account.
 
 Gapwise uses OpenFreeMap for map style/tile delivery. Opening a map can create a direct browser request to `tiles.openfreemap.org`; Gapwise does not attach the user's private timetable payload to that map request. OpenFreeMap's published privacy policy says ordinary logs are anonymized and omit IP addresses by default, while temporary IP logging may be enabled during security incidents for up to 30 days and Cloudflare may participate in delivery.
 
-The current Gapwise application does not add advertising or cross-site tracking cookies, and it does not contain advertising. A cookie banner is therefore not added merely because the current telemetry components are present. If telemetry changes to use non-essential cookies, identifiable profiling, advertising, or other tracking that requires consent in an applicable jurisdiction, Gapwise must reassess notice and consent before that change ships.
+The current Gapwise application does not add advertising or cross-site tracking cookies, and it does not contain advertising. If telemetry changes to use non-essential cookies, identifiable profiling, advertising, or other tracking that requires consent in an applicable jurisdiction, Gapwise must reassess notice and consent before that change ships.
 
 Server diagnostics can include operational request/error information. Credential-shaped data is redacted from expanded catastrophic-error diagnostics before it reaches application logging. Hosting and other providers can independently retain ordinary infrastructure logs under their own settings and policies.
 

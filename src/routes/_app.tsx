@@ -227,6 +227,7 @@ function AppLayout() {
     setAcademic,
   });
   const timetableCommands = useTimetableCommands({
+    institutionId: institution.id,
     meetings,
     setMeetings,
     setWarnings,

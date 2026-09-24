@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { Theme } from "@/hooks/use-preferences";
-import type { AppDestination } from "@/features/navigation/use-app-navigation";\nimport { currentInstitution } from "@/config/institution";
+import type { AppDestination } from "@/features/navigation/use-app-navigation";
+import { currentInstitution } from "@/config/institution";
 
 const destinations = [
   {
@@ -59,7 +60,8 @@ export function DesktopSidebar({
   onOpenAccount: () => void;
   onToggleTheme: () => void;
 }) {
-  const darkTheme = theme === "dark";\n  const institution = currentInstitution();
+  const darkTheme = theme === "dark";
+  const institution = currentInstitution();
 
   return (
     <aside className="desktop-sidebar" aria-label="Desktop navigation">

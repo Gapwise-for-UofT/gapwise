@@ -18,7 +18,9 @@ test("privacy and terms are public, responsive, and independent of an account", 
     page.getByText(/Resend for configured transactional authentication email/),
   ).toBeVisible();
   await expect(page.getByText(/Cloudflare for DNS, inbound Gapwise email routing/)).toBeVisible();
-  await expect(page.getByText(/Web Analytics as cookie-free and anonymized/)).toBeVisible();
+  await expect(
+    page.getByText(/does not currently initialize product analytics or Speed Insights/),
+  ).toBeVisible();
   await expect(
     page.getByText(/Delete your account and associated application cloud data/),
   ).toBeVisible();

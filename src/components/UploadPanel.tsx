@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FileUp } from "lucide-react";
 import { clearFirstValuePending, markFirstValuePending } from "@/features/onboarding/first-value";
-import "./onboarding/first-run.css";
+import "./onboarding/first-run.css";\nimport { currentInstitution } from "@/config/institution";
 
 function ScheduleSkeleton() {
   return (
@@ -47,7 +47,7 @@ export function UploadPanel({
   rememberAvailable?: boolean;
   variant?: "card" | "hero";
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);\n  const institution = currentInstitution();\n  const isUofT = institution.id === "uoft";
   const importArmedRef = useRef(false);
   const [dragging, setDragging] = useState(false);
   const hero = variant === "hero";
@@ -107,7 +107,7 @@ export function UploadPanel({
     >
       <p className="font-semibold">The calendar could not be imported.</p>
       <p className="mt-1 leading-6">{error}</p>
-      <p className="mt-1 leading-6">Choose another ACORN .ics file to try again.</p>
+      <p className="mt-1 leading-6">Choose another {institution.timetableSourceName} .ics file to try again.</p>
     </div>
   ) : null;
 
@@ -138,7 +138,7 @@ export function UploadPanel({
                 className="button-primary inline-flex min-h-11 w-full items-center justify-center gap-2 px-5 text-sm font-semibold"
               >
                 <FileUp className="h-4 w-4" aria-hidden="true" />
-                Import ACORN
+                Import {institution.timetableSourceName}
               </button>
               <button
                 type="button"
@@ -224,7 +224,7 @@ export function UploadPanel({
               className="button-primary inline-flex min-h-11 w-full items-center justify-center gap-2 px-5 text-sm font-semibold"
             >
               <FileUp className="h-4 w-4" aria-hidden="true" />
-              Import ACORN
+              Import {institution.timetableSourceName}
             </button>
             <button
               type="button"

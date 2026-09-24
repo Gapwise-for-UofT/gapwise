@@ -145,7 +145,10 @@ describe("UTM entrance truth registry", () => {
     expect(mappedOphDoors.every((item) => item.kind === "exterior_entrance")).toBe(true);
     expect(mappedOphDoors.every((item) => item.publicAccess === "restricted")).toBe(true);
     expect(mappedOphDoors.every((item) => item.direction === "unknown")).toBe(true);
-    expect(mappedOphDoors.every((item) => item.routability === "routable")).toBe(true);
+    // Graph connectivity and ordinary public access are separate facts. Data may
+    // classify a restricted door as non-routable without losing its mapped node.
+    expect(mappedOphDoors.every((item) => item.coordinates && item.routingNodeId)).toBe(true);
+    expect(mappedOphDoors.every((item) => item.routability !== "candidate")).toBe(true);
 
     const officialOphIdentities = UTM_ENTRANCE_REGISTRY.filter(
       (item) => item.buildingCode === "OPH" && item.id.startsWith("utm:entrance-candidate:oph:"),

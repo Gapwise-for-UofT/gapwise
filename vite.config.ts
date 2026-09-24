@@ -21,6 +21,9 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,json}"],
         navigateFallback: "/index.html",
+        // Never let the app-shell service worker intercept crawler-facing static endpoints.
+        // This also keeps direct browser navigation to these files truthful after a deployment.
+        navigateFallbackDenylist: [/^\/robots\.txt$/, /^\/sitemap\.xml$/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/tiles\.openfreemap\.org\/.*$/,

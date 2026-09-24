@@ -1,4 +1,5 @@
 import ICAL from "ical.js";
+import type { GapwiseInstitutionId } from "@/config/institution";
 import {
   ASSESSMENT_WINDOW_NOTE,
   campusForCourseCode,
@@ -45,12 +46,54 @@ function unescapeText(value: string): string {
     .trim();
 }
 
-function parseSummary(summary: string): {
+function parseSummary(
+  summary: string,
+  institutionId: GapwiseInstitutionId,
+): {
   courseCode: string;
   activityType: ActivityType;
   sectionCode: string;
 } {
   const cleaned = unescapeText(summary).replace(/\s+/g, " ").trim();
+
+  if (institutionId === "carleton") {
+    const match = cleaned.match(/^([A-Z]{4})\s*[- ]?\s*(\d{4})(?:\s*[-–—:]?\s*(.*))?$/i);
+    if (!match) {
+      return { courseCode: cleaned || "Unknown", activityType: "OTHER", sectionCode: "" };
+    }
+
+    const courseCode = `${match[1]!.toUpperCase()} ${match[2]}`;
+    const remainder = (match[3] ?? "").trim();
+    const tokens = remainder ? remainder.split(/\s+/) : [];
+    let activityType: ActivityType = "OTHER";
+    let sectionCode = "";
+
+    for (const token of tokens) {
+      const normalized = token.replace(/[^A-Z]/gi, "").toUpperCase();
+      if (normalized === "LEC" || normalized === "LECTURE") {
+        activityType = "LEC";
+        continue;
+      }
+      if (normalized === "TUT" || normalized === "TUTORIAL") {
+        activityType = "TUT";
+        continue;
+      }
+      if (
+        normalized === "LAB" ||
+        normalized === "PRA" ||
+        normalized === "PRACTICAL"
+      ) {
+        activityType = "PRA";
+        continue;
+      }
+      if (!sectionCode && /^[A-Z]{1,3}\d{0,3}$/i.test(token)) {
+        sectionCode = token.toUpperCase();
+      }
+    }
+
+    return { courseCode, activityType, sectionCode };
+  }
+
   // Standard UTM/St. George codes look like CSC110Y5, while UTSC uses the
   // fourth position as a letter in identifiers such as CSCA08H3.
   const match = cleaned.match(/^([A-Z]{3}[A-Z0-9]\d{2}[A-Z]\d?)\s*(LEC|TUT|PRA)?\s*(\d{3,4})?/i);
@@ -66,9 +109,19 @@ function parseSummary(summary: string): {
   };
 }
 
+function isCourseCodeForInstitution(
+  courseCode: string,
+  institutionId: GapwiseInstitutionId,
+): boolean {
+  return institutionId === "carleton"
+    ? /^[A-Z]{4} \d{4}$/.test(courseCode)
+    : /^[A-Z]{3}[A-Z0-9]\d{2}[A-Z]\d?$/.test(courseCode);
+}
+
 function parseLocation(
   raw: string | null,
   campus: Campus,
+  institutionId: GapwiseInstitutionId,
 ): {
   buildingCode: string | null;
   room: string | null;
@@ -109,6 +162,18 @@ function parseLocation(
       locationUnknown: true,
       locationType: "tba",
       warning: "The physical location is still TBA.",
+    };
+  }
+
+  if (institutionId === "carleton") {
+    const match = value.match(/^([A-Z]{2})[\s-]+(.+)$/i);
+    return {
+      buildingCode: match?.[1]?.toUpperCase() ?? null,
+      room: match?.[2]?.trim() ?? null,
+      sourceLocation: value,
+      locationUnknown: false,
+      locationType: "physical",
+      warning: null,
     };
   }
 
@@ -220,13 +285,19 @@ function weekdaysFor(event: ICAL.Event, startWeekday: Weekday | null): Weekday[]
   return WEEKDAYS.filter((d) => days.has(d));
 }
 
-export function parseIcs(text: string): ParsedTimetable {
+export function parseIcs(
+  text: string,
+  options: { institutionId?: GapwiseInstitutionId } = {},
+): ParsedTimetable {
+  const institutionId = options.institutionId ?? "uoft";
   if (text.length > MAX_ICS_FILE_BYTES) {
     throw new IcsParseError("That calendar is too large. Please choose an .ics file under 2 MB.");
   }
   if (!/BEGIN:VCALENDAR/i.test(text)) {
     throw new IcsParseError(
-      "That file doesn't look like a calendar export. Please upload the .ics file downloaded from ACORN.",
+      institutionId === "uoft"
+        ? "That file doesn't look like a calendar export. Please upload the .ics file downloaded from ACORN."
+        : "That file doesn't look like a timetable calendar. Please upload a valid .ics file.",
     );
   }
 
@@ -242,12 +313,16 @@ export function parseIcs(text: string): ParsedTimetable {
   const vevents = comp.getAllSubcomponents("vevent");
   if (vevents.length === 0) {
     throw new IcsParseError(
-      "This calendar has no events in it. Export your timetable from ACORN again and try once more.",
+      institutionId === "uoft"
+        ? "This calendar has no events in it. Export your timetable from ACORN again and try once more."
+        : "This calendar has no events in it. Export your Carleton timetable calendar again and try once more.",
     );
   }
   if (vevents.length > MAX_ICS_EVENTS) {
     throw new IcsParseError(
-      "That calendar contains too many events. Export only your current ACORN timetable and try again.",
+      institutionId === "uoft"
+        ? "That calendar contains too many events. Export only your current ACORN timetable and try again."
+        : "That calendar contains too many events. Export only your current Carleton timetable and try again.",
     );
   }
 
@@ -294,15 +369,15 @@ export function parseIcs(text: string): ParsedTimetable {
     }
 
     const summary = event.summary ?? "";
-    const { courseCode, activityType, sectionCode } = parseSummary(summary);
-    if (!/^[A-Z]{3}[A-Z0-9]\d{2}[A-Z]\d?$/.test(courseCode)) {
+    const { courseCode, activityType, sectionCode } = parseSummary(summary, institutionId);
+    if (!isCourseCodeForInstitution(courseCode, institutionId)) {
       warnings.add(
         `"${summary || "Untitled event"}" was skipped because it isn't a course meeting.`,
       );
       continue;
     }
 
-    const campus = campusForCourseCode(courseCode);
+    const campus: Campus = institutionId === "carleton" ? "CARLETON" : campusForCourseCode(courseCode);
     const description = unescapeText(event.description ?? "");
     const courseName = description.split("\n")[0]?.trim() || courseCode;
     const rawLocation = unescapeText(
@@ -313,9 +388,11 @@ export function parseIcs(text: string): ParsedTimetable {
     // ACORN uses a synthetic "ZZ TBA" location plus an asterisk-only description
     // line for recurring blocks reserved for tests, quizzes, and midterms.
     const isReservedAssessmentWindow =
-      /^ZZ\s+TBA$/i.test(rawLocation) && /(^|\n)\*{6,}($|\n)/.test(description);
+      institutionId === "uoft" &&
+      /^ZZ\s+TBA$/i.test(rawLocation) &&
+      /(^|\n)\*{6,}($|\n)/.test(description);
 
-    const location = parseLocation(rawLocation, campus);
+    const location = parseLocation(rawLocation, campus, institutionId);
     if (location.warning) {
       warnings.add(`${courseCode} ${activityType}: ${location.warning}`);
     }
@@ -395,7 +472,9 @@ export function parseIcs(text: string): ParsedTimetable {
 
   if (meetings.length === 0) {
     throw new IcsParseError(
-      "We parsed the calendar but found no classes. This export may not contain a U of T timetable.",
+      institutionId === "uoft"
+        ? "We parsed the calendar but found no classes. This export may not contain a U of T timetable."
+        : "We parsed the calendar but found no classes. This export may not contain a Carleton timetable.",
     );
   }
 

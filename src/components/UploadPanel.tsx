@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { FileUp } from "lucide-react";
 import { clearFirstValuePending, markFirstValuePending } from "@/features/onboarding/first-value";
-import "./onboarding/first-run.css";\nimport { currentInstitution } from "@/config/institution";
+import "./onboarding/first-run.css";
+import { currentInstitution } from "@/config/institution";
 
 function ScheduleSkeleton() {
   return (
@@ -47,7 +48,9 @@ export function UploadPanel({
   rememberAvailable?: boolean;
   variant?: "card" | "hero";
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);\n  const institution = currentInstitution();\n  const isUofT = institution.id === "uoft";
+  const inputRef = useRef<HTMLInputElement>(null);
+  const institution = currentInstitution();
+  const isUofT = institution.id === "uoft";
   const importArmedRef = useRef(false);
   const [dragging, setDragging] = useState(false);
   const hero = variant === "hero";
@@ -107,7 +110,9 @@ export function UploadPanel({
     >
       <p className="font-semibold">The calendar could not be imported.</p>
       <p className="mt-1 leading-6">{error}</p>
-      <p className="mt-1 leading-6">\n        Choose another {institution.timetableSourceName} calendar (.ics) file to try again.\n      </p>
+      <p className="mt-1 leading-6">
+        Choose another {institution.timetableSourceName} calendar (.ics) file to try again.
+      </p>
     </div>
   ) : null;
 

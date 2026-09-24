@@ -240,6 +240,34 @@ test("campus explorer supports public building deep links and local search", asy
   guard.assertClean();
 });
 
+test("a first-time visitor can browse buildings on all three campus maps", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    !["chromium", "mobile-chromium"].includes(testInfo.project.name),
+    "tri-campus map journey runs in desktop and phone Chromium",
+  );
+  const guard = watchForAppFailures(page, String(testInfo.project.use.baseURL));
+
+  await page.goto("/route");
+  await expect(page.getByRole("heading", { name: "Choose a campus map" })).toBeVisible();
+
+  for (const [campus, query, building] of [
+    ["UTSG", "Bahen", "Bahen Centre for Information Technology"],
+    ["UTSC", "Science Wing", "Science Wing"],
+    ["UTM", "Maanjiwe", "Maanjiwe nendamowinan"],
+  ]) {
+    await page.getByRole("button", { name: campus, exact: true }).click();
+    const search = page.getByRole("searchbox", { name: `Search ${campus} buildings` });
+    await expect(search).toBeVisible();
+    await search.fill(query);
+    await search.press("Enter");
+    await expect(page.getByRole("heading", { name: building })).toBeVisible();
+  }
+
+  guard.assertClean();
+});
+
 test("campus-day arrival settings route transit and parking through the map", async ({
   page,
 }, testInfo) => {
@@ -655,6 +683,7 @@ test("guest import never writes plaintext timetable persistence", async ({ page 
 
   await page.locator("#ics-file").setInputFiles(fixturePath);
   await expect(page.getByRole("heading", { name: "Your timetable" })).toBeVisible();
+  await expect(page).toHaveURL(/\/timetable$/);
 
   const stored = await page.evaluate(() => ({
     timetable: window.localStorage.getItem("gapwise:timetable"),
@@ -663,10 +692,8 @@ test("guest import never writes plaintext timetable persistence", async ({ page 
   expect(stored).toEqual({ timetable: null, remember: null });
 
   await page.reload();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(
-    page.getByRole("heading", { name: "Make every gap on campus count." }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/timetable$/);
+  await expect(page.getByRole("heading", { name: "Add your timetable" })).toBeVisible();
   guard.assertClean();
 });
 

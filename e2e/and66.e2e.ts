@@ -47,6 +47,10 @@ test("AND-66 first-run landing keeps activation clear on a narrow phone", async 
     ),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Try a demo" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Need help importing?" })).toHaveAttribute(
+    "href",
+    "/acorn-import",
+  );
   await expect(page.getByRole("button", { name: "Campus arrival settings" })).toHaveCount(0);
 
   const importAction = page.getByRole("button", { name: "Import ACORN" });

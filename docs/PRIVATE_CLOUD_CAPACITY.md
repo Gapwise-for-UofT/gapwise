@@ -95,9 +95,9 @@ friend calculations. No Realtime subscription or polling is part of this model.
 The static application's typical compressed first-load transfer is budgeted at 0.75 MB before a
 user opens the lazy map. At four cold loads per MAU, 30,000 MAU would approach 90 GB of Vercel Fast
 Data Transfer. Browser/CDN caching should reduce that, but transfer becomes the second boundary to
-watch at the high scenario. Web Analytics (50,000 events) and Speed Insights (10,000 points) may
-reach their Hobby observability allowances earlier; exhausting those optional measurements must
-not affect application correctness.
+watch at the high scenario. If Web Analytics or Speed Insights is enabled in the future, their
+Hobby allowances could be exhausted earlier; optional measurements must not affect application
+correctness. Neither browser telemetry product is initialized by the current app.
 
 ## Operational measurements
 

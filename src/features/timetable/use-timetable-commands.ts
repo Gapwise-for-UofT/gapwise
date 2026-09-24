@@ -11,6 +11,7 @@ import type { RestoredSource } from "@/features/sync/restoration-decisions";
 import type { RestorationState } from "@/features/sync/restoration";
 import { setCloudRestoreSuppressed } from "@/features/sync/restore-preference";
 import type { Meeting } from "@/lib/timetable-types";
+import type { GapwiseInstitutionId } from "@/config/institution";
 import {
   describeTimetableChanges,
   parseTimetableText,
@@ -19,6 +20,7 @@ import {
 } from "./import-lifecycle";
 
 type TimetableCommandInput = {
+  institutionId: GapwiseInstitutionId;
   meetings: Meeting[] | null;
   setMeetings: Dispatch<SetStateAction<Meeting[] | null>>;
   setWarnings: Dispatch<SetStateAction<string[]>>;
@@ -64,7 +66,7 @@ export function useTimetableCommands(input: TimetableCommandInput) {
       input.setRestorationMessage(null);
       input.setLoading(true);
       try {
-        const result = await parseTimetableText(await file.text());
+        const result = await parseTimetableText(await file.text(), input.institutionId);
         let persistenceWarning: string | null = null;
         if (input.remember && !input.userId) {
           try {

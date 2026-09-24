@@ -1,7 +1,7 @@
 import { CalendarClock, CalendarRange, LayoutGrid, MapPinned, Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import "./mobile-integrated.css";
+import "./mobile-integrated.css";\nimport { currentInstitution } from "@/config/institution";
 
 export type MobileTab = "today" | "timetable" | "route" | "gaps";
 
@@ -48,7 +48,7 @@ export function MobileShell({
   moreOpen: boolean;
   children: ReactNode;
 }) {
-  const [routeTargetId, setRouteTargetId] = useState<string | null>(null);
+  const [routeTargetId, setRouteTargetId] = useState<string | null>(null);\n  const institution = currentInstitution();
   const routeTargetContext = useMemo(() => ({ routeTargetId, setRouteTargetId }), [routeTargetId]);
 
   return (
@@ -58,7 +58,7 @@ export function MobileShell({
           <div className="mx-auto flex min-h-[3.5rem] w-full max-w-[46rem] items-center justify-between gap-3 px-4 pt-[env(safe-area-inset-top)]">
             <div className="flex min-w-0 items-center gap-2.5">
               <span className="brand-mark-shell h-7 w-7">
-                <img src="/logo-mark.svg" alt="" aria-hidden="true" />
+                <img src={institution.logoMarkHref} alt="" aria-hidden="true" />
               </span>
               <p className="truncate font-display text-[0.95rem] font-semibold tracking-[-0.035em]">
                 Gapwise

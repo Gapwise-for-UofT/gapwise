@@ -9,7 +9,7 @@ import type {
 import { TERMS, WEEKDAYS } from "@/lib/timetable-types";
 
 const ACTIVITY_TYPES: ActivityType[] = ["LEC", "TUT", "PRA", "OTHER"];
-const CAMPUSES: Campus[] = ["UTSG", "UTM", "UTSC", "UNKNOWN"];
+const CAMPUSES: Campus[] = ["UTSG", "UTM", "UTSC", "CARLETON", "UNKNOWN"];
 const LOCATION_TYPES: MeetingLocationType[] = ["physical", "tba", "online", "unknown"];
 const deserializationCache = new WeakMap<object, Meeting[]>();
 

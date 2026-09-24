@@ -29,7 +29,7 @@ export const GAPWISE_INSTITUTIONS: Record<GapwiseInstitutionId, GapwiseInstituti
 };
 
 function configuredInstitutionId(): GapwiseInstitutionId | null {
-  const configured = String(import.meta.env.VITE_GAPWISE_INSTITUTION ?? "")
+  const configured = String(import.meta.env?.VITE_GAPWISE_INSTITUTION ?? "")
     .trim()
     .toLowerCase();
   return configured === "uoft" || configured === "carleton" ? configured : null;

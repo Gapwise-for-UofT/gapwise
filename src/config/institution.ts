@@ -7,6 +7,8 @@ export type GapwiseInstitutionConfig = {
   scopeLabel: string;
   campusHeading: string;
   logoMarkHref: string;
+  timetableSourceName: string;
+  timetableLabel: string;
 };
 
 export const GAPWISE_INSTITUTIONS: Record<GapwiseInstitutionId, GapwiseInstitutionConfig> = {
@@ -17,6 +19,8 @@ export const GAPWISE_INSTITUTIONS: Record<GapwiseInstitutionId, GapwiseInstituti
     scopeLabel: "U of T",
     campusHeading: "University of Toronto",
     logoMarkHref: "/logo-mark.svg",
+    timetableSourceName: "ACORN",
+    timetableLabel: "U of T timetable",
   },
   carleton: {
     id: "carleton",
@@ -25,11 +29,13 @@ export const GAPWISE_INSTITUTIONS: Record<GapwiseInstitutionId, GapwiseInstituti
     scopeLabel: "Carleton",
     campusHeading: "Carleton University",
     logoMarkHref: "/logo-mark-carleton.svg",
+    timetableSourceName: "Carleton",
+    timetableLabel: "Carleton timetable",
   },
 };
 
 function configuredInstitutionId(): GapwiseInstitutionId | null {
-  const configured = String(import.meta.env?.VITE_GAPWISE_INSTITUTION ?? "")
+  const configured = String(import.meta.env?.["VITE_GAPWISE_INSTITUTION"] ?? "")
     .trim()
     .toLowerCase();
   return configured === "uoft" || configured === "carleton" ? configured : null;

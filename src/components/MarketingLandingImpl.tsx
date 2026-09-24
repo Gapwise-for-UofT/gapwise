@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { UploadPanel } from "@/components/UploadPanel";
 import type { MarketingLandingProps } from "./MarketingLanding";
 import { MARKETING_PRODUCTS, type MarketingProductId } from "./marketing-products";
-import "./marketing-landing.css";\nimport { currentInstitution } from "@/config/institution";
+import "./marketing-landing.css";
+import { currentInstitution } from "@/config/institution";
 
 function ProductMark() {
   return <span className="product-brand-mark" aria-hidden="true" />;
@@ -41,7 +42,8 @@ export function MarketingLandingImpl({
   onRememberChange,
   rememberAvailable,
 }: MarketingLandingProps) {
-  const rootRef = useRef<HTMLDivElement>(null);\n  const institution = currentInstitution();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const institution = currentInstitution();
   const [activeProduct, setActiveProduct] = useState<MarketingProductId>("gapwise");
 
   useEffect(() => {

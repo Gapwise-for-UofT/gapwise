@@ -19,8 +19,10 @@ async function fixture() {
     "data/public/data",
     "data/data/utsg",
     "data/data/utsc",
+    "data/data/carleton",
     "gapwise/src/data/campuses/utsg",
     "gapwise/src/data/campuses/utsc",
+    "gapwise/src/data/campuses/carleton",
   ]) {
     await mkdir(join(root, directory), { recursive: true });
   }
@@ -33,7 +35,7 @@ async function fixture() {
   await put("gapwise/src/data/utm/entrances.geojson", "old mirror\n");
   await put("gapwise/src/data/utm/obsolete.json", "obsolete\n");
   await put("gapwise/public/data/utm-campus-v1.json", "old snapshot\n");
-  for (const campus of ["utsg", "utsc"]) {
+  for (const campus of ["utsg", "utsc", "carleton"]) {
     for (const name of ["buildings.json", "buildings.geojson"]) {
       await put(`data/data/${campus}/${name}`, `${campus} canonical ${name}\n`);
       await put(`gapwise/src/data/campuses/${campus}/${name}`, "old campus snapshot\n");
@@ -61,7 +63,7 @@ describe("canonical campus mirror CLI", () => {
     expect(await f.read("gapwise/public/data/utm-campus-v1.json")).toBe(
       await f.read("data/public/data/utm-campus-v1.json"),
     );
-    for (const campus of ["utsg", "utsc"]) {
+    for (const campus of ["utsg", "utsc", "carleton"]) {
       for (const name of ["buildings.json", "buildings.geojson"]) {
         expect(await f.read(`gapwise/src/data/campuses/${campus}/${name}`)).toBe(
           await f.read(`data/data/${campus}/${name}`),

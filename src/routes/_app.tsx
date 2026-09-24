@@ -62,7 +62,7 @@ import {
 } from "@/features/academic/state";
 import { plannedWorkMeetings } from "@/features/academic/integration";
 import { CAMPUS_SHORT_LABELS, getResidenceBuildingForCampus } from "@/data/campuses";
-import { getCampusAccessPoint } from "@/data/utm/campus-access-points";
+import { getCampusAccessPoint } from "@/data/utm/campus-access-points";\nimport { currentInstitution } from "@/config/institution";
 
 const DayRoute = lazy(() =>
   import("@/components/DayRoute").then((module) => ({ default: module.DayRoute })),
@@ -94,8 +94,8 @@ function ProductEmptyState({
     destination === "gaps"
       ? "Gapwise needs your class times to identify useful windows between meetings."
       : destination === "today"
-        ? "Import your ACORN calendar to see the next class, current gap, and leave-by guidance."
-        : "Import your ACORN calendar to build your weekly view.";
+        ? `Import your ${institution.timetableSourceName} calendar to see the next class, current gap, and leave-by guidance.`
+        : `Import your ${institution.timetableSourceName} calendar to build your weekly view.`;
 
   return (
     <section className="empty-state surface rise-in mx-auto flex max-w-2xl flex-col items-center p-8 text-center sm:p-12">
@@ -113,7 +113,7 @@ function ProductEmptyState({
           className="button-primary inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold disabled:opacity-60"
         >
           <Upload className="h-4 w-4" aria-hidden="true" />
-          {loading ? "Importing…" : "Import ACORN calendar"}
+          {loading ? "Importing…" : `Import ${institution.timetableSourceName} calendar`}
         </button>
         <button
           type="button"
@@ -554,11 +554,11 @@ function AppLayout() {
             className="brand-lockup group flex min-w-0 items-center gap-3"
           >
             <span className="brand-mark-shell">
-              <img src="/logo-mark.svg" alt="" aria-hidden="true" />
+              <img src={institution.logoMarkHref} alt="" aria-hidden="true" />
             </span>
             <div className="min-w-0">
               <p className="flex items-center gap-2 truncate font-display text-base font-semibold tracking-[-0.035em]">
-                Gapwise <span className="brand-scope-pill">U of T</span>
+                Gapwise <span className="brand-scope-pill">{institution.scopeLabel}</span>
               </p>
             </div>
           </Link>
@@ -632,7 +632,7 @@ function AppLayout() {
         ) : !meetings ? (
           <>
             <section className="rise-in mb-5">
-              <p className="eyebrow text-accent">U of T campus explorer</p>
+              <p className="eyebrow text-accent">{institution.shortName} campus explorer</p>
               <h1 className="mt-2 font-display text-3xl font-medium tracking-[-0.045em] sm:text-4xl">
                 Find your way around campus
               </h1>
@@ -818,7 +818,7 @@ function AppLayout() {
                   </h2>
                   <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
                     This export doesn&apos;t contain any {term} term meetings. Try another term tab
-                    or upload a different ACORN export.
+                    or upload a different {institution.timetableSourceName} export.
                   </p>
                 </div>
               ) : (
@@ -934,8 +934,8 @@ function AppLayout() {
           <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-7 text-xs text-muted-foreground sm:px-6">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <p className="flex items-center gap-2 font-display font-semibold text-foreground">
-                <img src="/logo-mark.svg" alt="" aria-hidden="true" className="h-4 w-4" />
-                Gapwise <span className="font-normal text-muted-foreground">Built for UofT</span>
+                <img src={institution.logoMarkHref} alt="" aria-hidden="true" className="h-4 w-4" />
+                Gapwise <span className="font-normal text-muted-foreground">Built for {institution.shortName}</span>
               </p>
               <nav aria-label="Gapwise ecosystem" className="flex flex-wrap gap-x-4 gap-y-2">
                 <Link to="/about" className="hover:text-foreground">

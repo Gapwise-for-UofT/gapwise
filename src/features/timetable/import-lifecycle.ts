@@ -29,10 +29,15 @@ export async function parseTimetableText(
   return { ...parsed, meetings };
 }
 
-export function timetableImportError(error: unknown): string {
+export function timetableImportError(
+  error: unknown,
+  institutionId: GapwiseInstitutionId = "uoft",
+): string {
   return error instanceof Error && error.name === "IcsParseError"
     ? error.message
-    : "Something went wrong while reading that calendar. Try exporting it from ACORN again.";
+    : institutionId === "uoft"
+      ? "Something went wrong while reading that calendar. Try exporting it from ACORN again."
+      : "Something went wrong while reading that calendar. Try exporting the Carleton timetable calendar again.";
 }
 
 export function describeTimetableChanges(

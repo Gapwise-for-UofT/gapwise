@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { Theme } from "@/hooks/use-preferences";
-import type { AppDestination } from "@/features/navigation/use-app-navigation";
+import type { AppDestination } from "@/features/navigation/use-app-navigation";\nimport { currentInstitution } from "@/config/institution";
 
 const destinations = [
   {
@@ -59,17 +59,17 @@ export function DesktopSidebar({
   onOpenAccount: () => void;
   onToggleTheme: () => void;
 }) {
-  const darkTheme = theme === "dark";
+  const darkTheme = theme === "dark";\n  const institution = currentInstitution();
 
   return (
     <aside className="desktop-sidebar" aria-label="Desktop navigation">
       <Link to="/" className="desktop-brand" aria-label="Gapwise home">
         <span className="brand-mark-shell">
-          <img src="/logo-mark.svg" alt="" aria-hidden="true" />
+          <img src={institution.logoMarkHref} alt="" aria-hidden="true" />
         </span>
         <span className="inline-flex items-center gap-2">
           <span>Gapwise</span>
-          <span className="brand-scope-pill">U of T</span>
+          <span className="brand-scope-pill">{institution.scopeLabel}</span>
         </span>
       </Link>
 

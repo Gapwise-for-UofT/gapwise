@@ -17,16 +17,30 @@ const dataRepoRoot = resolve(sourceRoot, "../..");
 const ignoredFiles = new Set(["SHA256SUMS"]);
 const sourceSnapshot = resolve(dataRepoRoot, "public/data/utm-campus-v1.json");
 const targetSnapshot = resolve(repoRoot, "public/data/utm-campus-v1.json");
-const campusSnapshots = [
-  "utsg/buildings.json",
-  "utsg/buildings.geojson",
-  "utsc/buildings.json",
-  "utsc/buildings.geojson",
-].map((path) => ({
-  path,
-  source: resolve(dataRepoRoot, "data", path),
-  target: resolve(repoRoot, "src/data/campuses", path),
-}));
+const campusSnapshotNames = ["buildings.json", "buildings.geojson"] as const;
+
+async function discoverCampusSnapshots() {
+  const canonicalDataRoot = resolve(dataRepoRoot, "data");
+  const entries = await readdir(canonicalDataRoot, { withFileTypes: true });
+  const snapshots: Array<{ path: string; source: string; target: string }> = [];
+
+  for (const entry of entries) {
+    if (!entry.isDirectory() || entry.name === "utm") continue;
+    const campusRoot = resolve(canonicalDataRoot, entry.name);
+    if (!campusSnapshotNames.every((name) => existsSync(resolve(campusRoot, name)))) continue;
+
+    for (const name of campusSnapshotNames) {
+      const path = `${entry.name}/${name}`;
+      snapshots.push({
+        path,
+        source: resolve(canonicalDataRoot, path),
+        target: resolve(repoRoot, "src/data/campuses", path),
+      });
+    }
+  }
+
+  return snapshots.sort((a, b) => a.path.localeCompare(b.path));
+}
 
 if ([checkOnly, write, publish].filter(Boolean).length !== 1) {
   console.error("Choose exactly one mode: --check, --write, or --publish.");
@@ -83,6 +97,8 @@ async function writeCanonicalChecksums(files: string[]) {
   }
   await writeFile(resolve(sourceRoot, "SHA256SUMS"), `${lines.join("\n")}\n`, "utf8");
 }
+
+const campusSnapshots = await discoverCampusSnapshots();
 
 const sourceFiles = await filesUnder(sourceRoot);
 const targetFiles = existsSync(targetRoot) ? await filesUnder(targetRoot) : [];
@@ -187,5 +203,5 @@ for (const snapshot of campusSnapshots) {
   await copyFile(snapshot.source, snapshot.target);
 }
 console.log(
-  `Synced ${sourceFiles.length} canonical UTM files, the public UTM snapshot, and ${campusSnapshots.length} UTSG/UTSC snapshots.`,
+  `Synced ${sourceFiles.length} canonical UTM files, the public UTM snapshot, and ${campusSnapshots.length} external campus snapshots.`,
 );

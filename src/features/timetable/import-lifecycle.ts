@@ -1,4 +1,5 @@
 import type { Meeting } from "@/lib/timetable-types";
+import type { GapwiseInstitutionId } from "@/config/institution";
 
 export const MAX_ICS_FILE_BYTES = 2 * 1024 * 1024;
 
@@ -14,13 +15,16 @@ export function validateTimetableFile(file: Pick<File, "name" | "type" | "size">
   return null;
 }
 
-export async function parseTimetableText(text: string) {
+export async function parseTimetableText(
+  text: string,
+  institutionId: GapwiseInstitutionId = "uoft",
+) {
   // Calendar parsing and location metadata remain browser-local. Canonical title
   // enrichment only sends three-letter subject prefixes (for example CSC/MAT)
   // to Gapwise, never the raw .ics file or the student's exact course list.
   const { parseIcs } = await import("@/lib/ics-parser");
   const { enrichCourseTitles } = await import("@/lib/course-title-catalog");
-  const parsed = parseIcs(text);
+  const parsed = parseIcs(text, { institutionId });
   const meetings = await enrichCourseTitles(parsed.meetings);
   return { ...parsed, meetings };
 }

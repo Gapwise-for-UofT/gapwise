@@ -62,7 +62,8 @@ import {
 } from "@/features/academic/state";
 import { plannedWorkMeetings } from "@/features/academic/integration";
 import { CAMPUS_SHORT_LABELS, getResidenceBuildingForCampus } from "@/data/campuses";
-import { getCampusAccessPoint } from "@/data/utm/campus-access-points";\nimport { currentInstitution } from "@/config/institution";
+import { getCampusAccessPoint } from "@/data/utm/campus-access-points";
+import { currentInstitution } from "@/config/institution";
 
 const DayRoute = lazy(() =>
   import("@/components/DayRoute").then((module) => ({ default: module.DayRoute })),

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { UploadPanel } from "@/components/UploadPanel";
 import type { MarketingLandingProps } from "./MarketingLanding";
 import { MARKETING_PRODUCTS, type MarketingProductId } from "./marketing-products";
-import "./marketing-landing.css";
+import "./marketing-landing.css";\nimport { currentInstitution } from "@/config/institution";
 
 function ProductMark() {
   return <span className="product-brand-mark" aria-hidden="true" />;
@@ -41,7 +41,7 @@ export function MarketingLandingImpl({
   onRememberChange,
   rememberAvailable,
 }: MarketingLandingProps) {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);\n  const institution = currentInstitution();
   const [activeProduct, setActiveProduct] = useState<MarketingProductId>("gapwise");
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export function MarketingLandingImpl({
     <div ref={rootRef} className="marketing-home" data-active-product={activeProduct}>
       <section className="marketing-hero" aria-labelledby="marketing-title">
         <div className="marketing-hero-copy">
-          <p className="marketing-eyebrow">For University of Toronto</p>
+          <p className="marketing-eyebrow">For {institution.name}</p>
           <h1 id="marketing-title">
             Make every <span>gap</span> on campus count.
           </h1>

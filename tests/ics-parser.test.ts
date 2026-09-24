@@ -73,6 +73,47 @@ describe("untrusted ICS parsing", () => {
     });
   });
 
+  test("parses a Carleton course, section, campus, and room code", () => {
+    const result = parseIcs(
+      calendar([
+        event("carleton-one", "COMP 1405 A", {
+          location: "SA 417",
+        }),
+      ]),
+      { institutionId: "carleton" },
+    );
+
+    expect(result.meetings).toHaveLength(1);
+    expect(result.meetings[0]).toMatchObject({
+      courseCode: "COMP 1405",
+      activityType: "OTHER",
+      sectionCode: "A",
+      campus: "CARLETON",
+      buildingCode: "SA",
+      room: "417",
+      sourceLocation: "SA 417",
+    });
+  });
+
+  test.each([
+    ["COMP 1405 LAB A1", "PRA", "A1"],
+    ["MATH 1007 TUT T02", "TUT", "T02"],
+    ["ARCS 1105 LEC B", "LEC", "B"],
+  ] as const)("parses Carleton activity notation in %s", (summary, activityType, sectionCode) => {
+    const result = parseIcs(
+      calendar([event(summary, summary, { location: "MC 7035" })]),
+      { institutionId: "carleton" },
+    );
+
+    expect(result.meetings[0]).toMatchObject({
+      activityType,
+      sectionCode,
+      campus: "CARLETON",
+      buildingCode: "MC",
+      room: "7035",
+    });
+  });
+
   test("rejects malformed calendar input with a user-safe error", () => {
     expect(() => parseIcs("BEGIN:VCALENDAR\nBEGIN:VEVENT")).toThrow(IcsParseError);
   });

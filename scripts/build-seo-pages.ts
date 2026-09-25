@@ -388,8 +388,11 @@ await writeFile(join("dist", "sitemap.xml"), expectedSitemap);
 const universitiesManifest = JSON.parse(await readFile("universities.json", "utf8"));
 for (const uni of universitiesManifest.universities) {
   if (uni.id === "uoft") continue;
-  const tenantHtml = baseHtml
-    .replace(/<title>.*?<\/title>/, `<title>Gapwise — ${escapeHtml(uni.name)}</title>`)
+  const tenantHtml = (
+    baseHtml.includes("<title>")
+      ? baseHtml.replace(/<title>.*?<\/title>/, `<title>Gapwise — ${escapeHtml(uni.name)}</title>`)
+      : baseHtml.replace("<head>", `<head>\n    <title>Gapwise — ${escapeHtml(uni.name)}</title>`)
+  )
     .replace(
       /content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto\."/,
       `content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for ${escapeHtml(uni.name)}."`,

@@ -39,15 +39,18 @@ export function useSelectedScheduleContext(meetings: Meeting[] | null) {
   }, [meetings, todayRoute]);
 
   useEffect(() => {
-    if (!isOutdoorCampus) return;
-    let current = true;
-    if (universityId === "carleton") {
-      void import("@/features/routing/carleton-transition").then(
-        ({ createCarletonTransitionPlanner }) => {
-          if (current) setOutdoorPlanner(() => createCarletonTransitionPlanner());
-        },
-      );
+    if (!isOutdoorCampus || !universityId) {
+      setOutdoorPlanner(null);
+      return;
     }
+    let current = true;
+    void import("@/features/routing/carleton-transition").then(
+      ({ getOutdoorCampusTransitionPlanner }) => {
+        getOutdoorCampusTransitionPlanner(universityId).then((planner) => {
+          if (current) setOutdoorPlanner(() => planner);
+        });
+      },
+    );
     return () => {
       current = false;
     };

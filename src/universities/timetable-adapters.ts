@@ -12,6 +12,18 @@ export const timetableAdapters: Record<string, (text: string) => Promise<ParsedT
     const { parseCarletonTimetable } = await import("./carleton/adapter");
     return parseCarletonTimetable(text);
   },
+  "tmu-schedule": async (text) => {
+    const { parseTimetable } = await import("./tmu/adapter");
+    return parseTimetable(text);
+  },
+  "queens-schedule": async (text) => {
+    const { parseTimetable } = await import("./queens/adapter");
+    return parseTimetable(text);
+  },
+  "laurier-schedule": async (text) => {
+    const { parseTimetable } = await import("./laurier/adapter");
+    return parseTimetable(text);
+  },
   // GAPWISE_ADAPTER_REGISTRY: the CLI inserts new timetable adapters here.
 };
 
@@ -24,6 +36,28 @@ export const demoTimetableLoaders: Record<string, () => Promise<Meeting[]>> = {
     ]);
     return DEMO_CARLETON_MEETINGS.flatMap(normalizeCarletonMeeting);
   },
+  "tmu-schedule": async () => {
+    const [{ DEMO_TMU_MEETINGS }, { normalizeTmuMeeting }] = await Promise.all([
+      import("./tmu/demo-timetable"),
+      import("./tmu/adapter"),
+    ]);
+    return DEMO_TMU_MEETINGS.flatMap(normalizeTmuMeeting);
+  },
+  "queens-schedule": async () => {
+    const [{ DEMO_QUEENS_MEETINGS }, { normalizeQueensMeeting }] = await Promise.all([
+      import("./queens/demo-timetable"),
+      import("./queens/adapter"),
+    ]);
+    return DEMO_QUEENS_MEETINGS.flatMap(normalizeQueensMeeting);
+  },
+  "laurier-schedule": async () => {
+    const [{ DEMO_LAURIER_MEETINGS }, { normalizeLaurierMeeting }] = await Promise.all([
+      import("./laurier/demo-timetable"),
+      import("./laurier/adapter"),
+    ]);
+    return DEMO_LAURIER_MEETINGS.flatMap(normalizeLaurierMeeting);
+  },
+  // GAPWISE_DEMO_LOADER_REGISTRY: the CLI inserts new demo loaders here.
 };
 
 export async function loadDemoTimetable(adapterId?: string): Promise<Meeting[]> {

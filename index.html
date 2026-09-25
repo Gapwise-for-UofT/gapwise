@@ -14,20 +14,26 @@
           var h = window.location.hostname.toLowerCase();
           var q = new URLSearchParams(window.location.search).get("university");
           var u = null;
-          if (q && (h === "localhost" || h === "127.0.0.1" || h === "gapwise.test")) {
+          var unis = {
+            "carleton": "Carleton University",
+            "tmu": "Toronto Metropolitan University",
+            "queens": "Queen's University",
+            "laurier": "Wilfrid Laurier University"
+          };
+          if (q && (h === "localhost" || h === "127.0.0.1" || h === "gapwise.test" || h.indexOf(".vercel.app") !== -1)) {
             u = q;
-          } else if (h === "carleton.gapwise.ca" || h === "carleton.gapwise.test") {
-            u = "carleton";
+          } else if (h.endsWith(".gapwise.ca")) {
+            u = h.slice(0, -".gapwise.ca".length);
           } else if (h.endsWith(".gapwise.test")) {
             u = h.slice(0, -".gapwise.test".length);
           }
-          if (u === "carleton") {
-            document.title = "Gapwise \u2014 Carleton University";
-            var elSvg = document.getElementById("app-icon-svg"); if (elSvg) elSvg.href = "/universities/carleton/logo-mark.svg";
-            var el192 = document.getElementById("app-icon-192"); if (el192) el192.href = "/universities/carleton/favicon-192x192.png";
-            var el32 = document.getElementById("app-icon-32"); if (el32) el32.href = "/universities/carleton/favicon-32x32.png";
-            var el16 = document.getElementById("app-icon-16"); if (el16) el16.href = "/universities/carleton/favicon-16x16.png";
-            var elApple = document.getElementById("app-apple-touch-icon"); if (elApple) elApple.href = "/universities/carleton/apple-touch-icon.png";
+          if (u && unis[u]) {
+            document.title = "Gapwise \u2014 " + unis[u];
+            var elSvg = document.getElementById("app-icon-svg"); if (elSvg) elSvg.href = "/universities/" + u + "/logo-mark.svg";
+            var el192 = document.getElementById("app-icon-192"); if (el192) el192.href = "/universities/" + u + "/favicon-192x192.png";
+            var el32 = document.getElementById("app-icon-32"); if (el32) el32.href = "/universities/" + u + "/favicon-32x32.png";
+            var el16 = document.getElementById("app-icon-16"); if (el16) el16.href = "/universities/" + u + "/favicon-16x16.png";
+            var elApple = document.getElementById("app-apple-touch-icon"); if (elApple) elApple.href = "/universities/" + u + "/apple-touch-icon.png";
           }
         } catch (_) {}
       })();

@@ -79,7 +79,7 @@ export function UploadPanel({
       name="ics-file"
       type="file"
       accept={
-        university?.id === "carleton"
+        university?.id !== "uoft"
           ? ".ics,.txt,.tsv,text/calendar,text/plain"
           : ".ics,text/calendar"
       }
@@ -153,7 +153,13 @@ export function UploadPanel({
               placeholder={
                 university?.id === "carleton"
                   ? "Paste timetable text from Carleton Central (Concise Student Schedule or Detail Schedule)..."
-                  : "Paste your timetable text or .ics calendar lines..."
+                  : university?.id === "tmu"
+                    ? "Paste timetable text from MyServiceHub (RAMSS) or VSB..."
+                    : university?.id === "queens"
+                      ? "Paste timetable text from SOLUS (View My Classes)..."
+                      : university?.id === "laurier"
+                        ? "Paste timetable text from LORIS (Student Detail Schedule)..."
+                        : "Paste your timetable text or .ics calendar lines..."
               }
               className="w-full rounded-md border border-input bg-background p-2.5 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
@@ -286,7 +292,13 @@ export function UploadPanel({
             placeholder={
               university?.id === "carleton"
                 ? "Paste timetable text from Carleton Central (Concise Student Schedule or Detail Schedule)..."
-                : "Paste your timetable text or .ics calendar lines..."
+                : university?.id === "tmu"
+                  ? "Paste timetable text from MyServiceHub (RAMSS) or VSB..."
+                  : university?.id === "queens"
+                    ? "Paste timetable text from SOLUS (View My Classes)..."
+                    : university?.id === "laurier"
+                      ? "Paste timetable text from LORIS (Student Detail Schedule)..."
+                      : "Paste your timetable text or .ics calendar lines..."
             }
             className="w-full rounded-md border border-input bg-background p-2.5 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent"
           />

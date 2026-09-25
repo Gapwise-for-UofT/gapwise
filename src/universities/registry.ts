@@ -38,24 +38,37 @@ export function universityById(id: string): University | null {
   return manifest.universities.find((entry) => entry.id === id) ?? null;
 }
 
+export function isPreviewOrLocalHost(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/\.$/, "");
+  return (
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host === "gapwise.test" ||
+    host.endsWith(".vercel.app") ||
+    host.endsWith(".gapwise.test")
+  );
+}
+
 export function universityForHostname(
   hostname: string,
   override?: string | null,
 ): University | null {
   const host = hostname.toLowerCase().replace(/\.$/, "");
   const local = host === "localhost" || host === "127.0.0.1" || host === "gapwise.test";
-  if (override && local) return universityById(override);
-  if (local) return universityById("uoft");
+  const preview = host.endsWith(".vercel.app");
+  if (override && (local || preview)) return universityById(override);
+  if (local || preview) return universityById("uoft");
   if (host.endsWith(".gapwise.test")) return universityById(host.slice(0, -".gapwise.test".length));
   return manifest.universities.find((entry) => entry.hosts.includes(host)) ?? null;
 }
 
 export function activeUniversity(): University | null {
   if (typeof window === "undefined") return universityById("uoft");
-  const local = ["localhost", "127.0.0.1", "gapwise.test"].includes(window.location.hostname);
+  const host = window.location.hostname;
+  const isPreviewOrDev = isPreviewOrLocalHost(host);
   const requested = new URLSearchParams(window.location.search).get("university");
   let override: string | null = null;
-  if (local) {
+  if (isPreviewOrDev) {
     try {
       if (requested) window.sessionStorage.setItem("gapwise:dev-university", requested);
       override = requested ?? window.sessionStorage.getItem("gapwise:dev-university");
@@ -63,9 +76,26 @@ export function activeUniversity(): University | null {
       override = requested;
     }
   }
-  return universityForHostname(window.location.hostname, override);
+  return universityForHostname(host, override);
 }
 
 export function campusesForUniversity(university: University): string[] {
   return university.campuses;
 }
+
+export function supportedUniversities(): University[] {
+  return manifest.universities.filter((entry) => entry.status === "supported");
+}
+
+export function urlForUniversity(uni: University): string {
+  if (typeof window === "undefined") return `https://${uni.hosts[0]}`;
+  const host = window.location.hostname.toLowerCase();
+  const isPreview = isPreviewOrLocalHost(host);
+  if (isPreview) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("university", uni.id);
+    return url.toString();
+  }
+  return `https://${uni.hosts[0]}`;
+}
+

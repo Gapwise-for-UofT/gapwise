@@ -2,6 +2,7 @@ import {
   Bot,
   Download,
   ExternalLink,
+  GraduationCap,
   HardDrive,
   Link2,
   LockKeyhole,
@@ -9,6 +10,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
+import { activeUniversity, supportedUniversities, urlForUniversity } from "@/universities/registry";
 import { TimetableExportDialog } from "@/components/TimetableExportDialog";
 import { TimetableHeatmapExportDialog } from "@/components/TimetableHeatmapExportDialog";
 import type { TransitionPlanner } from "@/features/routing/transition";
@@ -235,6 +237,35 @@ export function AccountSettingsDialog({
                       </p>
                     </div>
                   ) : null}
+                </div>
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-border/70 p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary/45">
+                  <GraduationCap className="h-4 w-4 text-accent" aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold">University edition</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    Active: <strong>{activeUniversity()?.name ?? "University of Toronto"}</strong>
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {supportedUniversities().map((uni) => (
+                      <a
+                        key={uni.id}
+                        href={urlForUniversity(uni)}
+                        className={`inline-flex min-h-8 items-center rounded-md border px-2.5 text-xs font-medium transition-colors ${
+                          uni.id === activeUniversity()?.id
+                            ? "border-accent bg-accent/10 text-accent font-semibold"
+                            : "border-border bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                        }`}
+                      >
+                        {uni.shortName}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </section>

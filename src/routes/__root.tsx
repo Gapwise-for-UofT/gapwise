@@ -110,11 +110,7 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const PLANNED_EDITIONS: Record<string, { name: string; shortName: string }> = {
-  "tmu.gapwise.ca": { name: "Toronto Metropolitan University", shortName: "TMU" },
-  "queens.gapwise.ca": { name: "Queen's University", shortName: "Queen's" },
-  "laurier.gapwise.ca": { name: "Wilfrid Laurier University", shortName: "Laurier" },
-};
+const PLANNED_EDITIONS: Record<string, { name: string; shortName: string }> = {};
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

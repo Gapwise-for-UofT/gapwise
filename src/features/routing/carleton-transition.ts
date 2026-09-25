@@ -24,7 +24,15 @@ export function createOutdoorCampusTransitionPlanner(campus: CampusSnapshot): Tr
       building.nativeCodes.map((code) => [code.toUpperCase(), building.id] as const),
     ),
   );
-  const campusIdUpper = campus.campus.id.toUpperCase();
+  const validCampuses = new Set([
+    campus.campus.id.toUpperCase(),
+    campus.institution.toUpperCase(),
+    "CARLETON",
+    "TMU",
+    "QUEENS",
+    "WATERLOO",
+    "LAURIER",
+  ]);
 
   return function planOutdoorTransition(
     from: Meeting,
@@ -33,7 +41,7 @@ export function createOutdoorCampusTransitionPlanner(campus: CampusSnapshot): Tr
   ): TransitionRoute {
     if (from.campus && to.campus && from.campus !== to.campus)
       return unavailable("A mapped route requires both classes on the same campus.");
-    if (from.campus && from.campus !== campusIdUpper && from.campus !== "CARLETON")
+    if (from.campus && !validCampuses.has(from.campus.toUpperCase()))
       return unavailable("A mapped route requires both classes on the same campus.");
     if (from.locationType !== "physical" || to.locationType !== "physical")
       return unavailable("A physical route requires two known campus locations.");
@@ -75,4 +83,29 @@ export const planOutdoorCampusTransition = createOutdoorCampusTransitionPlanner(
 /** One planner contract powers Today, gaps, timetable and map route segments. */
 export function createCarletonTransitionPlanner(): TransitionPlanner {
   return planOutdoorCampusTransition;
+}
+
+export async function getOutdoorCampusTransitionPlanner(
+  universityId: string,
+): Promise<TransitionPlanner | null> {
+  switch (universityId) {
+    case "carleton": {
+      const { carletonCampus } = await import("@/universities/carleton/adapter");
+      return createOutdoorCampusTransitionPlanner(carletonCampus);
+    }
+    case "tmu": {
+      const { tmuCampus } = await import("@/universities/tmu/adapter");
+      return createOutdoorCampusTransitionPlanner(tmuCampus);
+    }
+    case "queens": {
+      const { queensCampus } = await import("@/universities/queens/adapter");
+      return createOutdoorCampusTransitionPlanner(queensCampus);
+    }
+    case "laurier": {
+      const { laurierCampus } = await import("@/universities/laurier/adapter");
+      return createOutdoorCampusTransitionPlanner(laurierCampus);
+    }
+    default:
+      return null;
+  }
 }

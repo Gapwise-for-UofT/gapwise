@@ -32,6 +32,54 @@
       "routableCampuses": ["carleton"],
       "dataPaths": ["universities/carleton/campus.json"],
       "status": "supported"
+    },
+    {
+      "id": "tmu",
+      "name": "Toronto Metropolitan University",
+      "shortName": "TMU",
+      "hosts": ["tmu.gapwise.ca"],
+      "campuses": ["tmu"],
+      "defaultCampus": "tmu",
+      "timetableAdapter": "tmu-schedule",
+      "calendarSource": "MyServiceHub & Google Calendar",
+      "calendarInstructions": "Paste your schedule text from MyServiceHub (RAMSS) or upload your exported Google Calendar (.ics) file.",
+      "calendarHelpUrl": "https://www.torontomu.ca/servicehub/",
+      "enabledFeatures": { "routing": true, "liveLocation": false },
+      "routableCampuses": ["tmu"],
+      "dataPaths": ["universities/tmu/campus.json"],
+      "status": "supported"
+    },
+    {
+      "id": "queens",
+      "name": "Queen's University",
+      "shortName": "Queen's",
+      "hosts": ["queens.gapwise.ca"],
+      "campuses": ["queens"],
+      "defaultCampus": "queens",
+      "timetableAdapter": "queens-schedule",
+      "calendarSource": "SOLUS Student Center",
+      "calendarInstructions": "Upload your calendar (.ics) from SOLUS Class Schedule Subscription, or paste your schedule text.",
+      "calendarHelpUrl": "https://my.queensu.ca",
+      "enabledFeatures": { "routing": true, "liveLocation": false },
+      "routableCampuses": ["queens"],
+      "dataPaths": ["universities/queens/campus.json"],
+      "status": "supported"
+    },
+    {
+      "id": "laurier",
+      "name": "Wilfrid Laurier University",
+      "shortName": "Laurier",
+      "hosts": ["laurier.gapwise.ca"],
+      "campuses": ["waterloo"],
+      "defaultCampus": "waterloo",
+      "timetableAdapter": "laurier-schedule",
+      "calendarSource": "LORIS & MyLS",
+      "calendarInstructions": "Paste your schedule text from LORIS (Student Detail Schedule) or upload your exported calendar (.ics) file.",
+      "calendarHelpUrl": "https://web.wlu.ca/student-portal/",
+      "enabledFeatures": { "routing": true, "liveLocation": false },
+      "routableCampuses": ["waterloo"],
+      "dataPaths": ["universities/laurier/campus.json"],
+      "status": "supported"
     }
   ]
 }

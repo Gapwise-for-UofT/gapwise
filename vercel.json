@@ -354,6 +354,66 @@
       "destination": "/_universities/carleton/index.html"
     },
     {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/tmu/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/queens/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/laurier/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

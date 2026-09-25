@@ -7,12 +7,12 @@ export const MAX_ICS_FILE_BYTES = 2 * 1024 * 1024;
 export type TimetableImportResult = Awaited<ReturnType<typeof parseTimetableText>>;
 
 export function validateTimetableFile(file: Pick<File, "name" | "type" | "size">): string | null {
-  const university = activeUniversity();
-  const allowsText = university?.id === "carleton";
   const isIcs = /\.ics$/i.test(file.name) || file.type === "text/calendar";
-  const isText =
-    allowsText && (/\.(txt|tsv|csv)$/i.test(file.name) || file.type.startsWith("text/"));
-  if (!isIcs && !isText) {
+  const isText = /\.(txt|tsv|csv)$/i.test(file.name) || file.type.startsWith("text/");
+  const university = activeUniversity();
+  const allowsText = university ? university.id !== "uoft" : false;
+
+  if (!isIcs && (!allowsText || !isText)) {
     return "That file type isn't supported. Please choose a .ics calendar file.";
   }
   if (file.size > MAX_ICS_FILE_BYTES) {

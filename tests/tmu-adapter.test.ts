@@ -5,9 +5,9 @@ import {
   parseTmuTimetable,
   parseTmuIcs,
   loadTmuDemoTimetable,
-} from "./adapter";
-import { tmu } from "./config";
-import { parseTmuText } from "./text-parser";
+} from "@/universities/tmu/adapter";
+import { tmu } from "@/universities/tmu/config";
+import { parseTmuText } from "@/universities/tmu/text-parser";
 
 describe("TMU Schedule Adapter & Parsers", () => {
   test("parses MyServiceHub tabular schedule text", () => {

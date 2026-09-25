@@ -137,3 +137,38 @@ test("Direct URL refresh preserves university context in local development", asy
   await expect(page.getByRole("button", { name: /Import Carleton/ })).toBeVisible();
   failures.assertClean();
 });
+
+test("TMU, Queen's, and Laurier use canonical product screens and single-campus context", async ({
+  page,
+  baseURL,
+}) => {
+  test.skip(!["chromium", "mobile-chromium"].includes(test.info().project.name));
+  if (!baseURL) throw new Error("Playwright baseURL is required");
+  const failures = watchForAppFailures(page, baseURL);
+
+  // TMU
+  await page.goto("/?university=tmu");
+  await expect(page.getByText("For Toronto Metropolitan University", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Import (MyServiceHub|pasted schedule)/ })).toBeVisible();
+  await page.getByRole("button", { name: "Try a demo" }).click();
+  await expect(page).toHaveURL(/\/timetable/);
+  await expect(page.getByText("CPS 109").first()).toBeVisible();
+
+  // Queen's
+  await page.goto("/?university=queens");
+  await expect(page.getByText("For Queen's University", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Import (SOLUS|pasted schedule)/ })).toBeVisible();
+  await page.getByRole("button", { name: "Try a demo" }).click();
+  await expect(page).toHaveURL(/\/timetable/);
+  await expect(page.getByText("CISC 121").first()).toBeVisible();
+
+  // Laurier
+  await page.goto("/?university=laurier");
+  await expect(page.getByText("For Wilfrid Laurier University", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Import (LORIS|pasted schedule)/ })).toBeVisible();
+  await page.getByRole("button", { name: "Try a demo" }).click();
+  await expect(page).toHaveURL(/\/timetable/);
+  await expect(page.getByText("CP 104").first()).toBeVisible();
+
+  failures.assertClean();
+});

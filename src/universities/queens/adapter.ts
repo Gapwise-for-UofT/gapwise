@@ -27,7 +27,9 @@ export function normalizeQueensMeeting(source: QueensMeeting): Meeting[] {
   const component = source.nativeComponentType.toUpperCase();
   const activityType =
     component === "LEC" || component === "TUT" || component === "PRA" || component === "LAB"
-      ? (component === "LAB" ? "PRA" : component)
+      ? component === "LAB"
+        ? "PRA"
+        : component
       : "OTHER";
   const term = source.termLabel.startsWith("Winter")
     ? "Winter"
@@ -74,8 +76,9 @@ export function parseTimetable(text: string): ParsedTimetable {
 
 export const parseQueensTimetable = parseTimetable;
 
+import { DEMO_QUEENS_MEETINGS } from "./demo-timetable";
+
 export function loadQueensDemoTimetable(): Meeting[] {
-  const { DEMO_QUEENS_MEETINGS } = require("./demo-timetable");
   return DEMO_QUEENS_MEETINGS.flatMap(normalizeQueensMeeting);
 }
 
@@ -95,4 +98,3 @@ export const queensScheduleAdapter = {
     return parseTimetable(text);
   },
 };
-

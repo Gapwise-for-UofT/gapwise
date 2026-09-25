@@ -98,4 +98,3 @@ export function urlForUniversity(uni: University): string {
   }
   return `https://${uni.hosts[0]}`;
 }
-

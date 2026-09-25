@@ -27,7 +27,9 @@ export function normalizeTmuMeeting(source: TmuMeeting): Meeting[] {
   const component = source.nativeComponentType.toUpperCase();
   const activityType =
     component === "LEC" || component === "TUT" || component === "PRA" || component === "LAB"
-      ? (component === "LAB" ? "PRA" : component)
+      ? component === "LAB"
+        ? "PRA"
+        : component
       : "OTHER";
   const term = source.termLabel.startsWith("Winter")
     ? "Winter"
@@ -74,8 +76,9 @@ export function parseTimetable(text: string): ParsedTimetable {
 
 export const parseTmuTimetable = parseTimetable;
 
+import { DEMO_TMU_MEETINGS } from "./demo-timetable";
+
 export function loadTmuDemoTimetable(): Meeting[] {
-  const { DEMO_TMU_MEETINGS } = require("./demo-timetable");
   return DEMO_TMU_MEETINGS.flatMap(normalizeTmuMeeting);
 }
 
@@ -95,4 +98,3 @@ export const tmuScheduleAdapter = {
     return parseTimetable(text);
   },
 };
-

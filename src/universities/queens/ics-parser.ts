@@ -136,7 +136,7 @@ export function parseIcs(
     if (rruleProp) {
       const rruleVal = rruleProp.getFirstValue() as {
         parts?: Record<string, string | string[]>;
-        until?: { toJSDate: () => Date };
+        until?: ICAL.Time;
       } | null;
       if (rruleVal?.parts?.["BYDAY"]) {
         const rawDays = rruleVal.parts["BYDAY"];
@@ -175,7 +175,8 @@ export function parseIcs(
         : "tba";
     const location = resolveLocation(locationRaw || "TBA", kind, campus);
 
-    const baseId = `${adapter.id}-${courseCode.replace(/\s+/g, "-")}-${nativeSection}-${days.join("")}-${startTime}`.toLowerCase();
+    const baseId =
+      `${adapter.id}-${courseCode.replace(/\s+/g, "-")}-${nativeSection}-${days.join("")}-${startTime}`.toLowerCase();
     if (seenIds.has(baseId)) continue;
     seenIds.add(baseId);
 

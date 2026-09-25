@@ -79,9 +79,7 @@ export function UploadPanel({
       name="ics-file"
       type="file"
       accept={
-        university?.id !== "uoft"
-          ? ".ics,.txt,.tsv,text/calendar,text/plain"
-          : ".ics,text/calendar"
+        university?.id !== "uoft" ? ".ics,.txt,.tsv,text/calendar,text/plain" : ".ics,text/calendar"
       }
       hidden
       onChange={(event) => {

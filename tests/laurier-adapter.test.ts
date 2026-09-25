@@ -5,9 +5,9 @@ import {
   parseLaurierTimetable,
   parseLaurierIcs,
   loadLaurierDemoTimetable,
-} from "./adapter";
-import { laurier } from "./config";
-import { parseLaurierText } from "./text-parser";
+} from "@/universities/laurier/adapter";
+import { laurier } from "@/universities/laurier/config";
+import { parseLaurierText } from "@/universities/laurier/text-parser";
 
 describe("Laurier Schedule Adapter & Parsers", () => {
   test("parses LORIS tabular schedule text", () => {

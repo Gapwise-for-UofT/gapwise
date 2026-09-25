@@ -8,16 +8,26 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   {
     ignores: [
-      "dist",
-      ".output",
-      ".vercel",
-      ".vinxi",
+      "dist/**",
+      ".output/**",
+      ".vercel/**",
+      ".vinxi/**",
+      "playwright-report/**",
+      "test-results/**",
+      "blob-report/**",
+      "coverage/**",
+      "artifacts/**",
+      "public/**",
+      "sdk/**/dist/**",
+      ".ruff_cache/**",
       "supabase/functions/**",
       "src/routes/mail.tsx",
-      // Generated entrance artifacts are validated by the UTM data workflows.
+      // Generated entrance and campus artifacts are validated by data workflows.
       // Keep ESLint/Prettier from treating generated serialization as source style.
       "src/data/utm/entrances.geojson",
       "src/data/utm/generated/entrance-audit.geojson",
+      "src/data/campuses/**/campus.json",
+      "src/data/campuses/**/catalog.json",
     ],
   },
   {

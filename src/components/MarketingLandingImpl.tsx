@@ -56,7 +56,7 @@ export function MarketingLandingImpl({
   const university = activeUniversity();
   const metrics =
     INSTITUTION_MARKETING_METRICS[university?.id ?? "uoft"] ??
-    INSTITUTION_MARKETING_METRICS.uoft!;
+    INSTITUTION_MARKETING_METRICS["uoft"]!;
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeProduct, setActiveProduct] = useState<MarketingProductId>("gapwise");
 

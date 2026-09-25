@@ -5,9 +5,9 @@ import {
   parseQueensTimetable,
   parseQueensIcs,
   loadQueensDemoTimetable,
-} from "./adapter";
-import { queens } from "./config";
-import { parseQueensText } from "./text-parser";
+} from "@/universities/queens/adapter";
+import { queens } from "@/universities/queens/config";
+import { parseQueensText } from "@/universities/queens/text-parser";
 
 describe("Queen's Schedule Adapter & Parsers", () => {
   test("parses SOLUS tabular schedule text", () => {

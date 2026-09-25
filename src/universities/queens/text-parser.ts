@@ -1,4 +1,10 @@
-import type { CampusSnapshot, Day, InstitutionAdapter, LocationKind, Meeting } from "../common/model";
+import type {
+  CampusSnapshot,
+  Day,
+  InstitutionAdapter,
+  LocationKind,
+  Meeting,
+} from "../common/model";
 import { resolveLocation } from "../common/meetings";
 
 const BANNER_DAY_MAP: Record<string, Day> = {
@@ -57,7 +63,8 @@ const IGNORED_WORDS = new Set([
 
 function parseDays(raw: string): Day[] {
   const result: Day[] = [];
-  const wordRegex = /\b(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/gi;
+  const wordRegex =
+    /\b(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/gi;
   let wordMatch: RegExpExecArray | null;
   while ((wordMatch = wordRegex.exec(raw)) !== null) {
     const day = WORD_DAY_MAP[wordMatch[1]!.toUpperCase()];
@@ -68,8 +75,22 @@ function parseDays(raw: string): Day[] {
   const tokenRegex = /\b([MTWRFSU]{1,5})\b/g;
   let tokenMatch: RegExpExecArray | null;
   const validBannerTokens = new Set([
-    "MWF", "TR", "MW", "WF", "MF", "MTRF", "MTWR", "MTWRF",
-    "M", "T", "W", "R", "F", "S", "U", "TH",
+    "MWF",
+    "TR",
+    "MW",
+    "WF",
+    "MF",
+    "MTRF",
+    "MTWR",
+    "MTWRF",
+    "M",
+    "T",
+    "W",
+    "R",
+    "F",
+    "S",
+    "U",
+    "TH",
   ]);
 
   while ((tokenMatch = tokenRegex.exec(raw)) !== null) {
@@ -109,14 +130,17 @@ function parseTimeRange(raw: string): { start: string; end: string } | null {
   if (!match) return null;
 
   let startStr = match[1]!.trim();
-  let endStr = match[2]!.trim();
+  const endStr = match[2]!.trim();
 
   if (!/(am|pm)$/i.test(startStr) && /(am|pm)$/i.test(endStr)) {
     const endAmPm = endStr.slice(-2).toLowerCase();
     const startHour = Number(startStr.split(":")[0]);
     const endHour = Number(endStr.split(":")[0]);
     if (endAmPm === "pm") {
-      if (startHour === 12 || (startHour < 12 && startHour >= 8 && endHour < 12 && startHour <= endHour)) {
+      if (
+        startHour === 12 ||
+        (startHour < 12 && startHour >= 8 && endHour < 12 && startHour <= endHour)
+      ) {
         startStr += "am";
       } else {
         startStr += "pm";
@@ -183,7 +207,10 @@ export function parseQueensText(
 ): { meetings: Meeting[]; warnings: string[] } {
   const warnings: string[] = [];
   const meetings: Meeting[] = [];
-  const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  const lines = rawText
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
 
   if (!lines.length) {
     return { meetings, warnings: ["The pasted schedule text was empty."] };
@@ -200,7 +227,9 @@ export function parseQueensText(
     const validMatch = courseMatches.find((m) => !IGNORED_WORDS.has(m[1]!.toUpperCase()));
     if (!validMatch) continue;
 
-    const timeMatch = line.match(/(\d{1,2}:\d{2}\s*(?:am|pm)?\s*[-–—to]+\s*\d{1,2}:\d{2}\s*(?:am|pm)?)/i);
+    const timeMatch = line.match(
+      /(\d{1,2}:\d{2}\s*(?:am|pm)?\s*[-–—to]+\s*\d{1,2}:\d{2}\s*(?:am|pm)?)/i,
+    );
     if (timeMatch) {
       const times = parseTimeRange(timeMatch[1]!);
       if (times) {
@@ -230,7 +259,8 @@ export function parseQueensText(
             : "physical";
         const location = resolveLocation(locationText, kind, campus);
 
-        const id = `${adapter.id}-${courseCode.replace(/\s+/g, "-")}-${section}-${days.join("")}-${times.start}`.toLowerCase();
+        const id =
+          `${adapter.id}-${courseCode.replace(/\s+/g, "-")}-${section}-${days.join("")}-${times.start}`.toLowerCase();
         meetings.push({
           id,
           institutionId: adapter.id,
@@ -266,7 +296,8 @@ export function parseQueensText(
       if (courseMatch && !IGNORED_WORDS.has(courseMatch[1]!.toUpperCase())) {
         currentCourseCode = `${courseMatch[1]!.toUpperCase()} ${courseMatch[2]!.toUpperCase()}`;
         const nameParts = line.split(/[-–—:]/);
-        currentCourseName = nameParts.length > 1 ? nameParts.slice(1).join(" ").trim() : currentCourseCode;
+        currentCourseName =
+          nameParts.length > 1 ? nameParts.slice(1).join(" ").trim() : currentCourseCode;
 
         const compMatch = line.match(/\b(LEC|TUT|LAB|SEM)\b/i);
         if (compMatch) currentComponent = compMatch[1]!.toUpperCase();
@@ -280,7 +311,9 @@ export function parseQueensText(
       }
 
       // 3. Time range
-      const timeMatch = line.match(/(\d{1,2}:\d{2}\s*(?:am|pm)?\s*[-–—to]+\s*\d{1,2}:\d{2}\s*(?:am|pm)?)/i);
+      const timeMatch = line.match(
+        /(\d{1,2}:\d{2}\s*(?:am|pm)?\s*[-–—to]+\s*\d{1,2}:\d{2}\s*(?:am|pm)?)/i,
+      );
       if (timeMatch && currentCourseCode) {
         const times = parseTimeRange(timeMatch[1]!);
         if (times) {
@@ -312,7 +345,8 @@ export function parseQueensText(
               : "physical";
           const location = resolveLocation(locationText, kind, campus);
 
-          const id = `${adapter.id}-${currentCourseCode.replace(/\s+/g, "-")}-${currentSection}-${days.join("")}-${times.start}`.toLowerCase();
+          const id =
+            `${adapter.id}-${currentCourseCode.replace(/\s+/g, "-")}-${currentSection}-${days.join("")}-${times.start}`.toLowerCase();
           meetings.push({
             id,
             institutionId: adapter.id,
@@ -335,7 +369,9 @@ export function parseQueensText(
   }
 
   if (meetings.length === 0) {
-    warnings.push("No class meetings could be recognized from the text. Make sure to copy your timetable from SOLUS.");
+    warnings.push(
+      "No class meetings could be recognized from the text. Make sure to copy your timetable from SOLUS.",
+    );
   }
 
   return { meetings, warnings };

@@ -33,7 +33,7 @@ const PAGES: readonly SeoPage[] = [
     path: "/",
     title: "Gapwise — University of Toronto",
     description:
-      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto.",
+      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for University of Toronto students. Also available for Carleton, TMU, Queen's, and Laurier.",
     heading: "Make the time between classes count.",
     detail:
       "Import an ACORN .ics timetable in your browser, preserve UTM, UTSG, UTSC, or mixed-campus context, understand the usable time between classes, and explore source-backed campus maps. Pedestrian routing is currently available for UTM. Guest mode and a demo work without an account.",
@@ -44,7 +44,7 @@ const PAGES: readonly SeoPage[] = [
       },
       {
         title: "Private by architecture",
-        body: "The original ACORN .ics file is parsed locally in the browser. Private sync is optional, public campus data stays separate from private student state, and foreground location is not retained as a movement history.",
+        body: "The original timetable file is parsed locally in the browser. Private sync is optional, public campus data stays separate from private student state, and foreground location is not retained as a movement history.",
       },
       {
         title: "Algorithms where correctness matters",
@@ -208,7 +208,7 @@ function homepageStructuredData(page: SeoPage) {
         name: "Gapwise",
         url: `${SITE_ORIGIN}/`,
         description:
-          "Privacy-first timetable intelligence and day planning for University of Toronto students.",
+          "Privacy-first timetable intelligence, campus maps, and day planning for university students across Canada. Supports University of Toronto, Carleton University, TMU, Queen's University, and Wilfrid Laurier University.",
         logo: {
           "@type": "ImageObject",
           url: `${SITE_ORIGIN}/icon-512.png`,
@@ -263,12 +263,13 @@ function homepageStructuredData(page: SeoPage) {
         },
         audience: {
           "@type": "Audience",
-          audienceType: "University of Toronto students",
+          audienceType:
+            "University students at University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, and Wilfrid Laurier University",
         },
         featureList: [
-          "Browser-local ACORN timetable import",
-          "UTM, UTSG, UTSC, and mixed-campus timetable identity",
-          "Source-backed UTM, UTSG, and UTSC building maps",
+          "Browser-local timetable import (ACORN .ics, Carleton Central, TMU, Queen's, Laurier schedule formats)",
+          "UTM, UTSG, UTSC, Carleton, TMU, Queen's, and Laurier campus timetable identity",
+          "Source-backed building maps for all 5 supported universities",
           "Source-backed UTM pedestrian routing",
           "Optional encrypted private sync",
         ],
@@ -341,13 +342,13 @@ function fallback(page: SeoPage) {
     .join("\n");
 
   return `<main data-gapwise-search-fallback style="max-width:60rem;margin:0 auto;padding:3rem 1.25rem;font-family:system-ui,sans-serif;line-height:1.65">
-      <p><strong>Gapwise</strong> · University of Toronto</p>
+      <p><strong>Gapwise</strong> — Timetable &amp; Campus Navigation</p>
       <h1>${escapeHtml(page.heading)}</h1>
       <p>${escapeHtml(page.description)}</p>
       <p>${escapeHtml(page.detail)}</p>
       ${page.path === "/" ? '<p>Gapwise was created by <a href="https://www.donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/Gapwise-for-UofT/gapwise">Gapwise is open source on GitHub</a>.</p>' : ""}
       ${sections}
-      <p>Gapwise is an independent student project for University of Toronto students. It is not an official University of Toronto service and does not claim university approval, sponsorship, or endorsement.</p>
+      <p>Gapwise is an independent student project for students at the University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, and Wilfrid Laurier University. It is not an official service of any of these institutions and does not claim university approval, sponsorship, or endorsement.</p>
       <nav aria-label="Gapwise public pages">${navigation}</nav>
     </main>`;
 }
@@ -394,8 +395,8 @@ for (const uni of universitiesManifest.universities) {
       : baseHtml.replace("<head>", `<head>\n    <title>Gapwise — ${escapeHtml(uni.name)}</title>`)
   )
     .replace(
-      /content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto\."/,
-      `content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for ${escapeHtml(uni.name)}."`,
+      /content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for University of Toronto students\. Also available for Carleton, TMU, Queen's, and Laurier\."/,
+      `content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for ${escapeHtml(uni.name)} students."`,
     )
     .replace(/href="\/logo-mark\.svg"/g, `href="/universities/${uni.id}/logo-mark.svg"`)
     .replace(/href="\/favicon-192x192\.png"/g, `href="/universities/${uni.id}/favicon-192x192.png"`)

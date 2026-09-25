@@ -720,7 +720,11 @@ function AppLayout() {
                 <input
                   ref={replacementInputRef}
                   type="file"
-                  accept=".ics,text/calendar"
+                  accept={
+                    university?.id !== "uoft"
+                      ? ".ics,.txt,.tsv,text/calendar,text/plain"
+                      : ".ics,text/calendar"
+                  }
                   hidden
                   onChange={timetableCommands.handleFileInputChange}
                 />

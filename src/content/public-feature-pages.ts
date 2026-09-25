@@ -19,18 +19,18 @@ export const PUBLIC_FEATURE_PAGES = {
     path: "/about",
     eyebrow: "About Gapwise",
     title: "A campus planner built around the time between classes.",
-    seoTitle: "About Gapwise — University of Toronto Student Planning",
+    seoTitle: "About Gapwise — Multi-University Student Planning",
     description:
-      "See how Gapwise connects University of Toronto timetables, gap planning, and source-backed campus context in one focused student-built product.",
+      "See how Gapwise connects university timetables, gap planning, and source-backed campus context in one focused student-built product for U of T, Carleton, TMU, Queen's, and Laurier.",
     lead: "Gapwise is built for the part of university life a timetable leaves blank: what to do next, how much time you actually have, and where you need to go.",
     sections: [
       {
         title: "One day, one system",
         body: "Your timetable, gaps, buildings, routes, and academic work stay connected instead of living in separate tools.",
         bullets: [
-          "ACORN timetable import",
+          "Timetable import for U of T (ACORN), Carleton, TMU, Queen's, and Laurier",
           "Gap budgets between classes",
-          "UTM, UTSG, and UTSC building maps",
+          "Source-backed campus building maps",
           "Academic work planning",
         ],
       },
@@ -39,8 +39,8 @@ export const PUBLIC_FEATURE_PAGES = {
         body: "Gapwise turns the space between commitments into something you can act on, with travel time and the next class already part of the calculation.",
       },
       {
-        title: "Made for U of T",
-        body: "Timetable identity and source-backed building maps cover UTM, UTSG, UTSC, and mixed-campus schedules. Pedestrian routing, verified entrances, and campus places are currently available for UTM.",
+        title: "Made for multiple universities",
+        body: "Timetable identity and source-backed building maps are supported for all five universities. Pedestrian routing, verified entrances, and campus places are currently most complete for UTM.",
       },
     ],
   },
@@ -70,19 +70,19 @@ export const PUBLIC_FEATURE_PAGES = {
   map: {
     path: "/campus-map",
     eyebrow: "Campus map",
-    title: "Explore U of T with a map built around your day.",
-    seoTitle: "University of Toronto Campus Map — Gapwise",
+    title: "Explore campus with a map built around your day.",
+    seoTitle: "University Campus Map — Gapwise",
     description:
-      "Explore source-backed UTM, UTSG, and UTSC building maps, with UTM entrances, campus places, pedestrian routes, and schedule context where supported.",
-    lead: "The Gapwise map connects campus buildings and schedule context across U of T. Verified entrance, place, and pedestrian-route coverage is currently specific to UTM.",
+      "Explore source-backed campus building maps for University of Toronto (UTM, UTSG, UTSC), Carleton, TMU, Queen's, and Laurier — with pedestrian routes and schedule context where supported.",
+    lead: "The Gapwise campus explorer connects campus buildings and schedule context. Verified entrance, place, and pedestrian-route coverage is currently most complete for UTM.",
     sections: [
       {
         title: "Explore without setup",
-        body: "Open the campus explorer, choose UTM, UTSG, or UTSC, and search source-backed buildings even before you import a timetable.",
+        body: "Open the campus explorer, choose your campus, and search source-backed buildings even before you import a timetable.",
       },
       {
         title: "Buildings and routes connected",
-        body: "Canonical building identities across all three campuses feed the same model used by Today and Gap Plan. UTM also has first-party pedestrian routing.",
+        body: "Canonical building identities across all supported campuses feed the same model used by Today and Gap Plan. UTM also has first-party pedestrian routing.",
       },
       {
         title: "Made for the next move",

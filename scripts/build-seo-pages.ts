@@ -363,11 +363,31 @@ function renderDocument(baseHtml: string, page: SeoPage) {
     .replace(/<div id="root"><\/div>/, `<div id="root">${fallback(page)}</div>`);
 }
 
-function renderSitemap() {
-  const urls = PAGES.filter((page) => page.sitemap)
-    .map((page) => `  <url><loc>${canonicalUrl(page.path)}</loc></url>`)
+/** Pages available on every university edition (no U of T-specific content). */
+const UNIVERSITY_COMMON_PATHS = new Set([
+  "/",
+  "/about",
+  "/campus-map",
+  "/gap-planner",
+  "/campus-routing",
+  "/developers",
+  "/ai",
+  "/support",
+  "/trust",
+  "/privacy",
+  "/security",
+  "/accessibility",
+]);
+
+function renderSitemap(origin: string = SITE_ORIGIN, paths?: Set<string>) {
+  const urls = PAGES.filter((page) => page.sitemap && (!paths || paths.has(page.path)))
+    .map((page) => `  <url><loc>${new URL(page.path, `${origin}/`).href}</loc></url>`)
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+}
+
+function renderRobotsTxt(sitemapUrl: string) {
+  return `User-agent: *\nAllow: /\nDisallow: /_seo/\nDisallow: /api/\nDisallow: /v1\nDisallow: /oauth/\n\nSitemap: ${sitemapUrl}\n`;
 }
 
 const distIndexPath = join("dist", "index.html");
@@ -385,19 +405,52 @@ if (committedSitemap !== expectedSitemap) {
   throw new Error("public/sitemap.xml is out of sync with the production SEO page inventory.");
 }
 await writeFile(join("dist", "sitemap.xml"), expectedSitemap);
+await writeFile(join("dist", "robots.txt"), await readFile(join("public", "robots.txt"), "utf8"));
 
 const universitiesManifest = JSON.parse(await readFile("universities.json", "utf8"));
+let universityCount = 0;
+const universityPageCounts: Record<string, number> = {};
+
 for (const uni of universitiesManifest.universities) {
   if (uni.id === "uoft") continue;
-  const tenantHtml = (
-    baseHtml.includes("<title>")
-      ? baseHtml.replace(/<title>.*?<\/title>/, `<title>Gapwise — ${escapeHtml(uni.name)}</title>`)
-      : baseHtml.replace("<head>", `<head>\n    <title>Gapwise — ${escapeHtml(uni.name)}</title>`)
-  )
-    .replace(
-      /content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for University of Toronto students\. Also available for Carleton, TMU, Queen's, and Laurier\."/,
-      `content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for ${escapeHtml(uni.name)} students."`,
-    )
+
+  // Canonical origin for this university (first host in the manifest).
+  const uniOrigin = `https://${uni.hosts[0]}`;
+  const uniSitemapUrl = `${uniOrigin}/sitemap.xml`;
+
+  // Per-university sitemap: only universal pages with the correct hostname.
+  const uniSitemap = renderSitemap(uniOrigin, UNIVERSITY_COMMON_PATHS);
+  const uniRobots = renderRobotsTxt(uniSitemapUrl);
+
+  // Build a university-specific homepage page object so renderDocument() injects
+  // the correct title, description, canonical, OG, and JSON-LD metadata.
+  const uniPage: SeoPage = {
+    path: "/",
+    title: `Gapwise — ${uni.name}`,
+    description: `Gapwise is a free and open-source timetable, campus navigation, and student planning platform for ${uni.name} students.`,
+    heading: "Make the time between classes count.",
+    detail:
+      "Import your class schedule, understand the usable time between classes, and explore source-backed campus maps. Guest mode and a demo work without an account.",
+    sections: [
+      {
+        title: "Your timetable, connected to campus context",
+        body: "Gapwise combines class times, rooms, campus identity, available deterministic travel time, and gap budgets so the schedule can answer more than when the next class begins.",
+      },
+      {
+        title: "Private by architecture",
+        body: "The original timetable file is parsed locally in the browser. Private sync is optional, public campus data stays separate from private student state, and foreground location is not retained as a movement history.",
+      },
+    ],
+    sitemap: true,
+  };
+
+  // Generate the full SEO-injected HTML for this university's homepage (canonical URLs
+  // will say gapwise.ca at first — we rewrite them to the university origin below).
+  const seodHtml = renderDocument(baseHtml, uniPage);
+
+  // Now rewrite all gapwise.ca references in the injected SEO metadata and branding:
+  const tenantHtml = seodHtml
+    // Branding assets → university-specific paths
     .replace(/href="\/logo-mark\.svg"/g, `href="/universities/${uni.id}/logo-mark.svg"`)
     .replace(/href="\/favicon-192x192\.png"/g, `href="/universities/${uni.id}/favicon-192x192.png"`)
     .replace(/href="\/favicon-32x32\.png"/g, `href="/universities/${uni.id}/favicon-32x32.png"`)
@@ -406,13 +459,39 @@ for (const uni of universitiesManifest.universities) {
       /href="\/apple-touch-icon\.png"/g,
       `href="/universities/${uni.id}/apple-touch-icon.png"`,
     )
-    .replace(/href="\/site\.webmanifest"/g, `href="/universities/${uni.id}/site.webmanifest"`);
+    .replace(/href="\/site\.webmanifest"/g, `href="/universities/${uni.id}/site.webmanifest"`)
+    // Canonical URL → university hostname
+    .replace(/(<link rel="canonical" href=")https:\/\/gapwise\.ca\//, `$1${uniOrigin}/`)
+    // Open Graph URL → university hostname
+    .replace(/(<meta property="og:url" content=")https:\/\/gapwise\.ca\//, `$1${uniOrigin}/`)
+    // JSON-LD: rewrite all gapwise.ca origin references to the university origin
+    .replace(
+      /(<script type="application\/ld\+json">)([\s\S]*?)(<\/script>)/,
+      (_match, open, jsonStr, close) => {
+        const rewritten = jsonStr.replaceAll(`https://gapwise.ca/`, `${uniOrigin}/`);
+        return `${open}${rewritten}${close}`;
+      },
+    );
 
-  const tenantDestination = join("dist", "_universities", uni.id, "index.html");
-  await mkdir(dirname(tenantDestination), { recursive: true });
-  await writeFile(tenantDestination, tenantHtml);
+  const tenantDir = join("dist", "_universities", uni.id);
+  await mkdir(tenantDir, { recursive: true });
+  await writeFile(join(tenantDir, "index.html"), tenantHtml);
+  await writeFile(join(tenantDir, "sitemap.xml"), uniSitemap);
+  await writeFile(join(tenantDir, "robots.txt"), uniRobots);
+
+  const uniPageCount = PAGES.filter((p) => p.sitemap && UNIVERSITY_COMMON_PATHS.has(p.path)).length;
+  universityPageCounts[uni.id] = uniPageCount;
+  universityCount++;
 }
 
+const uoftPageCount = PAGES.filter((p) => p.sitemap).length;
 console.log(
-  `Generated ${PAGES.length} crawlable Gapwise HTML entry points and ${PAGES.filter((page) => page.sitemap).length} sitemap URLs.`,
+  `Generated ${PAGES.length} crawlable Gapwise HTML entry points and ${uoftPageCount} U of T sitemap URLs.`,
+);
+console.log(
+  `Generated per-university sitemap + robots.txt for ${universityCount} university editions: ${Object.entries(
+    universityPageCounts,
+  )
+    .map(([id, n]) => `${id}(${n})`)
+    .join(", ")}.`,
 );

@@ -344,6 +344,26 @@
       "destination": "/universities/carleton/$1"
     },
     {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/robots.txt"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -362,6 +382,26 @@
         }
       ],
       "destination": "/universities/tmu/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/robots.txt"
     },
     {
       "source": "/(.*)",
@@ -384,6 +424,26 @@
       "destination": "/universities/queens/$1"
     },
     {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/robots.txt"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -402,6 +462,26 @@
         }
       ],
       "destination": "/universities/laurier/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/robots.txt"
     },
     {
       "source": "/(.*)",

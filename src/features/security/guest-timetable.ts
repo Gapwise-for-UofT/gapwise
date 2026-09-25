@@ -12,8 +12,12 @@ import type { StoredDataKeys } from "@/features/security/security-store";
 import { securityStore } from "@/features/sync/encrypted-sync-service";
 import { DEFAULT_USER_PREFERENCES } from "@/features/sync/preferences";
 import type { Meeting } from "@/lib/timetable-types";
+import { activeUniversity } from "@/universities/registry";
 
-const GUEST_DEVICE_ID = "gapwise-guest-device";
+function guestDeviceId(): string {
+  const universityId = activeUniversity()?.id ?? "uoft";
+  return universityId === "uoft" ? "gapwise-guest-device" : `gapwise-guest-device:${universityId}`;
+}
 let guestWriteQueue: Promise<unknown> = Promise.resolve();
 
 function enqueueGuestWrite(action: () => Promise<void>): Promise<void> {
@@ -25,7 +29,7 @@ function enqueueGuestWrite(action: () => Promise<void>): Promise<void> {
 function validGuestKeys(value: StoredDataKeys | null): value is StoredDataKeys {
   return Boolean(
     value &&
-    value.userId === GUEST_DEVICE_ID &&
+    value.userId === guestDeviceId() &&
     value.cryptoVersion === CRYPTO_VERSION &&
     value.privateData.keyVersion === KEY_VERSION &&
     value.privateData.key.type === "secret" &&
@@ -40,7 +44,7 @@ async function guestKeys(): Promise<StoredDataKeys> {
   const selection = await securityStore();
   if (!selection.persistent)
     throw new Error("Secure device storage is unavailable in this browser.");
-  const current = await selection.store.getDataKeys(GUEST_DEVICE_ID);
+  const current = await selection.store.getDataKeys(guestDeviceId());
   if (validGuestKeys(current)) return current;
 
   const [privateDataKey, availabilityKey] = await Promise.all([
@@ -48,7 +52,7 @@ async function guestKeys(): Promise<StoredDataKeys> {
     generateDataEncryptionKey(),
   ]);
   const keys: StoredDataKeys = {
-    userId: GUEST_DEVICE_ID,
+    userId: guestDeviceId(),
     cryptoVersion: CRYPTO_VERSION,
     subjectId: crypto.randomUUID(),
     cloudSyncEnabled: false,
@@ -78,11 +82,11 @@ export async function loadGuestTimetable(): Promise<GuestTimetableRestoration> {
   const selection = await securityStore();
   if (!selection.persistent) return { remember: false, meetings: null, updatedAt: null };
   const [keys, record] = await Promise.all([
-    selection.store.getDataKeys(GUEST_DEVICE_ID),
-    selection.store.getPrivateRecord(GUEST_DEVICE_ID),
+    selection.store.getDataKeys(guestDeviceId()),
+    selection.store.getPrivateRecord(guestDeviceId()),
   ]);
   if (!validGuestKeys(keys)) {
-    if (keys || record) await selection.store.clearUser(GUEST_DEVICE_ID);
+    if (keys || record) await selection.store.clearUser(guestDeviceId());
     return { remember: false, meetings: null, updatedAt: null };
   }
   if (!record) return { remember: true, meetings: null, updatedAt: null };
@@ -90,7 +94,7 @@ export async function loadGuestTimetable(): Promise<GuestTimetableRestoration> {
     const payload = await openPrivateData(keys, record);
     return { remember: true, meetings: payload.schedule, updatedAt: record.updatedAt };
   } catch {
-    await selection.store.clearUser(GUEST_DEVICE_ID);
+    await selection.store.clearUser(guestDeviceId());
     return { remember: false, meetings: null, updatedAt: null };
   }
 }
@@ -104,8 +108,8 @@ export function saveGuestTimetable(meetings: Meeting[] | null): Promise<void> {
     );
     const selection = await securityStore();
     const [previousPrivate, previousCapsule] = await Promise.all([
-      selection.store.getPrivateRecord(GUEST_DEVICE_ID),
-      selection.store.getCapsuleRecord(GUEST_DEVICE_ID),
+      selection.store.getPrivateRecord(guestDeviceId()),
+      selection.store.getCapsuleRecord(guestDeviceId()),
     ]);
     const updatedAt = new Date().toISOString();
     const payload = createPrivateDataPayload({
@@ -116,7 +120,7 @@ export function saveGuestTimetable(meetings: Meeting[] | null): Promise<void> {
     });
     const [privateRecord, capsuleRecord] = await Promise.all([
       sealPrivateData({
-        userId: GUEST_DEVICE_ID,
+        userId: guestDeviceId(),
         keys,
         payload,
         revision: (previousPrivate?.revision ?? 0) + 1,
@@ -124,7 +128,7 @@ export function saveGuestTimetable(meetings: Meeting[] | null): Promise<void> {
         updatedAt,
       }),
       sealAvailabilityCapsule({
-        userId: GUEST_DEVICE_ID,
+        userId: guestDeviceId(),
         keys,
         capsule: deriveAvailabilityCapsule([]),
         revision: (previousCapsule?.revision ?? 0) + 1,
@@ -139,6 +143,6 @@ export function saveGuestTimetable(meetings: Meeting[] | null): Promise<void> {
 export function clearGuestTimetable(): Promise<void> {
   return enqueueGuestWrite(async () => {
     const selection = await securityStore();
-    await selection.store.clearUser(GUEST_DEVICE_ID);
+    await selection.store.clearUser(guestDeviceId());
   });
 }

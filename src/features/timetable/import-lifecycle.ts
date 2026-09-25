@@ -1,4 +1,6 @@
 import type { Meeting } from "@/lib/timetable-types";
+import { activeUniversity } from "@/universities/registry";
+import { timetableAdapters } from "@/universities/timetable-adapters";
 
 export const MAX_ICS_FILE_BYTES = 2 * 1024 * 1024;
 
@@ -15,14 +17,11 @@ export function validateTimetableFile(file: Pick<File, "name" | "type" | "size">
 }
 
 export async function parseTimetableText(text: string) {
-  // Calendar parsing and location metadata remain browser-local. Canonical title
-  // enrichment only sends three-letter subject prefixes (for example CSC/MAT)
-  // to Gapwise, never the raw .ics file or the student's exact course list.
-  const { parseIcs } = await import("@/lib/ics-parser");
-  const { enrichCourseTitles } = await import("@/lib/course-title-catalog");
-  const parsed = parseIcs(text);
-  const meetings = await enrichCourseTitles(parsed.meetings);
-  return { ...parsed, meetings };
+  const university = activeUniversity();
+  if (!university) throw new Error("This university edition is not supported.");
+  const adapter = timetableAdapters[university.timetableAdapter];
+  if (!adapter) throw new Error(`No timetable adapter is registered for ${university.id}.`);
+  return adapter(text);
 }
 
 export function timetableImportError(error: unknown): string {

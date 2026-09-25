@@ -27,6 +27,39 @@ const campusSnapshots = [
   source: resolve(dataRepoRoot, "data", path),
   target: resolve(repoRoot, "src/data/campuses", path),
 }));
+const universityManifest = JSON.parse(
+  await readFile(resolve(repoRoot, "universities.json"), "utf8"),
+) as {
+  universities: Array<{ id: string; dataPaths: string[] }>;
+};
+const universitySnapshots = universityManifest.universities.flatMap((university) =>
+  university.dataPaths
+    .filter(
+      (path) => path.startsWith(`universities/${university.id}/`) && path.endsWith("/campus.json"),
+    )
+    .map((path) => ({
+      id: university.id,
+      path,
+      source: resolve(dataRepoRoot, path),
+      target: resolve(repoRoot, `src/data/campuses/${university.id}/campus.json`),
+      catalog: resolve(repoRoot, `src/data/campuses/${university.id}/catalog.json`),
+    })),
+);
+campusSnapshots.push(...universitySnapshots);
+
+async function universityCatalogBytes(source: string): Promise<string> {
+  const campus = JSON.parse(await readFile(source, "utf8"));
+  return `${JSON.stringify(
+    {
+      campus: campus.campus,
+      sources: campus.sources,
+      buildings: campus.buildings,
+      entrances: campus.entrances,
+    },
+    null,
+    2,
+  )}\n`;
+}
 
 if ([checkOnly, write, publish].filter(Boolean).length !== 1) {
   console.error("Choose exactly one mode: --check, --write, or --publish.");
@@ -158,6 +191,15 @@ for (const snapshot of campusSnapshots) {
   }
 }
 
+for (const snapshot of universitySnapshots) {
+  if (existsSync(snapshot.source)) {
+    const expected = await universityCatalogBytes(snapshot.source);
+    if (!existsSync(snapshot.catalog) || (await readFile(snapshot.catalog, "utf8")) !== expected) {
+      differences.push(`${snapshot.id} building catalog is stale`);
+    }
+  }
+}
+
 if (checkOnly) {
   if (differences.length > 0) {
     console.error("Campus data mirror differs from Gapwise-for-UofT/data:");
@@ -186,6 +228,9 @@ for (const snapshot of campusSnapshots) {
   await mkdir(dirname(snapshot.target), { recursive: true });
   await copyFile(snapshot.source, snapshot.target);
 }
+for (const snapshot of universitySnapshots) {
+  await writeFile(snapshot.catalog, await universityCatalogBytes(snapshot.source));
+}
 console.log(
-  `Synced ${sourceFiles.length} canonical UTM files, the public UTM snapshot, and ${campusSnapshots.length} UTSG/UTSC snapshots.`,
+  `Synced ${sourceFiles.length} UTM files and ${campusSnapshots.length} campus snapshots.`,
 );

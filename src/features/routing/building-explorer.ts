@@ -11,6 +11,7 @@ import {
 import { getCampusBuildingFootprint } from "@/data/utm/building-footprints";
 import {
   campusBuildingConfigurations,
+  campusBuildingEntrances,
   getBuildingFootprintForCampus,
   resolveCampusBuildingLocation,
   type GapwiseCampusId,
@@ -174,17 +175,21 @@ export function getBuildingExplorerDetails(
   if (!building || !getBuildingFootprintForCampus(campusId, code)) return null;
 
   if (campusId !== "utm") {
+    const entrances = campusBuildingEntrances(campusId, code);
     return {
       building,
       campus: null,
-      mappedEntrances: 0,
-      verifiedEntrances: 0,
+      mappedEntrances: entrances.length,
+      verifiedEntrances: entrances.filter(
+        (entrance) => entrance.metadata.verificationStatus === "verified",
+      ).length,
       inferredApproaches: 0,
       accessibleEntrances: 0,
-      accessibilityUnknown: 0,
+      accessibilityUnknown: entrances.filter((entrance) => entrance.accessibility === "unknown")
+        .length,
       officialBarrierFreeEntranceInstances: 0,
-      coverageStatus: "unmapped",
-      latestVerificationDate: null,
+      coverageStatus: currentCoverageStatus(entrances.length),
+      latestVerificationDate: latestDate(entrances),
     };
   }
 

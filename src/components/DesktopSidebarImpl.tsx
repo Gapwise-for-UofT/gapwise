@@ -9,6 +9,7 @@ import {
   Sun,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { activeUniversity } from "@/universities/registry";
 import type { Theme } from "@/hooks/use-preferences";
 import type { AppDestination } from "@/features/navigation/use-app-navigation";
 
@@ -69,7 +70,7 @@ export function DesktopSidebar({
         </span>
         <span className="inline-flex items-center gap-2">
           <span>Gapwise</span>
-          <span className="brand-scope-pill">U of T</span>
+          <span className="brand-scope-pill">{activeUniversity()?.shortName ?? "U of T"}</span>
         </span>
       </Link>
 

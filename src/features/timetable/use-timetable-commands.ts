@@ -11,6 +11,8 @@ import type { RestoredSource } from "@/features/sync/restoration-decisions";
 import type { RestorationState } from "@/features/sync/restoration";
 import { setCloudRestoreSuppressed } from "@/features/sync/restore-preference";
 import type { Meeting } from "@/lib/timetable-types";
+import { activeUniversity } from "@/universities/registry";
+import { loadDemoTimetable } from "@/universities/timetable-adapters";
 import {
   describeTimetableChanges,
   parseTimetableText,
@@ -124,7 +126,7 @@ export function useTimetableCommands(input: TimetableCommandInput) {
     input.setWarnings([]);
     input.setLoading(true);
     try {
-      const { DEMO_MEETINGS } = await import("@/lib/demo-timetable");
+      const DEMO_MEETINGS = await loadDemoTimetable(activeUniversity()?.timetableAdapter);
       input.setMeetings(DEMO_MEETINGS);
       input.latestMeetings.current = DEMO_MEETINGS;
       input.restoredSource.current = "memory";

@@ -295,7 +295,7 @@ export function resolveMeetingLocation(meeting: {
 
   // St. George and Scarborough can share short building codes with UTM, so resolve
   // against the meeting's own campus-scoped registry and never reinterpret them as UTM.
-  if (campus === "UTSG" || campus === "UTSC") {
+  if (campus !== "UTM" && campus !== "UNKNOWN") {
     return externalCampusResolution(suppliedLocation, campus);
   }
   if (campus === "UTM") {

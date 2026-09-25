@@ -89,11 +89,12 @@ describe("large timetable regressions", () => {
   });
 
   test("keeps heavy route, map, parser, and 3D paths out of the initial bundle", async () => {
-    const [entry, route, map, importLifecycle, packageManifest] = await Promise.all([
+    const [entry, route, map, importLifecycle, adapters, packageManifest] = await Promise.all([
       readFile("src/main.tsx", "utf8"),
       readFile("src/routes/_app.tsx", "utf8"),
       readFile("src/components/CampusMap.tsx", "utf8"),
       readFile("src/features/timetable/import-lifecycle.ts", "utf8"),
+      readFile("src/universities/timetable-adapters.ts", "utf8"),
       readFile("package.json", "utf8"),
     ]);
 
@@ -104,7 +105,8 @@ describe("large timetable regressions", () => {
     expect(map).toContain('import "maplibre-gl/dist/maplibre-gl.css"');
     expect(map).toContain("maplibre-gl-worker.mjs?worker&url");
     expect(map).toContain("setWorkerUrl(mapLibreWorkerUrl)");
-    expect(importLifecycle).toContain('await import("@/lib/ics-parser")');
+    expect(importLifecycle).toContain("timetableAdapters[university.timetableAdapter]");
+    expect(adapters).toContain('await import("@/lib/ics-parser")');
     expect(importLifecycle).not.toContain("import { IcsParseError");
     expect(route).not.toContain("@google/model-viewer");
     expect(route).not.toContain("UtmMonumentViewer");

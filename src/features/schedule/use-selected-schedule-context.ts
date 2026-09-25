@@ -1,7 +1,11 @@
 import { useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { UTM_ROUTING_GRAPH } from "@/data/utm/campus";
-import { createScheduleTransitionPlanner } from "@/features/routing/transition";
+import {
+  createScheduleTransitionPlanner,
+  type TransitionPlanner,
+} from "@/features/routing/transition";
+import { activeUniversity } from "@/universities/registry";
 import { chooseDefaultTerm } from "@/lib/calendar-awareness";
 import { findGaps } from "@/lib/gaps";
 import { availableScheduleTerms, composeTermSchedule } from "@/lib/personal-scheduler";
@@ -11,6 +15,12 @@ const EMPTY_MEETINGS: Meeting[] = [];
 
 /** Owns the selected-term facts shared by responsive timetable, Today, and gap views. */
 export function useSelectedScheduleContext(meetings: Meeting[] | null) {
+  const university = activeUniversity();
+  const universityId = university?.id;
+  const isOutdoorCampus = Boolean(
+    universityId && universityId !== "uoft" && university?.enabledFeatures.routing,
+  );
+  const [outdoorPlanner, setOutdoorPlanner] = useState<TransitionPlanner | null>(null);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [term, setTerm] = useState<Term>("Fall");
   const terms = useMemo(() => availableScheduleTerms(meetings ?? EMPTY_MEETINGS), [meetings]);
@@ -28,14 +38,42 @@ export function useSelectedScheduleContext(meetings: Meeting[] | null) {
     if (todayRoute && meetings?.length) setTerm(chooseDefaultTerm(meetings, new Date()));
   }, [meetings, todayRoute]);
 
+  useEffect(() => {
+    if (!isOutdoorCampus) return;
+    let current = true;
+    if (universityId === "carleton") {
+      void import("@/features/routing/carleton-transition").then(
+        ({ createCarletonTransitionPlanner }) => {
+          if (current) setOutdoorPlanner(() => createCarletonTransitionPlanner());
+        },
+      );
+    }
+    return () => {
+      current = false;
+    };
+  }, [isOutdoorCampus, universityId]);
+
   const schedule = useMemo(
     () => composeTermSchedule(meetings ?? EMPTY_MEETINGS, [], term),
     [meetings, term],
   );
   const gaps = useMemo(() => findGaps(schedule, term), [schedule, term]);
   const planTransition = useMemo(
-    () => createScheduleTransitionPlanner(UTM_ROUTING_GRAPH, meetings ?? EMPTY_MEETINGS),
-    [meetings],
+    () =>
+      isOutdoorCampus
+        ? (outdoorPlanner ??
+          (() => ({
+            status: "unavailable" as const,
+            message: "Campus routes are loading.",
+            accuracy: "Location unavailable" as const,
+            result: null,
+            displayCoordinates: [],
+            warnings: [],
+            approximateDistanceMeters: null,
+            approximateSeconds: null,
+          })))
+        : createScheduleTransitionPlanner(UTM_ROUTING_GRAPH, meetings ?? EMPTY_MEETINGS),
+    [meetings, isOutdoorCampus, outdoorPlanner],
   );
 
   return { term, setTerm, terms, schedule, gaps, planTransition };

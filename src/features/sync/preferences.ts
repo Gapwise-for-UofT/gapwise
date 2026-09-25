@@ -3,6 +3,7 @@ import { getResidenceBuildingForCampus, type GapwiseCampusId } from "@/data/camp
 import { getCampusAccessPoint, type CampusAccessKind } from "@/data/utm/campus-access-points";
 import type { RoutePreferences } from "@/features/routing/types";
 import { isEncryptedPrivateCloudAuthoritative } from "@/features/security/private-cloud-mode";
+import { activeUniversity } from "@/universities/registry";
 
 export type DayOrigin = "commute" | "residence";
 
@@ -35,7 +36,7 @@ export function sanitizeUserPreferences(
 ): UserPreferences {
   const route = sanitizeRoutePreferences(value);
   const mainCampus =
-    value?.mainCampus === "utm" || value?.mainCampus === "utsg" || value?.mainCampus === "utsc"
+    value?.mainCampus && activeUniversity()?.campuses.includes(value.mainCampus)
       ? value.mainCampus
       : null;
   const requestedResidence = value?.residenceBuildingCode?.trim().toUpperCase() ?? null;

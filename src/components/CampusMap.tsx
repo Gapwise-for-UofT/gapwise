@@ -5,6 +5,7 @@ import mapLibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&ur
 import "maplibre-gl/dist/maplibre-gl.css";
 import { MAP_CONFIG } from "@/config/map";
 import { getCampusBuilding, UTM_ROUTING_GRAPH } from "@/data/utm/campus";
+import { campusBuildingEntrances } from "@/data/campuses";
 import {
   CAMPUS_LABELS,
   buildingCodeAtCampusCoordinate,
@@ -12,6 +13,7 @@ import {
   campusCenter,
   campusFootprintCollection,
   campusFootprintGeometryPoints,
+  campusMapAttribution,
   getBuildingFootprintForCampus,
   representativePointForCampusFootprint,
   type GapwiseCampusId,
@@ -316,9 +318,11 @@ function ensureCanonicalCampusBuildingLayer(
   const collection = campusFootprintCollection(campusId);
 
   if (!map.getSource(CANONICAL_CAMPUS_SOURCE_ID)) {
+    const attribution = campusMapAttribution(campusId);
     map.addSource(CANONICAL_CAMPUS_SOURCE_ID, {
       type: "geojson",
       data: collection,
+      ...(attribution ? { attribution } : {}),
     });
   } else {
     (map.getSource(CANONICAL_CAMPUS_SOURCE_ID) as GeoJSONSource).setData(collection);
@@ -769,8 +773,7 @@ function syncEntranceMarkers(
   markers: EntranceMarkerRecord[],
   theme: MapTheme,
 ) {
-  const building = campusId === "utm" ? getCampusBuilding(buildingCode) : null;
-  const targetEntrances = building?.entrances ?? [];
+  const targetEntrances = campusBuildingEntrances(campusId, buildingCode);
   const targetIds = new Set(targetEntrances.map((entrance) => entrance.id));
 
   for (let index = markers.length - 1; index >= 0; index -= 1) {
@@ -781,7 +784,7 @@ function syncEntranceMarkers(
     }
   }
 
-  if (!building) return;
+  if (!buildingCode) return;
 
   for (const entrance of targetEntrances) {
     const existingRecord = markers.find((record) => record.id === entrance.id);

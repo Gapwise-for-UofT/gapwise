@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FileUp } from "lucide-react";
 import { clearFirstValuePending, markFirstValuePending } from "@/features/onboarding/first-value";
+import { activeUniversity } from "@/universities/registry";
 import "./onboarding/first-run.css";
 
 function ScheduleSkeleton() {
@@ -51,6 +52,8 @@ export function UploadPanel({
   const importArmedRef = useRef(false);
   const [dragging, setDragging] = useState(false);
   const hero = variant === "hero";
+  const university = activeUniversity();
+  const calendarSource = university?.calendarSource ?? "calendar";
 
   useEffect(() => {
     if (error) clearFirstValuePending();
@@ -107,7 +110,7 @@ export function UploadPanel({
     >
       <p className="font-semibold">The calendar could not be imported.</p>
       <p className="mt-1 leading-6">{error}</p>
-      <p className="mt-1 leading-6">Choose another ACORN .ics file to try again.</p>
+      <p className="mt-1 leading-6">Choose another {calendarSource} .ics file to try again.</p>
     </div>
   ) : null;
 
@@ -123,8 +126,7 @@ export function UploadPanel({
           Start with your timetable.
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Download the calendar export (.ics) from ACORN&apos;s Timetable &amp; Exams, then choose
-          it here. Your file stays in this browser; no account is needed.
+          {university?.calendarInstructions} Your file stays in this browser; no account is needed.
         </p>
 
         {loading ? (
@@ -138,7 +140,7 @@ export function UploadPanel({
                 className="button-primary inline-flex min-h-11 w-full items-center justify-center gap-2 px-5 text-sm font-semibold"
               >
                 <FileUp className="h-4 w-4" aria-hidden="true" />
-                Import ACORN
+                Import {calendarSource}
               </button>
               <button
                 type="button"
@@ -154,7 +156,7 @@ export function UploadPanel({
               </button>
             </div>
             <a
-              href="/acorn-import"
+              href={university?.calendarHelpUrl ?? "/support"}
               className="mt-3 inline-block text-xs font-medium text-accent underline-offset-4 hover:underline"
             >
               Need help importing?
@@ -209,8 +211,7 @@ export function UploadPanel({
         Upload your timetable
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Choose the calendar export (.ics) from ACORN&apos;s Timetable &amp; Exams. The file stays in
-        this browser.
+        {university?.calendarInstructions} The file stays in this browser.
       </p>
       {loading ? (
         <ScheduleSkeleton />
@@ -224,7 +225,7 @@ export function UploadPanel({
               className="button-primary inline-flex min-h-11 w-full items-center justify-center gap-2 px-5 text-sm font-semibold"
             >
               <FileUp className="h-4 w-4" aria-hidden="true" />
-              Import ACORN
+              Import {calendarSource}
             </button>
             <button
               type="button"

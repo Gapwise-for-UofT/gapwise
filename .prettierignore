@@ -15,6 +15,8 @@ src/data/campuses/utsg/buildings.json
 src/data/campuses/utsg/buildings.geojson
 src/data/campuses/utsc/buildings.json
 src/data/campuses/utsc/buildings.geojson
+src/data/campuses/carleton/campus.json
+src/data/campuses/carleton/catalog.json
 public/openapi.json
 public/data/utm-campus-v1.json
 

@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-
-const TITLE = "Gapwise — University of Toronto";
-const DESCRIPTION =
-  "Plan University of Toronto timetables, useful gaps, and source-backed campus routes in one precise workspace.";
+import { activeUniversity } from "@/universities/registry";
 
 export const Route = createFileRoute("/_app/")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-    ],
-  }),
+  head: () => {
+    const university = activeUniversity();
+    const title = `Gapwise — ${university?.name ?? "Campus timetable"}`;
+    const description = `Plan ${university?.name ?? "campus"} timetables, useful gaps, and source-backed campus routes in one precise workspace.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
   component: RouteBoundary,
 });
 

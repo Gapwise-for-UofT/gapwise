@@ -19,12 +19,15 @@ async function fixture() {
     "data/public/data",
     "data/data/utsg",
     "data/data/utsc",
+    "data/universities/carleton",
+    "gapwise/src/data/campuses/carleton",
     "gapwise/src/data/campuses/utsg",
     "gapwise/src/data/campuses/utsc",
   ]) {
     await mkdir(join(root, directory), { recursive: true });
   }
   await copyFile("scripts/sync-campus-data.ts", join(root, "gapwise/scripts/sync-campus-data.ts"));
+  await copyFile("universities.json", join(root, "gapwise/universities.json"));
   const put = (path: string, value: string) => writeFile(join(root, path), value);
   const read = (path: string) => readFile(join(root, path), "utf8");
   await put("data/data/utm/entrances.geojson", "canonical entrance bytes\n");
@@ -33,6 +36,11 @@ async function fixture() {
   await put("gapwise/src/data/utm/entrances.geojson", "old mirror\n");
   await put("gapwise/src/data/utm/obsolete.json", "obsolete\n");
   await put("gapwise/public/data/utm-campus-v1.json", "old snapshot\n");
+  await put(
+    "data/universities/carleton/campus.json",
+    JSON.stringify({ sources: [], buildings: [], entrances: [] }) + "\n",
+  );
+  await put("gapwise/src/data/campuses/carleton/campus.json", "old Carleton snapshot\n");
   for (const campus of ["utsg", "utsc"]) {
     for (const name of ["buildings.json", "buildings.geojson"]) {
       await put(`data/data/${campus}/${name}`, `${campus} canonical ${name}\n`);
@@ -68,6 +76,14 @@ describe("canonical campus mirror CLI", () => {
         );
       }
     }
+    expect(await f.read("gapwise/src/data/campuses/carleton/campus.json")).toBe(
+      await f.read("data/universities/carleton/campus.json"),
+    );
+    expect(JSON.parse(await f.read("gapwise/src/data/campuses/carleton/catalog.json"))).toEqual({
+      sources: [],
+      buildings: [],
+      entrances: [],
+    });
     expect(await Bun.file(join(f.root, "gapwise/src/data/utm/obsolete.json")).exists()).toBe(false);
     expect(await Bun.file(join(f.root, "gapwise/src/data/utm/SHA256SUMS")).exists()).toBe(false);
     expect((await f.run("--write")).code).toBe(0);

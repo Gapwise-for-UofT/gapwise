@@ -34,6 +34,7 @@ import { planLiveClassRoute, selectLiveClassOrigin } from "@/features/routing/li
 import type { UserPreferences } from "@/features/sync/preferences";
 import type { Meeting, Term, Weekday } from "@/lib/timetable-types";
 import { formatDuration, formatTime, TERMS, weekdayForDate } from "@/lib/timetable-types";
+import { activeUniversity } from "@/universities/registry";
 
 type DaySegment = {
   id: string;
@@ -614,19 +615,22 @@ export function MobileDayRoute({
             onSelectSegment={selectSegment}
           />
 
-          <LiveClassRouteCard
-            meeting={selectedMeeting}
-            origin={liveOrigin}
-            route={liveRoute}
-            fallbackRoute={fallbackRoute}
-            preferences={preferences}
-            now={now}
-          />
+          {activeUniversity()?.enabledFeatures.liveLocation ? (
+            <LiveClassRouteCard
+              meeting={selectedMeeting}
+              origin={liveOrigin}
+              route={liveRoute}
+              fallbackRoute={fallbackRoute}
+              preferences={preferences}
+              now={now}
+            />
+          ) : null}
 
           <SegmentSummary segment={selectedSegment} preferences={preferences} />
 
           {selectedSegment &&
           selectedSegment.route.result &&
+          selectedSegment.route.result.nodes.length > 0 &&
           !isCampusDayAnchorMeeting(selectedSegment.from) &&
           !isCampusDayAnchorMeeting(selectedSegment.to) ? (
             <IndoorFloorViewer

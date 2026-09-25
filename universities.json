@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "universities": [
+    {
+      "id": "uoft",
+      "name": "University of Toronto",
+      "shortName": "U of T",
+      "hosts": ["gapwise.ca", "www.gapwise.ca"],
+      "campuses": ["utm", "utsg", "utsc"],
+      "defaultCampus": "utm",
+      "timetableAdapter": "acorn-ics",
+      "calendarSource": "ACORN",
+      "calendarInstructions": "Download the calendar export (.ics) from ACORN's Timetable & Exams, then choose it here.",
+      "calendarHelpUrl": "/acorn-import",
+      "enabledFeatures": { "routing": true, "liveLocation": true },
+      "routableCampuses": ["utm"],
+      "dataPaths": ["data/utm", "data/utsg", "data/utsc"],
+      "status": "supported"
+    },
+    {
+      "id": "carleton",
+      "name": "Carleton University",
+      "shortName": "Carleton",
+      "hosts": ["carleton.gapwise.ca"],
+      "campuses": ["carleton"],
+      "defaultCampus": "carleton",
+      "timetableAdapter": "carleton-ics",
+      "calendarSource": "Carleton",
+      "calendarInstructions": "Choose a Carleton class calendar (.ics) from your device, or try the sample timetable.",
+      "calendarHelpUrl": "https://central.carleton.ca/prod/bwysched.p_select_term?wsea_code=EXT",
+      "enabledFeatures": { "routing": true, "liveLocation": false },
+      "routableCampuses": ["carleton"],
+      "dataPaths": ["universities/carleton/campus.json"],
+      "status": "migration"
+    }
+  ]
+}

@@ -45,7 +45,6 @@ const universitySnapshots = universityManifest.universities.flatMap((university)
       catalog: resolve(repoRoot, `src/data/campuses/${university.id}/catalog.json`),
     })),
 );
-campusSnapshots.push(...universitySnapshots);
 
 async function universityCatalogBytes(source: string): Promise<string> {
   const campus = JSON.parse(await readFile(source, "utf8"));
@@ -192,7 +191,20 @@ for (const snapshot of campusSnapshots) {
 }
 
 for (const snapshot of universitySnapshots) {
-  if (existsSync(snapshot.source)) {
+  if (!existsSync(snapshot.source)) {
+    if (!existsSync(snapshot.target)) {
+      differences.push(`campus snapshot is missing in gapwise: ${snapshot.path}`);
+    }
+  } else {
+    if (!existsSync(snapshot.target)) {
+      differences.push(`campus snapshot is missing in gapwise: ${snapshot.path}`);
+    } else {
+      const [sourceBytes, targetBytes] = await Promise.all([
+        readFile(snapshot.source),
+        readFile(snapshot.target),
+      ]);
+      if (!sourceBytes.equals(targetBytes)) differences.push(`content differs: ${snapshot.path}`);
+    }
     const expected = await universityCatalogBytes(snapshot.source);
     if (!existsSync(snapshot.catalog) || (await readFile(snapshot.catalog, "utf8")) !== expected) {
       differences.push(`${snapshot.id} building catalog is stale`);
@@ -229,8 +241,12 @@ for (const snapshot of campusSnapshots) {
   await copyFile(snapshot.source, snapshot.target);
 }
 for (const snapshot of universitySnapshots) {
-  await writeFile(snapshot.catalog, await universityCatalogBytes(snapshot.source));
+  if (existsSync(snapshot.source)) {
+    await mkdir(dirname(snapshot.target), { recursive: true });
+    await copyFile(snapshot.source, snapshot.target);
+    await writeFile(snapshot.catalog, await universityCatalogBytes(snapshot.source));
+  }
 }
 console.log(
-  `Synced ${sourceFiles.length} UTM files and ${campusSnapshots.length} campus snapshots.`,
+  `Synced ${sourceFiles.length} UTM files, ${campusSnapshots.length} tri-campus snapshots, and ${universitySnapshots.length} university snapshots.`,
 );

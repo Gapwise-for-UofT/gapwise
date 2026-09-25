@@ -9,8 +9,8 @@ export const timetableAdapters: Record<string, (text: string) => Promise<ParsedT
     return { ...parsed, meetings: await enrichCourseTitles(parsed.meetings) };
   },
   "carleton-ics": async (text) => {
-    const { parseCarletonIcs } = await import("./carleton/adapter");
-    return parseCarletonIcs(text);
+    const { parseCarletonTimetable } = await import("./carleton/adapter");
+    return parseCarletonTimetable(text);
   },
   // GAPWISE_ADAPTER_REGISTRY: the CLI inserts new timetable adapters here.
 };

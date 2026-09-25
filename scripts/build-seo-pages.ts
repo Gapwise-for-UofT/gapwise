@@ -385,6 +385,30 @@ if (committedSitemap !== expectedSitemap) {
 }
 await writeFile(join("dist", "sitemap.xml"), expectedSitemap);
 
+const universitiesManifest = JSON.parse(await readFile("universities.json", "utf8"));
+for (const uni of universitiesManifest.universities) {
+  if (uni.id === "uoft") continue;
+  const tenantHtml = baseHtml
+    .replace(/<title>.*?<\/title>/, `<title>Gapwise — ${escapeHtml(uni.name)}</title>`)
+    .replace(
+      /content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto\."/,
+      `content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for ${escapeHtml(uni.name)}."`,
+    )
+    .replace(/href="\/logo-mark\.svg"/g, `href="/universities/${uni.id}/logo-mark.svg"`)
+    .replace(/href="\/favicon-192x192\.png"/g, `href="/universities/${uni.id}/favicon-192x192.png"`)
+    .replace(/href="\/favicon-32x32\.png"/g, `href="/universities/${uni.id}/favicon-32x32.png"`)
+    .replace(/href="\/favicon-16x16\.png"/g, `href="/universities/${uni.id}/favicon-16x16.png"`)
+    .replace(
+      /href="\/apple-touch-icon\.png"/g,
+      `href="/universities/${uni.id}/apple-touch-icon.png"`,
+    )
+    .replace(/href="\/site\.webmanifest"/g, `href="/universities/${uni.id}/site.webmanifest"`);
+
+  const tenantDestination = join("dist", "_universities", uni.id, "index.html");
+  await mkdir(dirname(tenantDestination), { recursive: true });
+  await writeFile(tenantDestination, tenantHtml);
+}
+
 console.log(
   `Generated ${PAGES.length} crawlable Gapwise HTML entry points and ${PAGES.filter((page) => page.sitemap).length} sitemap URLs.`,
 );

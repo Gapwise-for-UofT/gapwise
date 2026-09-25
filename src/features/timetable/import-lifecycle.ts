@@ -7,7 +7,12 @@ export const MAX_ICS_FILE_BYTES = 2 * 1024 * 1024;
 export type TimetableImportResult = Awaited<ReturnType<typeof parseTimetableText>>;
 
 export function validateTimetableFile(file: Pick<File, "name" | "type" | "size">): string | null {
-  if (!/\.ics$/i.test(file.name) && file.type !== "text/calendar") {
+  const university = activeUniversity();
+  const allowsText = university?.id === "carleton";
+  const isIcs = /\.ics$/i.test(file.name) || file.type === "text/calendar";
+  const isText =
+    allowsText && (/\.(txt|tsv|csv)$/i.test(file.name) || file.type.startsWith("text/"));
+  if (!isIcs && !isText) {
     return "That file type isn't supported. Please choose a .ics calendar file.";
   }
   if (file.size > MAX_ICS_FILE_BYTES) {
@@ -25,9 +30,15 @@ export async function parseTimetableText(text: string) {
 }
 
 export function timetableImportError(error: unknown): string {
-  return error instanceof Error && error.name === "IcsParseError"
-    ? error.message
-    : "Something went wrong while reading that calendar. Try exporting it from ACORN again.";
+  if (
+    error instanceof Error &&
+    (error.name === "IcsParseError" || error.name === "TimetableParseError")
+  ) {
+    return error.message;
+  }
+  const university = activeUniversity();
+  const sourceName = university?.calendarSource ?? "your schedule";
+  return `Something went wrong while reading that timetable. Check your ${sourceName} export or schedule text.`;
 }
 
 export function describeTimetableChanges(

@@ -25,13 +25,13 @@
       "campuses": ["carleton"],
       "defaultCampus": "carleton",
       "timetableAdapter": "carleton-ics",
-      "calendarSource": "Carleton",
-      "calendarInstructions": "Choose a Carleton class calendar (.ics) from your device, or try the sample timetable.",
+      "calendarSource": "Carleton Central",
+      "calendarInstructions": "Paste your schedule text from Carleton Central, upload an exported calendar (.ics) file, or try the sample timetable.",
       "calendarHelpUrl": "https://central.carleton.ca/prod/bwysched.p_select_term?wsea_code=EXT",
       "enabledFeatures": { "routing": true, "liveLocation": false },
       "routableCampuses": ["carleton"],
       "dataPaths": ["universities/carleton/campus.json"],
-      "status": "migration"
+      "status": "supported"
     }
   ]
 }

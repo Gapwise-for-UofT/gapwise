@@ -2,6 +2,7 @@ import campusJson from "@/data/campuses/carleton/campus.json";
 import type { Meeting, ParsedTimetable, Weekday } from "@/lib/timetable-types";
 import { carleton } from "./config";
 import { parseIcs } from "./ics-parser";
+import { parseCarletonText } from "./text-parser";
 import type { CampusSnapshot, Day, Meeting as CarletonMeeting } from "./model";
 
 export const carletonCampus = campusJson as unknown as CampusSnapshot;
@@ -57,5 +58,13 @@ export function normalizeCarletonMeeting(source: CarletonMeeting): Meeting[] {
 
 export function parseCarletonIcs(text: string): ParsedTimetable {
   const parsed = parseIcs(text, carletonCampus, carleton);
+  return { meetings: parsed.meetings.flatMap(normalizeCarletonMeeting), warnings: parsed.warnings };
+}
+
+export function parseCarletonTimetable(text: string): ParsedTimetable {
+  if (text.includes("BEGIN:VCALENDAR")) {
+    return parseCarletonIcs(text);
+  }
+  const parsed = parseCarletonText(text, carletonCampus, carleton);
   return { meetings: parsed.meetings.flatMap(normalizeCarletonMeeting), warnings: parsed.warnings };
 }

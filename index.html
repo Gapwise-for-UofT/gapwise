@@ -3,11 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-192x192.png" sizes="192x192" type="image/png" />
-    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
-    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link id="app-icon-svg" rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
+    <link id="app-icon-192" rel="icon" href="/favicon-192x192.png" sizes="192x192" type="image/png" />
+    <link id="app-icon-32" rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+    <link id="app-icon-16" rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
+    <link id="app-apple-touch-icon" rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script>
+      (function() {
+        try {
+          var h = window.location.hostname.toLowerCase();
+          var q = new URLSearchParams(window.location.search).get("university");
+          var u = null;
+          if (q && (h === "localhost" || h === "127.0.0.1" || h === "gapwise.test")) {
+            u = q;
+          } else if (h === "carleton.gapwise.ca" || h === "carleton.gapwise.test") {
+            u = "carleton";
+          } else if (h.endsWith(".gapwise.test")) {
+            u = h.slice(0, -".gapwise.test".length);
+          }
+          if (u === "carleton") {
+            document.title = "Gapwise \u2014 Carleton University";
+            var elSvg = document.getElementById("app-icon-svg"); if (elSvg) elSvg.href = "/universities/carleton/logo-mark.svg";
+            var el192 = document.getElementById("app-icon-192"); if (el192) el192.href = "/universities/carleton/favicon-192x192.png";
+            var el32 = document.getElementById("app-icon-32"); if (el32) el32.href = "/universities/carleton/favicon-32x32.png";
+            var el16 = document.getElementById("app-icon-16"); if (el16) el16.href = "/universities/carleton/favicon-16x16.png";
+            var elApple = document.getElementById("app-apple-touch-icon"); if (elApple) elApple.href = "/universities/carleton/apple-touch-icon.png";
+          }
+        } catch (_) {}
+      })();
+    </script>
     <link rel="stylesheet" href="/desktop-gap-plan-fixes.css" />
     <link rel="stylesheet" href="/timetable-card-fixes.css" />
     <style>

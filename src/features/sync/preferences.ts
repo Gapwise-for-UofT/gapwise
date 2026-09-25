@@ -35,10 +35,13 @@ export function sanitizeUserPreferences(
   value: Partial<UserPreferences> | null | undefined,
 ): UserPreferences {
   const route = sanitizeRoutePreferences(value);
+  const currentUniversity = activeUniversity();
   const mainCampus =
-    value?.mainCampus && activeUniversity()?.campuses.includes(value.mainCampus)
+    value?.mainCampus && currentUniversity?.campuses.includes(value.mainCampus)
       ? value.mainCampus
-      : null;
+      : currentUniversity?.campuses.length === 1
+        ? currentUniversity.campuses[0]!
+        : null;
   const requestedResidence = value?.residenceBuildingCode?.trim().toUpperCase() ?? null;
   const residenceBuildingCode =
     (mainCampus && getResidenceBuildingForCampus(mainCampus, requestedResidence)?.code) ?? null;

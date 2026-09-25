@@ -11,7 +11,7 @@ test("Carleton uses the canonical product screens and campus dataset", async ({
 
   await page.goto("/?university=carleton");
   await expect(page.getByText("For Carleton University", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Import Carleton" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Import Carleton/ })).toBeVisible();
   await page.getByRole("button", { name: "Try a demo" }).click();
   await expect(page.getByText("DEMO 1001").first()).toBeVisible();
   await expect(page).toHaveURL(/\/timetable/);
@@ -129,11 +129,11 @@ test("Direct URL refresh preserves university context in local development", asy
 
   await page.goto("/?university=carleton");
   await expect(page.getByText("For Carleton University", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Import Carleton" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Import Carleton/ })).toBeVisible();
 
   // Refresh page
   await page.reload();
   await expect(page.getByText("For Carleton University", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Import Carleton" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Import Carleton/ })).toBeVisible();
   failures.assertClean();
 });

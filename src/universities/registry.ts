@@ -19,7 +19,8 @@ export function validateUniversityManifest(
     if (entry.routableCampuses.some((campus) => !entry.campuses.includes(campus)))
       errors.push(`${entry.id}: routable campus must be listed`);
     if (!entry.timetableAdapter.trim()) errors.push(`${entry.id}: timetable adapter is required`);
-    if (!entry.dataPaths.length) errors.push(`${entry.id}: data paths are required`);
+    if (entry.status !== "planned" && !entry.dataPaths.length)
+      errors.push(`${entry.id}: data paths are required`);
     for (const campus of entry.campuses) {
       if (campusIds.has(campus)) errors.push(`Duplicate campus ID: ${campus}`);
       campusIds.add(campus);

@@ -334,6 +334,26 @@
       "destination": "/api/v1?resource=gap-plan"
     },
     {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/carleton/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

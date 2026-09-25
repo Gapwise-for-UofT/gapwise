@@ -21,6 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { sanitizeUserPreferences, type UserPreferences } from "./preferences";
+import { activeUniversity } from "@/universities/registry";
 
 type ArrivalOption = {
   label: string;
@@ -127,16 +128,22 @@ export function ResidenceSettings({
     });
   }
 
+  const university = activeUniversity();
+  const campusIds = (university?.campuses ?? []) as GapwiseCampusId[];
+  const isSingleCampus = campusIds.length <= 1;
+
   const points =
     preferences.mainCampus === "utm" && preferences.commuteMode
       ? campusAccessPointsFor(preferences.commuteMode)
       : [];
   const triggerLabel =
     selectedResidence?.code || selectedAccessPoint?.label
-      ? `${preferences.mainCampus ? CAMPUS_SHORT_LABELS[preferences.mainCampus] : "Campus"} · ${selectedResidence?.code ?? selectedAccessPoint?.label}`
-      : preferences.mainCampus
-        ? CAMPUS_SHORT_LABELS[preferences.mainCampus]
-        : "Choose campus";
+      ? `${preferences.mainCampus ? (CAMPUS_SHORT_LABELS[preferences.mainCampus] ?? "Campus") : "Campus"} · ${selectedResidence?.code ?? selectedAccessPoint?.label}`
+      : isSingleCampus
+        ? (selectedResidence?.code ?? "Arrival")
+        : preferences.mainCampus
+          ? (CAMPUS_SHORT_LABELS[preferences.mainCampus] ?? "Campus")
+          : "Choose campus";
 
   useEffect(() => {
     if (openRequest > 0) setOpen(true);
@@ -162,26 +169,31 @@ export function ResidenceSettings({
           </DialogDescription>
         </DialogHeader>
 
-        <fieldset>
-          <legend className="text-sm font-medium">Main campus</legend>
-          <div className="mt-2 grid grid-cols-3 gap-2">
-            {(["utm", "utsg", "utsc"] as GapwiseCampusId[]).map((campus) => (
-              <button
-                key={campus}
-                type="button"
-                aria-pressed={preferences.mainCampus === campus}
-                onClick={() => selectMainCampus(campus)}
-                className={`min-h-10 rounded-lg border px-3 font-mono text-xs font-bold tracking-[0.08em] transition-colors ${
-                  preferences.mainCampus === campus
-                    ? "border-accent/60 bg-accent/10 text-foreground"
-                    : "border-border bg-card/80 text-muted-foreground hover:bg-muted/60"
-                }`}
-              >
-                {CAMPUS_SHORT_LABELS[campus]}
-              </button>
-            ))}
-          </div>
-        </fieldset>
+        {!isSingleCampus ? (
+          <fieldset>
+            <legend className="text-sm font-medium">Main campus</legend>
+            <div
+              className="mt-2 grid gap-2"
+              style={{ gridTemplateColumns: `repeat(${campusIds.length || 1}, minmax(0, 1fr))` }}
+            >
+              {campusIds.map((campus) => (
+                <button
+                  key={campus}
+                  type="button"
+                  aria-pressed={preferences.mainCampus === campus}
+                  onClick={() => selectMainCampus(campus)}
+                  className={`min-h-10 rounded-lg border px-3 font-mono text-xs font-bold tracking-[0.08em] transition-colors ${
+                    preferences.mainCampus === campus
+                      ? "border-accent/60 bg-accent/10 text-foreground"
+                      : "border-border bg-card/80 text-muted-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  {CAMPUS_SHORT_LABELS[campus] ?? campus}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        ) : null}
 
         <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Campus day origin">
           {ARRIVAL_OPTIONS.map((option) => {

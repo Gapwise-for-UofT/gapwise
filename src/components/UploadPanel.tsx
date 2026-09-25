@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FileUp } from "lucide-react";
+import { ClipboardPaste, FileUp } from "lucide-react";
 import { clearFirstValuePending, markFirstValuePending } from "@/features/onboarding/first-value";
 import { activeUniversity } from "@/universities/registry";
 import "./onboarding/first-run.css";
@@ -51,6 +51,8 @@ export function UploadPanel({
   const inputRef = useRef<HTMLInputElement>(null);
   const importArmedRef = useRef(false);
   const [dragging, setDragging] = useState(false);
+  const [pasting, setPasting] = useState(false);
+  const [pastedText, setPastedText] = useState("");
   const hero = variant === "hero";
   const university = activeUniversity();
   const calendarSource = university?.calendarSource ?? "calendar";
@@ -76,7 +78,9 @@ export function UploadPanel({
       id="ics-file"
       name="ics-file"
       type="file"
-      accept=".ics,text/calendar"
+      accept={
+        university?.id !== "uoft" ? ".ics,.txt,.tsv,text/calendar,text/plain" : ".ics,text/calendar"
+      }
       hidden
       onChange={(event) => {
         const file = event.target.files?.[0];
@@ -131,6 +135,56 @@ export function UploadPanel({
 
         {loading ? (
           <ScheduleSkeleton />
+        ) : pasting ? (
+          <div className="mt-6 space-y-3 rounded-xl border border-border bg-card/60 p-4 text-left">
+            <label
+              htmlFor="hero-paste-text"
+              className="block text-xs font-semibold text-foreground"
+            >
+              Paste schedule text from {calendarSource}
+            </label>
+            <textarea
+              id="hero-paste-text"
+              rows={6}
+              value={pastedText}
+              onChange={(e) => setPastedText(e.target.value)}
+              placeholder={
+                university?.id === "carleton"
+                  ? "Paste timetable text from Carleton Central (Concise Student Schedule or Detail Schedule)..."
+                  : university?.id === "tmu"
+                    ? "Paste timetable text from MyServiceHub (RAMSS) or VSB..."
+                    : university?.id === "queens"
+                      ? "Paste timetable text from SOLUS (View My Classes)..."
+                      : university?.id === "laurier"
+                        ? "Paste timetable text from LORIS (Student Detail Schedule)..."
+                        : "Paste your timetable text or .ics calendar lines..."
+              }
+              className="w-full rounded-md border border-input bg-background p-2.5 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={!pastedText.trim()}
+                onClick={() => {
+                  submitFile(new File([pastedText], "schedule.txt", { type: "text/plain" }), true);
+                  setPasting(false);
+                }}
+                className="button-primary inline-flex min-h-10 flex-1 items-center justify-center px-4 text-xs font-semibold disabled:opacity-50"
+              >
+                Import pasted schedule
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPasting(false);
+                  setPastedText("");
+                }}
+                className="button-secondary inline-flex min-h-10 items-center justify-center px-4 text-xs font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         ) : (
           <>
             <div className="mt-6 space-y-2">
@@ -141,6 +195,14 @@ export function UploadPanel({
               >
                 <FileUp className="h-4 w-4" aria-hidden="true" />
                 Import {calendarSource}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPasting(true)}
+                className="button-secondary inline-flex min-h-10 w-full items-center justify-center gap-2 px-4 text-xs font-medium text-foreground hover:bg-secondary/70"
+              >
+                <ClipboardPaste className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                Paste schedule text
               </button>
               <button
                 type="button"
@@ -196,10 +258,10 @@ export function UploadPanel({
         <FileUp className="h-5 w-5 text-accent" aria-hidden="true" />
       </span>
       <span className="mt-5 block font-display text-[0.95rem] font-semibold tracking-tight">
-        {dragging ? "Release to build your timetable" : "Drop your .ics file here"}
+        {dragging ? "Release to build your timetable" : "Drop your timetable file here"}
       </span>
       <span id="ics-file-help" className="mt-1.5 block text-xs leading-5 text-muted-foreground">
-        Choose from your device · 2 MB maximum
+        .ics or .txt · 2 MB maximum
       </span>
     </button>
   );
@@ -215,6 +277,53 @@ export function UploadPanel({
       </p>
       {loading ? (
         <ScheduleSkeleton />
+      ) : pasting ? (
+        <div className="mt-5 space-y-3 rounded-xl border border-border bg-card/60 p-4 text-left">
+          <label htmlFor="card-paste-text" className="block text-xs font-semibold text-foreground">
+            Paste schedule text from {calendarSource}
+          </label>
+          <textarea
+            id="card-paste-text"
+            rows={6}
+            value={pastedText}
+            onChange={(e) => setPastedText(e.target.value)}
+            placeholder={
+              university?.id === "carleton"
+                ? "Paste timetable text from Carleton Central (Concise Student Schedule or Detail Schedule)..."
+                : university?.id === "tmu"
+                  ? "Paste timetable text from MyServiceHub (RAMSS) or VSB..."
+                  : university?.id === "queens"
+                    ? "Paste timetable text from SOLUS (View My Classes)..."
+                    : university?.id === "laurier"
+                      ? "Paste timetable text from LORIS (Student Detail Schedule)..."
+                      : "Paste your timetable text or .ics calendar lines..."
+            }
+            className="w-full rounded-md border border-input bg-background p-2.5 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+          />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              disabled={!pastedText.trim()}
+              onClick={() => {
+                submitFile(new File([pastedText], "schedule.txt", { type: "text/plain" }), true);
+                setPasting(false);
+              }}
+              className="button-primary inline-flex min-h-10 flex-1 items-center justify-center px-4 text-xs font-semibold disabled:opacity-50"
+            >
+              Import pasted schedule
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPasting(false);
+                setPastedText("");
+              }}
+              className="button-secondary inline-flex min-h-10 items-center justify-center px-4 text-xs font-medium"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       ) : (
         <>
           <div className="mt-5">{dropzone}</div>
@@ -229,6 +338,14 @@ export function UploadPanel({
             </button>
             <button
               type="button"
+              onClick={() => setPasting(true)}
+              className="button-secondary inline-flex min-h-10 w-full items-center justify-center gap-2 px-4 text-xs font-medium text-foreground hover:bg-secondary/70"
+            >
+              <ClipboardPaste className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              Paste schedule text
+            </button>
+            <button
+              type="button"
               aria-label="Try a demo"
               onClick={() => {
                 importArmedRef.current = false;
@@ -240,7 +357,10 @@ export function UploadPanel({
               Try Demo Schedule
             </button>
             {rememberControl}
-            <a href="/acorn-import" className="inline-block text-xs text-accent hover:underline">
+            <a
+              href={university?.calendarHelpUrl ?? "/support"}
+              className="inline-block text-xs text-accent hover:underline"
+            >
               Need help importing?
             </a>
             {errorMessage}

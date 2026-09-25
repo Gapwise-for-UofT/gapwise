@@ -1,6 +1,7 @@
 export type ActivityType = "LEC" | "TUT" | "PRA" | "OTHER";
 export type Term = "Fall" | "Winter" | "Summer";
-export type Campus = "UTSG" | "UTM" | "UTSC" | "CARLETON" | "UNKNOWN";
+export type Campus =
+  "UTSG" | "UTM" | "UTSC" | "CARLETON" | "TMU" | "QUEENS" | "WATERLOO" | "UNKNOWN" | (string & {});
 export type Weekday =
   "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
 export type MeetingLocationType = "physical" | "tba" | "online" | "unknown";

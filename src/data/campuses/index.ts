@@ -15,9 +15,16 @@ import utsgFootprintsRaw from "./utsg/buildings.geojson?raw";
 import utscBuildingsRaw from "./utsc/buildings.json?raw";
 import utscFootprintsRaw from "./utsc/buildings.geojson?raw";
 import carletonCatalogRaw from "./carleton/catalog.json?raw";
+import tmuCatalogRaw from "./tmu/catalog.json?raw";
+import queensCatalogRaw from "./queens/catalog.json?raw";
+import laurierCatalogRaw from "./laurier/catalog.json?raw";
 
 const universityCatalogRaw: Record<string, string> = {
   carleton: carletonCatalogRaw,
+  tmu: tmuCatalogRaw,
+  queens: queensCatalogRaw,
+  waterloo: laurierCatalogRaw,
+  laurier: laurierCatalogRaw,
   // GAPWISE_CAMPUS_CATALOG_REGISTRY: the CLI inserts new catalog imports here.
 };
 

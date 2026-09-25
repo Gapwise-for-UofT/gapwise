@@ -174,12 +174,15 @@ function AppLayout() {
     : null;
   const arrivalAccessPoint =
     preferences.mainCampus === "utm" ? getCampusAccessPoint(preferences.campusAccessPointId) : null;
+  const isSingleCampus = (university?.campuses.length ?? 0) <= 1;
   const arrivalLabel =
     arrivalResidence?.code || arrivalAccessPoint?.label
       ? `${preferences.mainCampus ? (CAMPUS_SHORT_LABELS[preferences.mainCampus] ?? "Campus") : "Campus"} · ${arrivalResidence?.code ?? arrivalAccessPoint?.label}`
-      : preferences.mainCampus
-        ? (CAMPUS_SHORT_LABELS[preferences.mainCampus] ?? "Campus")
-        : "Choose campus";
+      : isSingleCampus
+        ? (arrivalResidence?.code ?? "Arrival")
+        : preferences.mainCampus
+          ? (CAMPUS_SHORT_LABELS[preferences.mainCampus] ?? "Campus")
+          : "Choose campus";
   const {
     destination,
     selectedBuildingCode,
@@ -639,12 +642,9 @@ function AppLayout() {
                 Find your way around campus
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Choose{" "}
-                {university?.campuses
-                  .map((campus) => CAMPUS_SHORT_LABELS[campus as keyof typeof CAMPUS_SHORT_LABELS])
-                  .join(", ")}
-                , then search a source-backed campus building. You can explore without uploading a
-                timetable.
+                {university?.campuses.length === 1
+                  ? `Search source-backed ${university.name} campus buildings and explore pedestrian routes. You can explore without uploading a timetable.`
+                  : `Choose ${university?.campuses.map((campus) => CAMPUS_SHORT_LABELS[campus] ?? campus).join(", ")}, then search a source-backed campus building. You can explore without uploading a timetable.`}
               </p>
             </section>
             <Suspense

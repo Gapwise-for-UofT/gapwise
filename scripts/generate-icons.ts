@@ -6,15 +6,35 @@ import { deflateSync } from "node:zlib";
 type Rgba = [number, number, number, number];
 type Point = [number, number];
 
-const logo = await readFile(new URL("../public/logo-mark.svg", import.meta.url), "utf8");
+const colorArgument = process.argv.find((arg) => arg.startsWith("--color="));
+const logoArgument = process.argv.find((arg) => arg.startsWith("--logo="));
+const outputArgument = process.argv.find((argument) => argument.startsWith("--output-dir="));
 
-for (const token of ['fill="#4EA7FE"', 'transform="translate(1254 0) scale(-1 1)"']) {
-  if (!logo.includes(token)) {
-    throw new Error(`logo-mark.svg is missing expected token: ${token}`);
-  }
+const logoPath = logoArgument
+  ? resolve(logoArgument.slice("--logo=".length))
+  : fileURLToPath(new URL("../public/logo-mark.svg", import.meta.url));
+
+const logo = await readFile(logoPath, "utf8");
+
+if (!logo.includes('transform="translate(1254 0) scale(-1 1)"')) {
+  throw new Error(`logo file is missing expected transform token: ${logoPath}`);
 }
 
-const outputArgument = process.argv.find((argument) => argument.startsWith("--output-dir="));
+function parseHexColor(hex: string): [number, number, number] {
+  const clean = hex.replace(/^#/, "");
+  if (clean.length === 6) {
+    return [
+      parseInt(clean.slice(0, 2), 16),
+      parseInt(clean.slice(2, 4), 16),
+      parseInt(clean.slice(4, 6), 16),
+    ];
+  }
+  return [78, 167, 254];
+}
+
+const fillColor: [number, number, number] = colorArgument
+  ? parseHexColor(colorArgument.slice("--color=".length))
+  : [78, 167, 254];
 
 const outputDirectory = outputArgument
   ? resolve(outputArgument.slice("--output-dir=".length))
@@ -166,7 +186,7 @@ function pointInPolygon(x: number, y: number, polygon: Point[]) {
 
 function pixel(x: number, y: number): Rgba {
   const filled = deerPolygons.some((polygon) => pointInPolygon(x, y, polygon));
-  return filled ? [78, 167, 254, 255] : [0, 0, 0, 0];
+  return filled ? [fillColor[0], fillColor[1], fillColor[2], 255] : [0, 0, 0, 0];
 }
 
 async function render(name: string, size: number) {

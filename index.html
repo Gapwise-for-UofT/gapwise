@@ -3,11 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-192x192.png" sizes="192x192" type="image/png" />
-    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
-    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" id="app-icon-svg" />
+    <link rel="icon" href="/favicon-192x192.png" sizes="192x192" id="app-icon-192" />
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" id="app-icon-32" />
+    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" id="app-icon-16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" id="app-apple-touch-icon" />
+    <script>
+      (function () {
+        try {
+          var h = window.location.hostname.toLowerCase();
+          var q = new URLSearchParams(window.location.search).get("university");
+          var u = null;
+          var unis = {
+            carleton: "Carleton University",
+            tmu: "Toronto Metropolitan University",
+            queens: "Queen's University",
+            laurier: "Wilfrid Laurier University",
+          };
+          if (
+            q &&
+            (h === "localhost" ||
+              h === "127.0.0.1" ||
+              h === "gapwise.test" ||
+              h.indexOf(".vercel.app") !== -1)
+          ) {
+            u = q;
+          } else if (h.endsWith(".gapwise.ca")) {
+            u = h.slice(0, -".gapwise.ca".length);
+          } else if (h.endsWith(".gapwise.test")) {
+            u = h.slice(0, -".gapwise.test".length);
+          }
+          if (u && unis[u]) {
+            document.title = "Gapwise \u2014 " + unis[u];
+            var elSvg = document.getElementById("app-icon-svg");
+            if (elSvg) elSvg.href = "/universities/" + u + "/logo-mark.svg";
+            var el192 = document.getElementById("app-icon-192");
+            if (el192) el192.href = "/universities/" + u + "/favicon-192x192.png";
+            var el32 = document.getElementById("app-icon-32");
+            if (el32) el32.href = "/universities/" + u + "/favicon-32x32.png";
+            var el16 = document.getElementById("app-icon-16");
+            if (el16) el16.href = "/universities/" + u + "/favicon-16x16.png";
+            var elApple = document.getElementById("app-apple-touch-icon");
+            if (elApple) elApple.href = "/universities/" + u + "/apple-touch-icon.png";
+          }
+        } catch (_) {}
+      })();
+    </script>
     <link rel="stylesheet" href="/desktop-gap-plan-fixes.css" />
     <link rel="stylesheet" href="/timetable-card-fixes.css" />
     <style>

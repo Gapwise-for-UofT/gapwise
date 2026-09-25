@@ -53,13 +53,19 @@ describe("university registry", () => {
     expect(universityForHostname("www.gapwise.ca")?.id).toBe("uoft");
     expect(universityForHostname("carleton.gapwise.ca")?.id).toBe("carleton");
     expect(universityForHostname("CARLETON.GAPWISE.CA.")?.id).toBe("carleton");
+    expect(universityForHostname("tmu.gapwise.ca")?.id).toBe("tmu");
+    expect(universityForHostname("queens.gapwise.ca")?.id).toBe("queens");
+    expect(universityForHostname("laurier.gapwise.ca")?.id).toBe("laurier");
     expect(universityForHostname("localhost")?.id).toBe("uoft");
     expect(universityForHostname("localhost", "carleton")?.id).toBe("carleton");
+    expect(universityForHostname("localhost", "tmu")?.id).toBe("tmu");
+    expect(universityForHostname("preview-branch.vercel.app")?.id).toBe("uoft");
+    expect(universityForHostname("preview-branch.vercel.app", "queens")?.id).toBe("queens");
+    expect(universityForHostname("preview-branch.vercel.app", "laurier")?.id).toBe("laurier");
     expect(universityForHostname("gapwise.ca", "carleton")?.id).toBe("uoft");
     expect(universityForHostname("unknown.gapwise.ca")).toBeNull();
-    expect(universityForHostname("tmu.gapwise.ca")).toBeNull();
     expect(universityForHostname("attacker.com")).toBeNull();
-    expect(universityById("waterloo")).toBeNull();
+    expect(universityById("nonexistent")).toBeNull();
   });
 
   test("rejects malformed manifest entries", () => {
@@ -147,6 +153,9 @@ describe("canonical meeting and campus data contracts", () => {
   test("timetable adapters registry loads registered adapters and demo schedules", async () => {
     expect(typeof timetableAdapters["acorn-ics"]).toBe("function");
     expect(typeof timetableAdapters["carleton-ics"]).toBe("function");
+    expect(typeof timetableAdapters["tmu-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["queens-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["laurier-schedule"]).toBe("function");
 
     const uoftDemo = await loadDemoTimetable("acorn-ics");
     expect(uoftDemo.length).toBeGreaterThan(0);
@@ -155,6 +164,18 @@ describe("canonical meeting and campus data contracts", () => {
     const carletonDemo = await loadDemoTimetable("carleton-ics");
     expect(carletonDemo.length).toBeGreaterThan(0);
     expect(carletonDemo.every((m) => m.universityId === "carleton")).toBe(true);
+
+    const tmuDemo = await loadDemoTimetable("tmu-schedule");
+    expect(tmuDemo.length).toBeGreaterThan(0);
+    expect(tmuDemo.every((m) => m.universityId === "tmu")).toBe(true);
+
+    const queensDemo = await loadDemoTimetable("queens-schedule");
+    expect(queensDemo.length).toBeGreaterThan(0);
+    expect(queensDemo.every((m) => m.universityId === "queens")).toBe(true);
+
+    const laurierDemo = await loadDemoTimetable("laurier-schedule");
+    expect(laurierDemo.length).toBeGreaterThan(0);
+    expect(laurierDemo.every((m) => m.universityId === "laurier")).toBe(true);
 
     const fallbackDemo = await loadDemoTimetable(undefined);
     expect(fallbackDemo).toEqual(uoftDemo);

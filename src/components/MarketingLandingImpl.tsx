@@ -32,6 +32,17 @@ function ExternalProductLink({ href, children }: { href: string; children: strin
   );
 }
 
+const INSTITUTION_MARKETING_METRICS: Record<
+  string,
+  { count: number; sampleCodes: [string, string, string, string] }
+> = {
+  uoft: { count: 30, sampleCodes: ["MN", "IB", "DH", "CCT"] },
+  carleton: { count: 48, sampleCodes: ["ML", "TB", "DT", "PA"] },
+  tmu: { count: 30, sampleCodes: ["SLC", "ENG", "VIC", "SHE"] },
+  queens: { count: 33, sampleCodes: ["DUN", "STF", "WLH", "JEF"] },
+  laurier: { count: 25, sampleCodes: ["LH", "SC", "DAWB", "BA"] },
+};
+
 export function MarketingLandingImpl({
   isOnline,
   onFile,
@@ -43,6 +54,9 @@ export function MarketingLandingImpl({
   rememberAvailable,
 }: MarketingLandingProps) {
   const university = activeUniversity();
+  const metrics =
+    INSTITUTION_MARKETING_METRICS[university?.id ?? "uoft"] ??
+    INSTITUTION_MARKETING_METRICS["uoft"]!;
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeProduct, setActiveProduct] = useState<MarketingProductId>("gapwise");
 
@@ -271,7 +285,7 @@ export function MarketingLandingImpl({
               <span>AI / MCP</span>
             </div>
             <pre>
-              <code>{`import { Gapwise } from "@gapwise/sdk";\n\nconst gapwise = new Gapwise();\nawait gapwise.routes.calculate({\n  from: "MN",\n  to: "IB"\n});`}</code>
+              <code>{`import { Gapwise } from "@gapwise/sdk";\n\nconst gapwise = new Gapwise();\nawait gapwise.routes.calculate({\n  from: "${metrics.sampleCodes[0]}",\n  to: "${metrics.sampleCodes[1]}"\n});`}</code>
             </pre>
           </div>
         </article>
@@ -285,8 +299,8 @@ export function MarketingLandingImpl({
           <div>
             <ProductHeading
               label="Gapwise Data"
-              title="UTM facts with provenance."
-              body="The open data layer owns canonical campus identity, geometry, entrances, routing inputs, provenance, and validation — including 30 UTM buildings and facilities in the published snapshot."
+              title={`${university?.shortName ?? "Campus"} facts with provenance.`}
+              body={`The open data layer owns canonical campus identity, geometry, entrances, routing inputs, provenance, and validation — including ${metrics.count} ${university?.shortName ?? "campus"} buildings and facilities in the published snapshot.`}
             />
             <div className="product-story-actions">
               <ExternalProductLink href="https://data.gapwise.ca">Explore Data</ExternalProductLink>
@@ -297,29 +311,29 @@ export function MarketingLandingImpl({
             <div className="data-stage-header">
               <ProductMark />
               <span>Campus registry</span>
-              <strong>30</strong>
+              <strong>{metrics.count}</strong>
             </div>
             <div className="data-table" role="presentation">
               <div>
-                <strong>MN</strong>
+                <strong>{metrics.sampleCodes[0]}</strong>
                 <span>Geometry</span>
                 <span>Entrances</span>
                 <i />
               </div>
               <div>
-                <strong>IB</strong>
+                <strong>{metrics.sampleCodes[1]}</strong>
                 <span>Geometry</span>
                 <span>Routing</span>
                 <i />
               </div>
               <div>
-                <strong>DH</strong>
+                <strong>{metrics.sampleCodes[2]}</strong>
                 <span>Geometry</span>
                 <span>Provenance</span>
                 <i />
               </div>
               <div>
-                <strong>CCT</strong>
+                <strong>{metrics.sampleCodes[3]}</strong>
                 <span>Identity</span>
                 <span>Validation</span>
                 <i />

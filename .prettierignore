@@ -7,6 +7,11 @@ package-lock.json
 bun.lock
 routeTree.gen.ts
 src/data/utm/entrances.geojson
+playwright-report/**
+test-results/**
+blob-report/**
+coverage/**
+artifacts/**
 src/data/utm/outdoor-edges.json
 src/data/utm/outdoor-nodes.geojson
 src/data/utm/generated/campus-access-audit.json
@@ -15,8 +20,8 @@ src/data/campuses/utsg/buildings.json
 src/data/campuses/utsg/buildings.geojson
 src/data/campuses/utsc/buildings.json
 src/data/campuses/utsc/buildings.geojson
-src/data/campuses/carleton/campus.json
-src/data/campuses/carleton/catalog.json
+src/data/campuses/**/campus.json
+src/data/campuses/**/catalog.json
 public/openapi.json
 public/data/utm-campus-v1.json
 

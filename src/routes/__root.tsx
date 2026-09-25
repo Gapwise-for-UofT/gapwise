@@ -110,18 +110,47 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const PLANNED_EDITIONS: Record<string, { name: string; shortName: string }> = {};
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  if (!activeUniversity()) {
+  const university = activeUniversity();
+  const hostname =
+    typeof window !== "undefined" ? window.location.hostname.toLowerCase().replace(/\.$/, "") : "";
+  const isDev = ["localhost", "127.0.0.1", "gapwise.test"].includes(hostname);
+  const devParam =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("university")
+      : null;
+  const plannedInfo =
+    PLANNED_EDITIONS[hostname] ??
+    (isDev && devParam && PLANNED_EDITIONS[`${devParam}.gapwise.ca`]
+      ? PLANNED_EDITIONS[`${devParam}.gapwise.ca`]
+      : null);
+
+  if (!university || university.status === "planned" || plannedInfo) {
+    const isPlanned = Boolean(plannedInfo || university?.status === "planned");
+    const name = plannedInfo?.name ?? university?.name;
+    const shortName = plannedInfo?.shortName ?? university?.shortName ?? "GW";
     return (
       <main className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
-        <div>
-          <h1 className="font-display text-2xl font-semibold">University edition unavailable</h1>
+        <div className="max-w-md">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-foreground font-display font-semibold text-base border border-border">
+            {shortName}
+          </div>
+          <h1 className="font-display text-2xl font-semibold">
+            {isPlanned ? `${name} edition coming soon` : "University edition unavailable"}
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            This hostname is not registered with Gapwise.
+            {isPlanned
+              ? `We are currently preparing campus data and timetable adapters for ${name}. Check back soon!`
+              : "This hostname is not registered with Gapwise."}
           </p>
-          <a className="mt-4 inline-block text-accent underline" href="https://gapwise.ca">
-            Open Gapwise
+          <a
+            className="mt-6 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            href="https://gapwise.ca"
+          >
+            Open Gapwise for U of T
           </a>
         </div>
       </main>

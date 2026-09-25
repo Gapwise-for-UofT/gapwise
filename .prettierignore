@@ -19,6 +19,7 @@ src/data/campuses/carleton/campus.json
 src/data/campuses/carleton/catalog.json
 public/openapi.json
 public/data/utm-campus-v1.json
+research/translate-js-poc/translate.min.js
 
 AGENTS.md
 README.md

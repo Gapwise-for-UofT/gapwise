@@ -171,8 +171,9 @@ describe("branding metadata", () => {
     expect(rootRoute).toContain('name: "apple-mobile-web-app-capable"');
     expect(rootRoute).toContain('rel: "manifest"');
 
-    expect(indexRoute).toContain('const TITLE = "Gapwise — University of Toronto"');
-    expect(indexRoute).toContain('{ name: "description", content: DESCRIPTION }');
+    expect(indexRoute).toContain("const university = activeUniversity()");
+    expect(indexRoute).toContain("const title = `Gapwise — ${university?.name");
+    expect(indexRoute).toContain('{ name: "description", content: description }');
   });
 });
 

@@ -6,7 +6,7 @@
 
 ### A privacy-first campus-intelligence ecosystem for U of T.
 
-**Gapwise is a free and open-source timetable, campus navigation, and student planning platform for the University of Toronto.**
+**Gapwise is a free and open-source timetable, campus navigation, and student planning platform built for multiple universities.**
 
 [![Open Gapwise](https://img.shields.io/badge/Open_Gapwise-gapwise.ca-0A84FF?style=for-the-badge&logo=vercel&logoColor=white)](https://gapwise.ca)
 [![CI](https://img.shields.io/github/actions/workflow/status/Gapwise-for-UofT/gapwise/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/Gapwise-for-UofT/gapwise/actions/workflows/ci.yml)
@@ -58,11 +58,19 @@ The project is designed as an integrated software ecosystem rather than a collec
 | **[`android`](https://github.com/Gapwise-for-UofT/android)** | Native Kotlin + Jetpack Compose Android client | Android app |
 | **[`ios`](https://github.com/Gapwise-for-UofT/ios)** | Native Swift + SwiftUI iOS client | iOS app |
 | **[`ai`](https://github.com/Gapwise-for-UofT/ai)** | OAuth/MCP layer for campus intelligence and explicitly delegated student context | [ai.gapwise.ca](https://ai.gapwise.ca) |
-| **[`data`](https://github.com/Gapwise-for-UofT/data)** | Canonical public University of Toronto campus data, provenance, schemas, validation, and distribution | [data.gapwise.ca](https://data.gapwise.ca) |
+| **[`data`](https://github.com/Gapwise-for-UofT/data)** | Canonical public campus data, provenance, schemas, validation, and distribution | [data.gapwise.ca](https://data.gapwise.ca) |
 | **[`docs`](https://github.com/Gapwise-for-UofT/docs)** | Canonical public developer documentation | [docs.gapwise.ca](https://docs.gapwise.ca) |
 | **[`status`](https://github.com/Gapwise-for-UofT/status)** | Independent service-health monitoring and incident communication | [status.gapwise.ca](https://status.gapwise.ca) |
 
-All seven repositories are separate implementation and trust boundaries within one Gapwise product ecosystem. Organization-wide GitHub defaults live in [`.github`](https://github.com/Gapwise-for-UofT/.github).
+These repositories separate implementation and trust boundaries within one Gapwise product ecosystem. The [`cli`](https://github.com/Gapwise-for-UofT/cli) scaffolds university integrations. Organization-wide GitHub defaults live in [`.github`](https://github.com/Gapwise-for-UofT/.github).
+
+## University editions
+
+`gapwise` is the only web application. `universities.json` resolves the edition by hostname: `gapwise.ca` selects U of T; `carleton.gapwise.ca` selects Carleton after that host is configured and deployed. For local development, use `?university=carleton` or `gapwise university dev carleton`. U of T remains the live default; the Carleton edition is in migration until its deployment is verified.
+
+Adapters in `src/universities/` convert university calendars into the shared meeting model. The same Today, Timetable, Gap Plan, map, routing UI, navigation, responsive layouts, and settings render both editions. `data` owns campus snapshots; `scripts/sync-campus-data.ts` mirrors them into the app and derives map catalogs. The Carleton path graph loads only for routing. Existing JavaScript and Python SDK implementations remain in `sdk/` here to preserve their published package paths.
+
+To add a university, use the [`cli`](https://github.com/Gapwise-for-UofT/cli) scaffold, add reviewed campus data and timetable fixtures, sync the data, run validation and browser tests, then configure its hostname. See the [step-by-step guide](https://github.com/Gapwise-for-UofT/docs/blob/main/src/content/docs/guides/add-university.md). A scaffold does not claim support or create any new product UI.
 
 The architectural rule across every surface is simple:
 

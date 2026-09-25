@@ -13,6 +13,7 @@ import {
   type GapwiseCampusId,
 } from "@/data/campuses";
 import { formatTime, locationLabel, meetingCampus } from "@/lib/timetable-types";
+import { activeUniversity } from "@/universities/registry";
 
 type CampusExplorerProps = Omit<
   CampusMapProps,
@@ -22,14 +23,15 @@ type CampusExplorerProps = Omit<
   onSelectBuilding: (code: string | null) => void;
 };
 
-const CAMPUS_IDS: GapwiseCampusId[] = ["utm", "utsg", "utsc"];
-
 function meetingGapwiseCampus(meeting: CampusMapProps["meetings"][number]): GapwiseCampusId | null {
   return gapwiseCampusIdForCampus(meetingCampus(meeting));
 }
 
-function inferredCampusForMeetings(meetings: CampusMapProps["meetings"]): GapwiseCampusId | null {
-  const counts = new Map<GapwiseCampusId, number>(CAMPUS_IDS.map((campus) => [campus, 0]));
+function inferredCampusForMeetings(
+  meetings: CampusMapProps["meetings"],
+  campusIds: GapwiseCampusId[],
+): GapwiseCampusId | null {
+  const counts = new Map<GapwiseCampusId, number>(campusIds.map((campus) => [campus, 0]));
   for (const meeting of meetings) {
     const campus = meetingGapwiseCampus(meeting);
     if (campus) counts.set(campus, (counts.get(campus) ?? 0) + 1);
@@ -37,7 +39,7 @@ function inferredCampusForMeetings(meetings: CampusMapProps["meetings"]): Gapwis
   return (
     [...counts.entries()]
       .filter(([, count]) => count > 0)
-      .sort((a, b) => b[1] - a[1] || CAMPUS_IDS.indexOf(a[0]) - CAMPUS_IDS.indexOf(b[0]))[0]?.[0] ??
+      .sort((a, b) => b[1] - a[1] || campusIds.indexOf(a[0]) - campusIds.indexOf(b[0]))[0]?.[0] ??
     null
   );
 }
@@ -54,9 +56,12 @@ export function CampusExplorer({
   onSelectMeeting,
   ...mapProps
 }: CampusExplorerProps) {
+  const university = activeUniversity();
+  const campusIds = (university?.campuses ?? []) as GapwiseCampusId[];
+  const defaultCampus = university?.defaultCampus as GapwiseCampusId | undefined;
   const [query, setQuery] = useState("");
   const [campusOverride, setCampusOverride] = useState<GapwiseCampusId | null>(() =>
-    selectedBuildingCode ? "utm" : null,
+    selectedBuildingCode ? (defaultCampus ?? null) : null,
   );
   const [activeEntranceId, setActiveEntranceId] = useState<string | null>(null);
   const [mapDetailMeetingId, setMapDetailMeetingId] = useState<string | null>(null);
@@ -76,8 +81,8 @@ export function CampusExplorer({
   );
   const selectedMeetingCampus = selectedMeeting ? meetingGapwiseCampus(selectedMeeting) : null;
   const inferredCampusId = useMemo(
-    () => inferredCampusForMeetings(mapProps.meetings),
-    [mapProps.meetings],
+    () => inferredCampusForMeetings(mapProps.meetings, campusIds),
+    [mapProps.meetings, campusIds],
   );
   // A public UTM building deep link is explicitly campus-scoped. Otherwise an empty or
   // unresolved schedule must ask the user instead of silently turning "unknown" into UTM.
@@ -85,7 +90,7 @@ export function CampusExplorer({
     campusOverride ??
     selectedMeetingCampus ??
     inferredCampusId ??
-    (selectedBuildingCode ? "utm" : null);
+    (selectedBuildingCode || campusIds.length === 1 ? (defaultCampus ?? null) : null);
   const activeMeetings = useMemo(
     () =>
       activeCampusId
@@ -95,7 +100,10 @@ export function CampusExplorer({
   );
   // UTSG/UTSC building maps are live before their pedestrian graphs are promoted
   // into the product route engine. Never reinterpret external-campus segments as UTM routes.
-  const activeSegments = activeCampusId === "utm" ? mapProps.segments : [];
+  const activeSegments =
+    activeCampusId && university?.routableCampuses.includes(activeCampusId)
+      ? mapProps.segments
+      : [];
 
   const routeContentKey = useMemo(
     () =>
@@ -221,7 +229,7 @@ export function CampusExplorer({
   if (!activeCampusId) {
     return (
       <section className="surface flex min-h-96 flex-col items-center justify-center p-6 text-center">
-        <p className="eyebrow text-accent">University of Toronto</p>
+        <p className="eyebrow text-accent">{university?.name ?? "Gapwise"}</p>
         <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight">
           Choose a campus map
         </h2>
@@ -230,7 +238,7 @@ export function CampusExplorer({
           explore; unknown locations will stay unknown.
         </p>
         <div className="mt-5 grid w-full max-w-sm grid-cols-3 gap-2" aria-label="Campus map">
-          {CAMPUS_IDS.map((campus) => (
+          {campusIds.map((campus) => (
             <button
               key={campus}
               type="button"
@@ -352,7 +360,7 @@ export function CampusExplorer({
           className="mb-2 grid grid-cols-3 gap-1 rounded-xl border border-border bg-popover/96 p-1 shadow-lg backdrop-blur"
           aria-label="Campus map"
         >
-          {CAMPUS_IDS.map((campus) => (
+          {campusIds.map((campus) => (
             <button
               key={campus}
               type="button"
@@ -394,13 +402,7 @@ export function CampusExplorer({
                 selectResult(results[0]);
               }
             }}
-            placeholder={
-              activeCampusId === "utm"
-                ? "Search MN, Deerfield, Kaneff…"
-                : activeCampusId === "utsg"
-                  ? "Search BA, Bahen, Sidney Smith…"
-                  : "Search AA, Highland, Kina Wiya…"
-            }
+            placeholder={`Search ${CAMPUS_SHORT_LABELS[activeCampusId]} building codes or names…`}
             aria-describedby="campus-search-help"
             className="h-11 w-full rounded-xl border border-border bg-popover/96 pl-10 pr-3 text-sm text-popover-foreground shadow-lg outline-none backdrop-blur focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/30"
           />

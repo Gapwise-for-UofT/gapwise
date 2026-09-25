@@ -1,4 +1,5 @@
 import type { BuildingConfiguration } from "@/data/utm/building-registry";
+import { getCampusBuilding, type BuildingEntrance } from "@/data/utm/routing-buildings";
 import { UTM_BUILDINGS } from "@/data/utm/building-registry";
 import {
   CAMPUS_BUILDING_FOOTPRINTS as UTM_FOOTPRINTS,
@@ -8,16 +9,23 @@ import {
   type FootprintCoordinate,
 } from "@/data/utm/building-footprints";
 import type { Campus } from "@/lib/timetable-types";
+import manifest from "../../../universities.json";
 import utsgBuildingsRaw from "./utsg/buildings.json?raw";
 import utsgFootprintsRaw from "./utsg/buildings.geojson?raw";
 import utscBuildingsRaw from "./utsc/buildings.json?raw";
 import utscFootprintsRaw from "./utsc/buildings.geojson?raw";
+import carletonCatalogRaw from "./carleton/catalog.json?raw";
 
-export type GapwiseCampusId = "utm" | "utsg" | "utsc";
+const universityCatalogRaw: Record<string, string> = {
+  carleton: carletonCatalogRaw,
+  // GAPWISE_CAMPUS_CATALOG_REGISTRY: the CLI inserts new catalog imports here.
+};
+
+export type GapwiseCampusId = string;
 
 type ExternalBuildingRecord = {
   id: string;
-  campus: "utsg" | "utsc";
+  campus: string;
   code: string;
   name: string;
   category: "academic" | "residence" | "facility";
@@ -28,7 +36,7 @@ type ExternalBuildingRecord = {
 };
 
 type ExternalRegistry = {
-  campus: "utsg" | "utsc";
+  campus: string;
   generatedAt: string;
   buildings: ExternalBuildingRecord[];
 };
@@ -64,17 +72,88 @@ const utscRegistry = JSON.parse(utscBuildingsRaw) as ExternalRegistry;
 const utsgFootprints = JSON.parse(utsgFootprintsRaw) as CampusFootprintCollection;
 const utscFootprints = JSON.parse(utscFootprintsRaw) as CampusFootprintCollection;
 
-const EXTERNAL_REGISTRIES = {
+type UniversityCatalog = {
+  campus?: { bounds?: [[number, number], [number, number]] | null };
+  sources: Array<{ id: string; title: string; url: string; retrievedAt: string }>;
+  buildings: Array<{
+    id: string;
+    name: string;
+    nativeCodes: string[];
+    aliases: string[];
+    geometry: CampusFootprintGeometry | null;
+  }>;
+  entrances: Array<{
+    id: string;
+    buildingId: string;
+    coordinate: [number, number];
+    pathNodeId: string;
+    access: BuildingEntrance["access"];
+    provenance: Array<{
+      sourceId: string;
+      verification: "source-backed" | "field-reviewed" | "inferred";
+    }>;
+  }>;
+};
+const universityCatalogs: Record<string, UniversityCatalog> = Object.fromEntries(
+  Object.entries(universityCatalogRaw).map(([id, raw]) => [
+    id,
+    JSON.parse(raw) as UniversityCatalog,
+  ]),
+);
+
+const EXTERNAL_REGISTRIES: Record<string, ExternalRegistry> = {
   utsg: utsgRegistry,
   utsc: utscRegistry,
+  ...Object.fromEntries(
+    Object.entries(universityCatalogs).map(([campus, catalog]) => [
+      campus,
+      {
+        campus,
+        generatedAt: "",
+        buildings: catalog.buildings.map((building) => ({
+          id: building.id,
+          campus,
+          code: building.nativeCodes[0] ?? building.id,
+          name: building.name,
+          category: "facility" as const,
+          aliases: [building.id, ...building.aliases, ...building.nativeCodes.slice(1)],
+        })),
+      },
+    ]),
+  ),
 } as const;
 
-const EXTERNAL_FOOTPRINTS = {
+const EXTERNAL_FOOTPRINTS: Record<string, CampusFootprintCollection> = {
   utsg: utsgFootprints,
   utsc: utscFootprints,
+  ...Object.fromEntries(
+    Object.entries(universityCatalogs).map(([campus, catalog]) => [
+      campus,
+      {
+        type: "FeatureCollection" as const,
+        features: catalog.buildings.flatMap((building) =>
+          building.geometry
+            ? [
+                {
+                  type: "Feature" as const,
+                  id: building.id,
+                  properties: {
+                    campus,
+                    buildingId: building.id,
+                    buildingCode: building.nativeCodes[0] ?? building.id,
+                    name: building.name,
+                  },
+                  geometry: building.geometry,
+                },
+              ]
+            : [],
+        ),
+      },
+    ]),
+  ),
 } as const;
 
-const CAMPUS_FALLBACK_BOUNDS: Record<GapwiseCampusId, [[number, number], [number, number]]> = {
+const CAMPUS_FALLBACK_BOUNDS: Record<string, [[number, number], [number, number]]> = {
   utm: [
     [-79.6765, 43.5415],
     [-79.6535, 43.5585],
@@ -87,25 +166,42 @@ const CAMPUS_FALLBACK_BOUNDS: Record<GapwiseCampusId, [[number, number], [number
     [-79.205, 43.772],
     [-79.165, 43.7995],
   ],
+  ...Object.fromEntries(
+    Object.entries(universityCatalogs)
+      .filter(([, catalog]) => catalog.campus?.bounds)
+      .map(([id, catalog]) => [id, catalog.campus!.bounds!]),
+  ),
 };
 
-export const CAMPUS_LABELS: Record<GapwiseCampusId, string> = {
+export const CAMPUS_LABELS: Record<string, string> = {
   utm: "University of Toronto Mississauga",
   utsg: "University of Toronto St. George",
   utsc: "University of Toronto Scarborough",
+  ...Object.fromEntries(
+    manifest.universities.flatMap((university) =>
+      university.id === "uoft"
+        ? []
+        : university.campuses.map((campus) => [campus, university.name]),
+    ),
+  ),
 };
 
-export const CAMPUS_SHORT_LABELS: Record<GapwiseCampusId, string> = {
+export const CAMPUS_SHORT_LABELS: Record<string, string> = {
   utm: "UTM",
   utsg: "UTSG",
   utsc: "UTSC",
+  ...Object.fromEntries(
+    manifest.universities.flatMap((university) =>
+      university.id === "uoft"
+        ? []
+        : university.campuses.map((campus) => [campus, university.shortName]),
+    ),
+  ),
 };
 
 export function gapwiseCampusIdForCampus(campus: Campus | undefined): GapwiseCampusId | null {
-  if (campus === "UTM") return "utm";
-  if (campus === "UTSG") return "utsg";
-  if (campus === "UTSC") return "utsc";
-  return null;
+  const id = campus?.toLowerCase();
+  return id && id in CONFIGURATIONS ? (id as GapwiseCampusId) : null;
 }
 
 function normalizeText(value: string) {
@@ -121,8 +217,8 @@ function unique(values: readonly string[]) {
   return [...new Set(values.filter(Boolean))];
 }
 
-function externalConfigurations(campusId: "utsg" | "utsc"): BuildingConfiguration[] {
-  return EXTERNAL_REGISTRIES[campusId].buildings
+function externalConfigurations(campusId: string): BuildingConfiguration[] {
+  return (EXTERNAL_REGISTRIES[campusId]?.buildings ?? [])
     .filter((building) => building.status !== "inactive")
     .map((building) => ({
       code: building.code.toUpperCase(),
@@ -136,10 +232,13 @@ function externalConfigurations(campusId: "utsg" | "utsc"): BuildingConfiguratio
     }));
 }
 
-const CONFIGURATIONS: Record<GapwiseCampusId, BuildingConfiguration[]> = {
+const CONFIGURATIONS: Record<string, BuildingConfiguration[]> = {
   utm: UTM_BUILDINGS,
   utsg: externalConfigurations("utsg"),
   utsc: externalConfigurations("utsc"),
+  ...Object.fromEntries(
+    Object.keys(universityCatalogs).map((id) => [id, externalConfigurations(id)]),
+  ),
 };
 
 // U of T Student Life's current St. George residence map groups these canonical
@@ -172,9 +271,11 @@ const UTSG_RESIDENCE_CODES = new Set([
 
 export function campusResidenceBuildings(campusId: GapwiseCampusId): BuildingConfiguration[] {
   if (campusId === "utsg") {
-    return CONFIGURATIONS.utsg.filter((building) => UTSG_RESIDENCE_CODES.has(building.code));
+    return (CONFIGURATIONS["utsg"] ?? []).filter((building) =>
+      UTSG_RESIDENCE_CODES.has(building.code),
+    );
   }
-  return CONFIGURATIONS[campusId].filter((building) => building.category === "residence");
+  return (CONFIGURATIONS[campusId] ?? []).filter((building) => building.category === "residence");
 }
 
 export function getResidenceBuildingForCampus(
@@ -191,14 +292,62 @@ export function getResidenceBuildingForCampus(
 }
 
 export function campusBuildingConfigurations(campusId: GapwiseCampusId) {
-  return CONFIGURATIONS[campusId];
+  return CONFIGURATIONS[campusId] ?? [];
+}
+
+/** Attribution attached to the campus overlay, separate from the basemap attribution. */
+export function campusMapAttribution(campusId: GapwiseCampusId): string | undefined {
+  const sources = universityCatalogs[campusId]?.sources ?? [];
+  return sources.some((source) => source.url?.startsWith("https://www.openstreetmap.org"))
+    ? '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors · ODbL</a>'
+    : undefined;
+}
+
+/** Canonical mapped doors for the selected campus, preserving unknown access facts. */
+export function campusBuildingEntrances(
+  campusId: GapwiseCampusId,
+  code: string | null,
+): BuildingEntrance[] {
+  if (!code) return [];
+  if (campusId === "utm") return getCampusBuilding(code)?.entrances ?? [];
+  const catalog = universityCatalogs[campusId];
+  if (!catalog) return [];
+  const identity = getCampusBuildingIdentity(campusId, code);
+  if (!identity) return [];
+  const building = catalog.buildings.find((item) => item.nativeCodes[0] === identity.code);
+  if (!building) return [];
+  return catalog.entrances
+    .filter((entrance) => entrance.buildingId === building.id)
+    .map((entrance) => {
+      const provenance = entrance.provenance[0];
+      const source = catalog.sources.find((item) => item.id === provenance?.sourceId);
+      return {
+        id: entrance.id,
+        label: `${building.name} mapped entrance`,
+        kind: "entrance",
+        coordinates: entrance.coordinate,
+        routingNodeId: entrance.pathNodeId,
+        accessibility: "unknown",
+        access: entrance.access,
+        direction: "unknown",
+        preferredForRouting: false,
+        verificationMethod: provenance?.verification ?? "unknown",
+        sourceIdentifier: source?.id ?? "unknown",
+        metadata: {
+          source: source?.title ?? "Gapwise Data",
+          sourceUrl: source?.url ?? "",
+          lastVerified: source?.retrievedAt ?? "",
+          verificationStatus: provenance?.verification === "inferred" ? "inferred" : "verified",
+        },
+      };
+    });
 }
 
 export function getCampusBuildingIdentity(campusId: GapwiseCampusId, value: string | null) {
   if (!value) return null;
   const normalized = normalizeText(value);
   return (
-    CONFIGURATIONS[campusId].find((building) =>
+    CONFIGURATIONS[campusId]?.find((building) =>
       [building.code, ...(building.aliases ?? [])].some(
         (candidate) => normalizeText(candidate) === normalized,
       ),
@@ -212,7 +361,7 @@ export function resolveCampusBuildingLocation(
 ): { building: BuildingConfiguration; room: string | null } | null {
   const normalized = normalizeText(raw ?? "");
   if (!normalized) return null;
-  const candidates = CONFIGURATIONS[campusId]
+  const candidates = (CONFIGURATIONS[campusId] ?? [])
     .flatMap((building) =>
       [building.code, ...(building.aliases ?? []), building.name].map((key) => ({
         building,
@@ -234,15 +383,15 @@ export function resolveCampusBuildingLocation(
   return null;
 }
 
-function externalFootprints(campusId: "utsg" | "utsc") {
-  return EXTERNAL_FOOTPRINTS[campusId].features;
+function externalFootprints(campusId: Exclude<GapwiseCampusId, "utm">) {
+  return EXTERNAL_FOOTPRINTS[campusId]?.features ?? [];
 }
 
 export function campusFootprintCollection(campusId: GapwiseCampusId): CampusFootprintCollection {
   if (campusId === "utm") {
     return UTM_FOOTPRINTS as unknown as CampusFootprintCollection;
   }
-  return EXTERNAL_FOOTPRINTS[campusId];
+  return EXTERNAL_FOOTPRINTS[campusId] ?? { type: "FeatureCollection", features: [] };
 }
 
 export function getBuildingFootprintForCampus(
@@ -371,7 +520,13 @@ export function campusCameraBounds(
 ): [[number, number], [number, number]] {
   const features = campusFootprintCollection(campusId).features;
   const points = features.flatMap((feature) => campusFootprintGeometryPoints(feature.geometry));
-  if (!points.length) return CAMPUS_FALLBACK_BOUNDS[campusId];
+  if (!points.length)
+    return (
+      CAMPUS_FALLBACK_BOUNDS[campusId] ?? [
+        [-180, -90],
+        [180, 90],
+      ]
+    );
   let west = Number.POSITIVE_INFINITY;
   let south = Number.POSITIVE_INFINITY;
   let east = Number.NEGATIVE_INFINITY;

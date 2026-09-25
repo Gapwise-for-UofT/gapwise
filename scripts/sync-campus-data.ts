@@ -27,6 +27,38 @@ const campusSnapshots = [
   source: resolve(dataRepoRoot, "data", path),
   target: resolve(repoRoot, "src/data/campuses", path),
 }));
+const universityManifest = JSON.parse(
+  await readFile(resolve(repoRoot, "universities.json"), "utf8"),
+) as {
+  universities: Array<{ id: string; dataPaths: string[] }>;
+};
+const universitySnapshots = universityManifest.universities.flatMap((university) =>
+  university.dataPaths
+    .filter(
+      (path) => path.startsWith(`universities/${university.id}/`) && path.endsWith("/campus.json"),
+    )
+    .map((path) => ({
+      id: university.id,
+      path,
+      source: resolve(dataRepoRoot, path),
+      target: resolve(repoRoot, `src/data/campuses/${university.id}/campus.json`),
+      catalog: resolve(repoRoot, `src/data/campuses/${university.id}/catalog.json`),
+    })),
+);
+
+async function universityCatalogBytes(source: string): Promise<string> {
+  const campus = JSON.parse(await readFile(source, "utf8"));
+  return `${JSON.stringify(
+    {
+      campus: campus.campus,
+      sources: campus.sources,
+      buildings: campus.buildings,
+      entrances: campus.entrances,
+    },
+    null,
+    2,
+  )}\n`;
+}
 
 if ([checkOnly, write, publish].filter(Boolean).length !== 1) {
   console.error("Choose exactly one mode: --check, --write, or --publish.");
@@ -158,6 +190,28 @@ for (const snapshot of campusSnapshots) {
   }
 }
 
+for (const snapshot of universitySnapshots) {
+  if (!existsSync(snapshot.source)) {
+    if (!existsSync(snapshot.target)) {
+      differences.push(`campus snapshot is missing in gapwise: ${snapshot.path}`);
+    }
+  } else {
+    if (!existsSync(snapshot.target)) {
+      differences.push(`campus snapshot is missing in gapwise: ${snapshot.path}`);
+    } else {
+      const [sourceBytes, targetBytes] = await Promise.all([
+        readFile(snapshot.source),
+        readFile(snapshot.target),
+      ]);
+      if (!sourceBytes.equals(targetBytes)) differences.push(`content differs: ${snapshot.path}`);
+    }
+    const expected = await universityCatalogBytes(snapshot.source);
+    if (!existsSync(snapshot.catalog) || (await readFile(snapshot.catalog, "utf8")) !== expected) {
+      differences.push(`${snapshot.id} building catalog is stale`);
+    }
+  }
+}
+
 if (checkOnly) {
   if (differences.length > 0) {
     console.error("Campus data mirror differs from Gapwise-for-UofT/data:");
@@ -186,6 +240,13 @@ for (const snapshot of campusSnapshots) {
   await mkdir(dirname(snapshot.target), { recursive: true });
   await copyFile(snapshot.source, snapshot.target);
 }
+for (const snapshot of universitySnapshots) {
+  if (existsSync(snapshot.source)) {
+    await mkdir(dirname(snapshot.target), { recursive: true });
+    await copyFile(snapshot.source, snapshot.target);
+    await writeFile(snapshot.catalog, await universityCatalogBytes(snapshot.source));
+  }
+}
 console.log(
-  `Synced ${sourceFiles.length} canonical UTM files, the public UTM snapshot, and ${campusSnapshots.length} UTSG/UTSC snapshots.`,
+  `Synced ${sourceFiles.length} UTM files, ${campusSnapshots.length} tri-campus snapshots, and ${universitySnapshots.length} university snapshots.`,
 );

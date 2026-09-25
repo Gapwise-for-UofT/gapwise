@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 import { AppUpdatePrompt } from "@/components/AppUpdatePrompt";
+import { activeUniversity } from "@/universities/registry";
 
 function NotFoundComponent() {
   return (
@@ -111,6 +112,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  if (!activeUniversity()) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
+        <div>
+          <h1 className="font-display text-2xl font-semibold">University edition unavailable</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This hostname is not registered with Gapwise.
+          </p>
+          <a className="mt-4 inline-block text-accent underline" href="https://gapwise.ca">
+            Open Gapwise
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

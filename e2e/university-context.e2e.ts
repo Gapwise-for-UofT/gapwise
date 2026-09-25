@@ -148,8 +148,12 @@ test("TMU, Queen's, and Laurier use canonical product screens and single-campus 
 
   // TMU
   await page.goto("/?university=tmu");
-  await expect(page.getByText("For Toronto Metropolitan University", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Import (MyServiceHub|pasted schedule)/ })).toBeVisible();
+  await expect(
+    page.getByText("For Toronto Metropolitan University", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Import (MyServiceHub|pasted schedule)/ }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Try a demo" }).click();
   await expect(page).toHaveURL(/\/timetable/);
   await expect(page.getByText("CPS 109").first()).toBeVisible();

@@ -17,12 +17,20 @@
   ],
   "tags": [
     {
+      "name": "Universities",
+      "description": "Supported university editions across the Gapwise multi-institution network."
+    },
+    {
+      "name": "Campuses",
+      "description": "Canonical campus models, geographical boundaries, and pedestrian routing coverage."
+    },
+    {
       "name": "Metadata",
       "description": "API capabilities, versions, and privacy boundary."
     },
     {
       "name": "Buildings",
-      "description": "Canonical UTM building identity and conservative accessibility/provenance facts."
+      "description": "Canonical campus building identity, university/campus attribution, and accessibility facts."
     },
     {
       "name": "Places",
@@ -78,522 +86,6 @@
             "$ref": "#/components/responses/ApiError"
           }
         }
-      }
-    },
-    "/buildings": {
-      "get": {
-        "tags": [
-          "Buildings"
-        ],
-        "operationId": "listBuildings",
-        "summary": "Search and list canonical UTM buildings",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Case-insensitive substring search across canonical code, name, and aliases. Unicode is normalized before matching.",
-            "schema": {
-              "type": "string",
-              "maxLength": 120
-            },
-            "example": "instructional"
-          },
-          {
-            "name": "category",
-            "in": "query",
-            "schema": {
-              "enum": [
-                "academic",
-                "residence",
-                "facility"
-              ]
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Page size.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Zero-based deterministic collection offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Deterministically ordered building page.",
-            "headers": {
-              "X-Request-Id": {
-                "description": "Opaque request identifier for support and diagnostics.",
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "Cache-Control": {
-                "description": "Response caching policy.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BuildingsCollection"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "405": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "429": {
-            "$ref": "#/components/responses/ApiError"
-          }
-        }
-      }
-    },
-    "/routes": {
-      "post": {
-        "tags": [
-          "Routing"
-        ],
-        "operationId": "calculateRoute",
-        "summary": "Calculate a deterministic building-level route",
-        "description": "Always inspect status, routeVerification, accuracy, and warnings. An unavailable step-free result is safer than an invented accessible route.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RouteRequest"
-              },
-              "example": {
-                "from": "MN",
-                "to": "IB",
-                "preferences": {
-                  "mode": "fastest"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Route result.",
-            "headers": {
-              "X-Request-Id": {
-                "description": "Opaque request identifier for support and diagnostics.",
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "Cache-Control": {
-                "description": "Response caching policy.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RouteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "405": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "409": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "413": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "429": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "415": {
-            "$ref": "#/components/responses/ApiError"
-          }
-        }
-      }
-    },
-    "/gaps/plan": {
-      "post": {
-        "tags": [
-          "Gap planning"
-        ],
-        "operationId": "planGap",
-        "summary": "Assess an explicitly supplied free interval",
-        "description": "Accepts only an explicit interval and boundary buildings. It does not accept, retrieve, or store a timetable.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GapPlanRequest"
-              },
-              "example": {
-                "from": "MN",
-                "to": "IB",
-                "term": "Fall",
-                "weekday": "Wednesday",
-                "startTime": 660,
-                "endTime": 780
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Route-aware deterministic gap assessment.",
-            "headers": {
-              "X-Request-Id": {
-                "description": "Opaque request identifier for support and diagnostics.",
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "Cache-Control": {
-                "description": "Response caching policy.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GapPlanResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "405": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "409": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "413": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "429": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "415": {
-            "$ref": "#/components/responses/ApiError"
-          }
-        }
-      }
-    },
-    "/places": {
-      "get": {
-        "tags": [
-          "Places"
-        ],
-        "operationId": "listPlaces",
-        "summary": "Discover source-backed campus places",
-        "description": "Filters combine with AND semantics. openNow=unknown is the safe way to discover places whose operating state cannot be determined. Results with unknown availability are never treated as closed.",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Case-insensitive substring search across place names and amenities.",
-            "schema": {
-              "type": "string",
-              "maxLength": 120
-            }
-          },
-          {
-            "name": "kind",
-            "in": "query",
-            "schema": {
-              "enum": [
-                "dining",
-                "study",
-                "library",
-                "service",
-                "recreation",
-                "amenity",
-                "facility"
-              ]
-            }
-          },
-          {
-            "name": "building",
-            "in": "query",
-            "description": "Canonical building code.",
-            "schema": {
-              "type": "string",
-              "pattern": "^[A-Z0-9]{1,12}$"
-            }
-          },
-          {
-            "name": "openNow",
-            "in": "query",
-            "schema": {
-              "enum": [
-                "open",
-                "closed",
-                "unknown"
-              ]
-            },
-            "description": "Filter by evaluated availability. Requests using this time-dependent filter are not cached."
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Page size.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Zero-based deterministic collection offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Deterministically ordered place page with source-dependent availability.",
-            "headers": {
-              "X-Request-Id": {
-                "description": "Opaque request identifier for support and diagnostics.",
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "Cache-Control": {
-                "description": "Response caching policy.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PlacesCollection"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "405": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "429": {
-            "$ref": "#/components/responses/ApiError"
-          }
-        }
-      }
-    },
-    "/buildings/{building}": {
-      "get": {
-        "tags": [
-          "Buildings"
-        ],
-        "operationId": "getBuilding",
-        "summary": "Resolve one building by canonical code, exact name, or alias",
-        "parameters": [
-          {
-            "name": "building",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 240
-            },
-            "example": "MN"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Resolved canonical building.",
-            "headers": {
-              "X-Request-Id": {
-                "description": "Opaque request identifier for support and diagnostics.",
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "Cache-Control": {
-                "description": "Response caching policy.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BuildingResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "405": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "409": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "429": {
-            "$ref": "#/components/responses/ApiError"
-          }
-        }
-      }
-    },
-    "/places/{placeId}": {
-      "get": {
-        "tags": [
-          "Places"
-        ],
-        "operationId": "getPlace",
-        "summary": "Get one canonical campus place",
-        "parameters": [
-          {
-            "name": "placeId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-            },
-            "example": "utm-library"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Source-backed campus place.",
-            "headers": {
-              "X-Request-Id": {
-                "description": "Opaque request identifier for support and diagnostics.",
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "Cache-Control": {
-                "description": "Response caching policy.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PlaceResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "405": {
-            "$ref": "#/components/responses/ApiError"
-          },
-          "429": {
-            "$ref": "#/components/responses/ApiError"
-          }
-        }
-      }
-    },
-    "/api/utm-buildings": {
-      "get": {
-        "tags": [
-          "Legacy compatibility"
-        ],
-        "operationId": "listUtmBuildings",
-        "summary": "List canonical UTM buildings",
-        "responses": {
-          "200": {
-            "description": "Canonical building inventory with routing coverage and provenance.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "service",
-                    "buildings"
-                  ],
-                  "properties": {
-                    "service": {
-                      "const": "gapwise-public-campus"
-                    },
-                    "buildings": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Building"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "servers": [
-          {
-            "url": "https://gapwise.ca",
-            "description": "Legacy compatibility origin"
-          }
-        ],
-        "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
       }
     },
     "/api/utm-building": {
@@ -655,62 +147,38 @@
         "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
       }
     },
-    "/api/utm-route": {
-      "post": {
+    "/api/utm-buildings": {
+      "get": {
         "tags": [
           "Legacy compatibility"
         ],
-        "operationId": "routeBetweenUtmBuildings",
-        "summary": "Plan a deterministic building-to-building campus route",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RouteRequest"
-              },
-              "examples": {
-                "mnToIb": {
-                  "value": {
-                    "from": "MN",
-                    "to": "IB"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "operationId": "listUtmBuildings",
+        "summary": "List canonical UTM buildings",
         "responses": {
           "200": {
-            "description": "Route result. Always inspect status, accuracy, routeVerification, and warnings.",
+            "description": "Canonical building inventory with routing coverage and provenance.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
                     "service",
-                    "route"
+                    "buildings"
                   ],
                   "properties": {
                     "service": {
                       "const": "gapwise-public-campus"
                     },
-                    "route": {
-                      "$ref": "#/components/schemas/Route"
+                    "buildings": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Building"
+                      }
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/LegacyApiError"
-          },
-          "404": {
-            "$ref": "#/components/responses/LegacyApiError"
-          },
-          "409": {
-            "$ref": "#/components/responses/LegacyApiError"
           }
         },
         "deprecated": true,
@@ -795,59 +263,6 @@
         "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
       }
     },
-    "/api/utm-places": {
-      "get": {
-        "tags": [
-          "Legacy compatibility"
-        ],
-        "operationId": "listUtmPlaces",
-        "summary": "List source-backed UTM campus places",
-        "responses": {
-          "200": {
-            "description": "Versioned place snapshot with explicit provenance and freshness.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "service",
-                    "dataVersion",
-                    "generatedAt",
-                    "places"
-                  ],
-                  "properties": {
-                    "service": {
-                      "const": "gapwise-public-campus"
-                    },
-                    "dataVersion": {
-                      "type": "string"
-                    },
-                    "generatedAt": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "places": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/LegacyCampusPlace"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "servers": [
-          {
-            "url": "https://gapwise.ca",
-            "description": "Legacy compatibility origin"
-          }
-        ],
-        "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
-      }
-    },
     "/api/utm-place": {
       "get": {
         "tags": [
@@ -904,6 +319,913 @@
           }
         ],
         "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
+      }
+    },
+    "/api/utm-places": {
+      "get": {
+        "tags": [
+          "Legacy compatibility"
+        ],
+        "operationId": "listUtmPlaces",
+        "summary": "List source-backed UTM campus places",
+        "responses": {
+          "200": {
+            "description": "Versioned place snapshot with explicit provenance and freshness.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "service",
+                    "dataVersion",
+                    "generatedAt",
+                    "places"
+                  ],
+                  "properties": {
+                    "service": {
+                      "const": "gapwise-public-campus"
+                    },
+                    "dataVersion": {
+                      "type": "string"
+                    },
+                    "generatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "places": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LegacyCampusPlace"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "servers": [
+          {
+            "url": "https://gapwise.ca",
+            "description": "Legacy compatibility origin"
+          }
+        ],
+        "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
+      }
+    },
+    "/api/utm-route": {
+      "post": {
+        "tags": [
+          "Legacy compatibility"
+        ],
+        "operationId": "routeBetweenUtmBuildings",
+        "summary": "Plan a deterministic building-to-building campus route",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteRequest"
+              },
+              "examples": {
+                "mnToIb": {
+                  "value": {
+                    "from": "MN",
+                    "to": "IB"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route result. Always inspect status, accuracy, routeVerification, and warnings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "service",
+                    "route"
+                  ],
+                  "properties": {
+                    "service": {
+                      "const": "gapwise-public-campus"
+                    },
+                    "route": {
+                      "$ref": "#/components/schemas/Route"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/LegacyApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/LegacyApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/LegacyApiError"
+          }
+        },
+        "deprecated": true,
+        "servers": [
+          {
+            "url": "https://gapwise.ca",
+            "description": "Legacy compatibility origin"
+          }
+        ],
+        "description": "Backwards-compatible alias; new integrations should use api.gapwise.ca/v1."
+      }
+    },
+    "/buildings": {
+      "get": {
+        "tags": [
+          "Buildings"
+        ],
+        "operationId": "listBuildings",
+        "summary": "Search and list canonical UTM buildings",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Case-insensitive substring search across canonical code, name, and aliases. Unicode is normalized before matching.",
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "example": "instructional"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "academic",
+                "residence",
+                "facility"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based deterministic collection offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "university",
+            "in": "query",
+            "description": "Filter by supported university identifier (e.g. uoft, carleton, queens). Defaults to uoft when omitted.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          },
+          {
+            "name": "campus",
+            "in": "query",
+            "description": "Filter by canonical campus identifier (e.g. utm, carleton, keele). Defaults to the university's default campus.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deterministically ordered building page.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildingsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "405": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/buildings/{building}": {
+      "get": {
+        "tags": [
+          "Buildings"
+        ],
+        "operationId": "getBuilding",
+        "summary": "Resolve one building by canonical code, exact name, or alias",
+        "parameters": [
+          {
+            "name": "building",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "example": "MN"
+          },
+          {
+            "name": "university",
+            "in": "query",
+            "description": "Filter by supported university identifier (e.g. uoft, carleton, queens). Defaults to uoft when omitted.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          },
+          {
+            "name": "campus",
+            "in": "query",
+            "description": "Filter by canonical campus identifier (e.g. utm, carleton, keele). Defaults to the university's default campus.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resolved canonical building.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "405": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/campuses": {
+      "get": {
+        "tags": [
+          "Campuses"
+        ],
+        "operationId": "listCampuses",
+        "summary": "List canonical campus models across all supported universities",
+        "parameters": [
+          {
+            "name": "university",
+            "in": "query",
+            "description": "Filter campuses by university identifier (e.g. uoft, carleton).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of canonical campus models.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusCollectionResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/campuses/{id}": {
+      "get": {
+        "tags": [
+          "Campuses"
+        ],
+        "operationId": "getCampus",
+        "summary": "Get a single canonical campus model by identifier",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Campus identifier (e.g. utm, carleton, keele).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campus model metadata.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/gaps/plan": {
+      "post": {
+        "tags": [
+          "Gap planning"
+        ],
+        "operationId": "planGap",
+        "summary": "Assess an explicitly supplied free interval",
+        "description": "Accepts only an explicit interval and boundary buildings. It does not accept, retrieve, or store a timetable.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GapPlanRequest"
+              },
+              "example": {
+                "from": "MN",
+                "to": "IB",
+                "term": "Fall",
+                "weekday": "Wednesday",
+                "startTime": 660,
+                "endTime": 780
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route-aware deterministic gap assessment.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GapPlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "405": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "413": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "415": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/places": {
+      "get": {
+        "tags": [
+          "Places"
+        ],
+        "operationId": "listPlaces",
+        "summary": "Discover source-backed campus places",
+        "description": "Filters combine with AND semantics. openNow=unknown is the safe way to discover places whose operating state cannot be determined. Results with unknown availability are never treated as closed.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Case-insensitive substring search across place names and amenities.",
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "dining",
+                "study",
+                "library",
+                "service",
+                "recreation",
+                "amenity",
+                "facility"
+              ]
+            }
+          },
+          {
+            "name": "building",
+            "in": "query",
+            "description": "Canonical building code.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]{1,12}$"
+            }
+          },
+          {
+            "name": "openNow",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "open",
+                "closed",
+                "unknown"
+              ]
+            },
+            "description": "Filter by evaluated availability. Requests using this time-dependent filter are not cached."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based deterministic collection offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "university",
+            "in": "query",
+            "description": "Filter by supported university identifier (e.g. uoft, carleton, queens). Defaults to uoft when omitted.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          },
+          {
+            "name": "campus",
+            "in": "query",
+            "description": "Filter by canonical campus identifier (e.g. utm, carleton, keele). Defaults to the university's default campus.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deterministically ordered place page with source-dependent availability.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlacesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "405": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/places/{placeId}": {
+      "get": {
+        "tags": [
+          "Places"
+        ],
+        "operationId": "getPlace",
+        "summary": "Get one canonical campus place",
+        "parameters": [
+          {
+            "name": "placeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "example": "utm-library"
+          },
+          {
+            "name": "university",
+            "in": "query",
+            "description": "Filter by supported university identifier (e.g. uoft, carleton, queens). Defaults to uoft when omitted.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          },
+          {
+            "name": "campus",
+            "in": "query",
+            "description": "Filter by canonical campus identifier (e.g. utm, carleton, keele). Defaults to the university's default campus.",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "example": "carleton"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Source-backed campus place.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "405": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/routes": {
+      "post": {
+        "tags": [
+          "Routing"
+        ],
+        "operationId": "calculateRoute",
+        "summary": "Calculate a deterministic building-level route",
+        "description": "Always inspect status, routeVerification, accuracy, and warnings. An unavailable step-free result is safer than an invented accessible route.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteRequest"
+              },
+              "example": {
+                "from": "MN",
+                "to": "IB",
+                "preferences": {
+                  "mode": "fastest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route result.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "405": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "413": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "415": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/universities": {
+      "get": {
+        "tags": [
+          "Universities"
+        ],
+        "operationId": "listUniversities",
+        "summary": "List supported universities across the Gapwise platform",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of supported universities with canonical editions and campus models.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UniversityCollectionResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/universities/{id}": {
+      "get": {
+        "tags": [
+          "Universities"
+        ],
+        "operationId": "getUniversity",
+        "summary": "Get a single supported university edition by identifier",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "University identifier (e.g. uoft, carleton, queens).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "University edition metadata.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Opaque request identifier for support and diagnostics.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Response caching policy.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UniversityResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
       }
     }
   },
@@ -1025,6 +1347,12 @@
             "items": {
               "$ref": "#/components/schemas/Provenance"
             }
+          },
+          "university": {
+            "type": "string"
+          },
+          "campus": {
+            "type": "string"
           }
         }
       },
@@ -1089,6 +1417,12 @@
           },
           "preferences": {
             "$ref": "#/components/schemas/RoutePreferencesInput"
+          },
+          "university": {
+            "type": "string"
+          },
+          "campus": {
+            "type": "string"
           }
         }
       },
@@ -1327,6 +1661,12 @@
           },
           "gapPreferences": {
             "$ref": "#/components/schemas/GapPreferencesInput"
+          },
+          "university": {
+            "type": "string"
+          },
+          "campus": {
+            "type": "string"
           }
         }
       },
@@ -1693,6 +2033,12 @@
           },
           "availability": {
             "$ref": "#/components/schemas/PlaceAvailability"
+          },
+          "university": {
+            "type": "string"
+          },
+          "campus": {
+            "type": "string"
           }
         }
       },
@@ -2143,6 +2489,220 @@
           },
           "metadataProvenance": {
             "$ref": "#/components/schemas/CampusFactProvenance"
+          }
+        }
+      },
+      "CampusSummary": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "shortName",
+          "city",
+          "isMainCampus",
+          "routable",
+          "buildingCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "isMainCampus": {
+            "type": "boolean"
+          },
+          "routable": {
+            "type": "boolean"
+          },
+          "buildingCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "UniversityInfo": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "shortName",
+          "hostname",
+          "canonicalUrl",
+          "accentColor",
+          "campuses"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "canonicalUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "accentColor": {
+            "type": "string"
+          },
+          "campuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampusSummary"
+            }
+          }
+        }
+      },
+      "UniversityResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UniversityInfo"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        }
+      },
+      "UniversityCollectionResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UniversityInfo"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMeta"
+          }
+        }
+      },
+      "CampusInfo": {
+        "type": "object",
+        "required": [
+          "id",
+          "universityId",
+          "universityName",
+          "name",
+          "shortName",
+          "city",
+          "isMainCampus",
+          "routable",
+          "buildingCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "universityId": {
+            "type": "string"
+          },
+          "universityName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "isMainCampus": {
+            "type": "boolean"
+          },
+          "routable": {
+            "type": "boolean"
+          },
+          "centerCoordinates": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "bounds": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "buildingCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "entranceCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pathSegmentCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "CampusResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CampusInfo"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        }
+      },
+      "CampusCollectionResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampusInfo"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMeta"
           }
         }
       }

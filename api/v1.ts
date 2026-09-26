@@ -1,14 +1,25 @@
 import gapPlanHandler from "./utm-gap-plan.js";
 import routeHandler from "./utm-route.js";
 import { evaluateOpenNow } from "../src/features/campus-state/hours.js";
-import { CAMPUS_STATE_SNAPSHOT, getCampusPlace } from "../src/features/campus-state/snapshot.js";
+import {
+  CAMPUS_STATE_SNAPSHOT,
+  getCampusPlace,
+  listCampusPlaces,
+} from "../src/features/campus-state/snapshot.js";
 import type { CampusPlace, CampusPlaceKind } from "../src/features/campus-state/types.js";
 import { PUBLIC_CAMPUS_DATA_VERSION } from "../src/server/public-campus/data.js";
 import {
   getPublicBuilding,
   listPublicBuildings,
+  routeBetweenPublicBuildings,
   type PublicBuildingView,
 } from "../src/server/public-campus/service.js";
+import type { RoutePreferences } from "../src/features/routing/types.js";
+import {
+  allCampuses,
+  supportedUniversities,
+  universityById,
+} from "../src/universities/registry.js";
 
 const API_VERSION = "v1";
 const MAX_PAGE_SIZE = 100;
@@ -201,15 +212,60 @@ function collectionMeta(
   };
 }
 
+function listUniversities(url: URL, id: string) {
+  requireKnownQuery(url, ["id"]);
+  const targetId = singleQuery(url, "id");
+  if (targetId) {
+    const uni = universityById(targetId);
+    if (!uni) throw new V1Error(404, "university_not_found", "University not found.");
+    return respond(
+      uni,
+      { apiVersion: API_VERSION, dataVersion: PUBLIC_CAMPUS_DATA_VERSION, requestId: id },
+      "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+    );
+  }
+  const universities = supportedUniversities();
+  return respond(
+    universities,
+    { apiVersion: API_VERSION, dataVersion: PUBLIC_CAMPUS_DATA_VERSION, requestId: id },
+    "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+  );
+}
+
+function listCampusesHandler(url: URL, id: string) {
+  requireKnownQuery(url, ["university", "id"]);
+  const targetId = singleQuery(url, "id");
+  const targetUniversity = singleQuery(url, "university");
+  const campuses = allCampuses().filter((campus) => {
+    if (targetId && campus.id.toLowerCase() !== targetId.toLowerCase()) return false;
+    if (targetUniversity && campus.universityId.toLowerCase() !== targetUniversity.toLowerCase())
+      return false;
+    return true;
+  });
+  if (targetId && campuses.length === 0) {
+    throw new V1Error(404, "campus_not_found", "Campus not found.");
+  }
+  return respond(
+    targetId && campuses.length === 1 ? campuses[0] : campuses,
+    { apiVersion: API_VERSION, dataVersion: PUBLIC_CAMPUS_DATA_VERSION, requestId: id },
+    "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+  );
+}
+
 function listBuildings(url: URL, id: string) {
-  requireKnownQuery(url, ["q", "category", "limit", "offset"]);
+  requireKnownQuery(url, ["q", "category", "limit", "offset", "university", "campus"]);
   const q = singleQuery(url, "q");
   const category = singleQuery(url, "category");
+  const university = singleQuery(url, "university");
+  const campus = singleQuery(url, "campus");
   if (category && !BUILDING_CATEGORIES.has(category))
     throw new V1Error(400, "invalid_query", "category must be academic, residence, or facility.");
   const page = pagination(url);
   const needle = q ? normalize(q) : undefined;
-  const all = listPublicBuildings().filter((building) => {
+  const all = listPublicBuildings({
+    ...(university ? { university } : {}),
+    ...(campus ? { campus } : {}),
+  }).filter((building) => {
     if (category && building.category !== category) return false;
     return (
       !needle ||
@@ -219,7 +275,12 @@ function listBuildings(url: URL, id: string) {
     );
   });
   const data = all.slice(page.offset, page.offset + page.limit);
-  const filters = { ...(q ? { q } : {}), ...(category ? { category } : {}) };
+  const filters = {
+    ...(q ? { q } : {}),
+    ...(category ? { category } : {}),
+    ...(university ? { university } : {}),
+    ...(campus ? { campus } : {}),
+  };
   return respond(
     data,
     collectionMeta(id, PUBLIC_CAMPUS_DATA_VERSION, all.length, data.length, page, filters),
@@ -241,11 +302,22 @@ function publicPlace(place: CampusPlace, now: Date) {
 }
 
 function listPlaces(url: URL, id: string, now: Date) {
-  requireKnownQuery(url, ["q", "kind", "building", "openNow", "limit", "offset"]);
+  requireKnownQuery(url, [
+    "q",
+    "kind",
+    "building",
+    "openNow",
+    "limit",
+    "offset",
+    "university",
+    "campus",
+  ]);
   const q = singleQuery(url, "q");
   const kind = singleQuery(url, "kind");
   const building = singleQuery(url, "building")?.toUpperCase();
   const openNow = singleQuery(url, "openNow");
+  const university = singleQuery(url, "university");
+  const campus = singleQuery(url, "campus");
   if (kind && !PLACE_KINDS.has(kind as CampusPlaceKind))
     throw new V1Error(400, "invalid_query", `kind must be one of: ${[...PLACE_KINDS].join(", ")}.`);
   if (building && !/^[A-Z0-9]{1,12}$/.test(building))
@@ -254,7 +326,10 @@ function listPlaces(url: URL, id: string, now: Date) {
     throw new V1Error(400, "invalid_query", "openNow must be open, closed, or unknown.");
   const page = pagination(url);
   const needle = q ? normalize(q) : undefined;
-  const all = CAMPUS_STATE_SNAPSHOT.places
+  const all = listCampusPlaces({
+    ...(university ? { university } : {}),
+    ...(campus ? { campus } : {}),
+  })
     .map((place) => publicPlace(place, now))
     .filter((place) => {
       if (kind && place.kind !== kind) return false;
@@ -272,6 +347,8 @@ function listPlaces(url: URL, id: string, now: Date) {
     ...(kind ? { kind } : {}),
     ...(building ? { building } : {}),
     ...(openNow ? { openNow } : {}),
+    ...(university ? { university } : {}),
+    ...(campus ? { campus } : {}),
   };
   return respond(
     data,
@@ -354,6 +431,17 @@ export async function fetchV1(request: Request, now = new Date()) {
             placeAvailability: "source-dependent",
             routingModes: ["fastest", "prefer-indoor", "step-free"],
           },
+          supportedUniversities: supportedUniversities().map((uni) => ({
+            id: uni.id,
+            name: uni.name,
+            shortName: uni.shortName,
+            campuses: uni.campuses,
+            defaultCampus: uni.defaultCampus,
+            routableCampuses: uni.routableCampuses,
+            hosts: uni.hosts,
+            status: uni.status,
+          })),
+          supportedCampuses: allCampuses(),
           privacy: "Public campus intelligence only; no student or account data is exposed.",
         },
         {
@@ -365,17 +453,24 @@ export async function fetchV1(request: Request, now = new Date()) {
         "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
       );
     }
+    if (resource === "universities" || resource === "university") return listUniversities(url, id);
+    if (resource === "campuses" || resource === "campus") return listCampusesHandler(url, id);
     if (resource === "buildings") return listBuildings(url, id);
     if (resource === "building") {
-      requireKnownQuery(url, ["building"]);
+      requireKnownQuery(url, ["building", "university", "campus"]);
       const value = url.searchParams.get("building")?.trim() ?? "";
+      const university = singleQuery(url, "university");
+      const campus = singleQuery(url, "campus");
       if (!value || value.length > 240)
         throw new V1Error(
           400,
           "invalid_identifier",
           "A building code, exact name, or alias is required.",
         );
-      const result = getPublicBuilding(value);
+      const result = getPublicBuilding(value, {
+        ...(university ? { university } : {}),
+        ...(campus ? { campus } : {}),
+      });
       if (result.status === "not_found")
         throw new V1Error(404, "building_not_found", "Campus building not found.");
       if (result.status === "ambiguous")
@@ -393,11 +488,16 @@ export async function fetchV1(request: Request, now = new Date()) {
     }
     if (resource === "places") return listPlaces(url, id, now);
     if (resource === "place") {
-      requireKnownQuery(url, ["placeId"]);
+      requireKnownQuery(url, ["placeId", "university", "campus"]);
       const value = url.searchParams.get("placeId")?.trim() ?? "";
+      const university = singleQuery(url, "university");
+      const campus = singleQuery(url, "campus");
       if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
         throw new V1Error(400, "invalid_identifier", "A canonical place id is required.");
-      const place = getCampusPlace(value);
+      const place = getCampusPlace(value, {
+        ...(university ? { university } : {}),
+        ...(campus ? { campus } : {}),
+      });
       if (!place) throw new V1Error(404, "place_not_found", "Campus place not found.");
       return respond(
         publicPlace(place, now),
@@ -412,10 +512,40 @@ export async function fetchV1(request: Request, now = new Date()) {
     }
     if (resource === "routes") {
       requireKnownQuery(url, []);
-      await validateCanonicalBody(request, ["from", "to", "preferences"], {
-        preferences: ["mode", "walkingSpeedMps", "transitionBufferMinutes"],
+      await validateCanonicalBody(
+        request,
+        ["from", "to", "preferences", "university", "campus", "includeGeometry"],
+        {
+          preferences: ["mode", "walkingSpeedMps", "transitionBufferMinutes"],
+        },
+      );
+      const text = await request.clone().text();
+      const body = JSON.parse(text) as {
+        from: string;
+        to: string;
+        university?: string;
+        campus?: string;
+        preferences?: Partial<RoutePreferences>;
+      };
+      const result = routeBetweenPublicBuildings({
+        from: body.from,
+        to: body.to,
+        ...(body.university ? { university: body.university } : {}),
+        ...(body.campus ? { campus: body.campus } : {}),
+        ...(body.preferences ? { preferences: body.preferences } : {}),
       });
-      return await adaptLegacy(request, routeHandler, "route", id);
+      if ("error" in result) {
+        throw new V1Error(
+          result.error === "ambiguous_building" ? 409 : 404,
+          result.error,
+          result.message,
+        );
+      }
+      return respond(result, {
+        apiVersion: API_VERSION,
+        dataVersion: result.dataVersion,
+        requestId: id,
+      });
     }
     if (resource === "gap-plan") {
       requireKnownQuery(url, []);
@@ -430,6 +560,8 @@ export async function fetchV1(request: Request, now = new Date()) {
           "endTime",
           "routePreferences",
           "gapPreferences",
+          "university",
+          "campus",
         ],
         {
           routePreferences: ["mode", "walkingSpeedMps", "transitionBufferMinutes"],

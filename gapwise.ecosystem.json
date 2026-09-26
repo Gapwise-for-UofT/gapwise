@@ -53,8 +53,8 @@
   },
   "campusData": {
     "canonicalRepository": "https://github.com/GapwiseHQ/data",
-    "canonicalPath": "data/utm",
-    "coreMirrorPath": "src/data/utm",
+    "canonicalPath": "universities",
+    "coreMirrorPath": "src/data/campuses",
     "runtimeFetchRequired": false,
     "syncMode": "vendored-build-time-snapshot"
   },

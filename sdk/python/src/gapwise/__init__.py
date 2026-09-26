@@ -8,13 +8,24 @@ from .client import (
     GapwiseResponseError,
     GapwiseTransportError,
 )
-from .types import ApiInfo, Building, CampusPlace, Page, RouteResult
+from .types import (
+    ApiInfo,
+    Building,
+    CampusInfo,
+    CampusPlace,
+    CampusSummary,
+    Page,
+    RouteResult,
+    UniversityInfo,
+)
 
 __all__ = [
     "ApiInfo",
     "AsyncGapwise",
     "Building",
+    "CampusInfo",
     "CampusPlace",
+    "CampusSummary",
     "Gapwise",
     "GapwiseAPIError",
     "GapwiseError",
@@ -22,4 +33,5 @@ __all__ = [
     "GapwiseTransportError",
     "Page",
     "RouteResult",
+    "UniversityInfo",
 ]

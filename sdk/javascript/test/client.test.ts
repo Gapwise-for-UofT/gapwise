@@ -163,6 +163,61 @@ describe("Gapwise JavaScript SDK", () => {
       status: 502,
     });
   });
+  test("supports university and campus discovery and multi-campus operations", async () => {
+    const urls: string[] = [];
+    const client = new Gapwise({
+      fetch: mock((url) => {
+        urls.push(url);
+        if (url.includes("/universities/uoft")) {
+          return Response.json({ data: { id: "uoft", name: "University of Toronto" }, meta });
+        }
+        if (url.includes("/universities")) {
+          return Response.json({ data: [{ id: "uoft" }], meta });
+        }
+        if (url.includes("/campuses/carleton")) {
+          return Response.json({ data: { id: "carleton", name: "Carleton Campus" }, meta });
+        }
+        if (url.includes("/campuses")) {
+          return Response.json({ data: [{ id: "utm" }], meta });
+        }
+        if (url.includes("/buildings/TB")) {
+          return Response.json({ data: { code: "TB", university: "carleton" }, meta });
+        }
+        if (url.includes("/places/carleton-dining")) {
+          return Response.json({ data: { id: "carleton-dining", university: "carleton" }, meta });
+        }
+        return Response.json({ data: {}, meta });
+      }),
+    });
+
+    const unis = await client.universities.list({ limit: 10 });
+    expect(unis.data).toHaveLength(1);
+    const uoft = await client.universities.get("uoft");
+    expect(uoft.id).toBe("uoft");
+
+    const campuses = await client.campuses.list({ university: "uoft" });
+    expect(campuses.data).toHaveLength(1);
+    const carleton = await client.campuses.get("carleton");
+    expect(carleton.id).toBe("carleton");
+
+    const building = await client.buildings.get("TB", {
+      university: "carleton",
+      campus: "carleton",
+    });
+    expect(building.code).toBe("TB");
+
+    const place = await client.places.get("carleton-dining", { university: "carleton" });
+    expect(place.id).toBe("carleton-dining");
+
+    expect(urls).toEqual([
+      "https://api.gapwise.ca/v1/universities?limit=10",
+      "https://api.gapwise.ca/v1/universities/uoft",
+      "https://api.gapwise.ca/v1/campuses?university=uoft",
+      "https://api.gapwise.ca/v1/campuses/carleton",
+      "https://api.gapwise.ca/v1/buildings/TB?university=carleton&campus=carleton",
+      "https://api.gapwise.ca/v1/places/carleton-dining?university=carleton",
+    ]);
+  });
   test("validates identifiers and timeout configuration locally", async () => {
     const client = new Gapwise({ fetch: mock(() => Response.json({})) });
     expect(() => client.buildings.get(" ")).toThrow(TypeError);

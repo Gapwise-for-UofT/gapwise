@@ -45,7 +45,46 @@ export interface FactProvenance {
   note?: string;
 }
 
-/** Canonical public representation of a UTM campus building. */
+/** Summary of a campus belonging to a university. */
+export interface CampusSummary {
+  id: string;
+  name: string;
+  shortName: string;
+  city: string;
+  isMainCampus: boolean;
+  routable: boolean;
+  buildingCount: number;
+}
+
+/** Canonical representation of a supported university edition. */
+export interface UniversityInfo {
+  id: string;
+  name: string;
+  shortName: string;
+  hostname: string;
+  canonicalUrl: string;
+  accentColor: string;
+  campuses: CampusSummary[];
+}
+
+/** Canonical representation of a university campus. */
+export interface CampusInfo {
+  id: string;
+  universityId: string;
+  universityName: string;
+  name: string;
+  shortName: string;
+  city: string;
+  isMainCampus: boolean;
+  routable: boolean;
+  centerCoordinates?: [number, number];
+  bounds?: [[number, number], [number, number]];
+  buildingCount: number;
+  entranceCount?: number;
+  pathSegmentCount?: number;
+}
+
+/** Canonical public representation of a campus building. */
 export interface Building {
   code: string;
   name: string;
@@ -57,6 +96,8 @@ export interface Building {
   accessibility: "accessible" | "not_accessible" | "unknown";
   indoorRoomNodeCount: number;
   provenance: Provenance[];
+  university?: string;
+  campus?: string;
 }
 
 /** Weekly operating intervals expressed in the Toronto timezone. */
@@ -96,6 +137,8 @@ export interface CampusPlace {
   hoursProvenance: FactProvenance;
   metadataProvenance: FactProvenance;
   availability: PlaceAvailability;
+  university?: string;
+  campus?: string;
 }
 
 /** Optional preferences that influence route calculation. */
@@ -109,6 +152,8 @@ export interface RoutePreferences {
 export interface RouteRequest {
   from: string;
   to: string;
+  university?: string;
+  campus?: string;
   preferences?: RoutePreferences;
 }
 
@@ -147,6 +192,8 @@ export interface GapPreferences {
 export interface GapPlanRequest {
   from: string;
   to: string;
+  university?: string;
+  campus?: string;
   term: Term;
   weekday: Weekday;
   startTime: number;
@@ -244,10 +291,37 @@ export interface ApiInfo {
   privacy: string;
 }
 
+/** Optional filters and pagination controls for listing universities. */
+export interface UniversityListOptions {
+  limit?: number;
+  offset?: number;
+}
+
+/** Optional filters and pagination controls for listing campuses. */
+export interface CampusListOptions {
+  university?: string;
+  limit?: number;
+  offset?: number;
+}
+
+/** Optional query parameters when fetching a single building. */
+export interface BuildingGetOptions {
+  university?: string;
+  campus?: string;
+}
+
+/** Optional query parameters when fetching a single campus place. */
+export interface PlaceGetOptions {
+  university?: string;
+  campus?: string;
+}
+
 /** Optional filters and pagination controls for listing buildings. */
 export interface BuildingListOptions {
   q?: string;
   category?: BuildingCategory;
+  university?: string;
+  campus?: string;
   limit?: number;
   offset?: number;
 }
@@ -257,6 +331,8 @@ export interface PlaceListOptions {
   q?: string;
   kind?: PlaceKind;
   building?: string;
+  university?: string;
+  campus?: string;
   openNow?: AvailabilityState;
   limit?: number;
   offset?: number;

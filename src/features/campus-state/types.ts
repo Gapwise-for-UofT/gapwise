@@ -34,8 +34,10 @@ export type CampusPlace = {
   id: string;
   name: string;
   kind: CampusPlaceKind;
-  /** References the existing canonical UTM registry; never a parallel building identity. */
+  /** References canonical building code. */
   buildingCode: string;
+  university?: string;
+  campus?: string;
   floorOrRoom?: string;
   summary: string;
   amenities: readonly string[];

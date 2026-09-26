@@ -2,15 +2,21 @@ export * from "./types.js";
 import type {
   ApiInfo,
   Building,
+  BuildingGetOptions,
   BuildingListOptions,
+  CampusInfo,
+  CampusListOptions,
   CampusPlace,
   Collection,
   GapPlanRequest,
   GapPlanResult,
+  PlaceGetOptions,
   PlaceListOptions,
   ResponseMeta,
   RouteRequest,
   RouteResult,
+  UniversityInfo,
+  UniversityListOptions,
 } from "./types.js";
 
 /** Configuration used when constructing a {@link Gapwise} client. */
@@ -79,6 +85,36 @@ type Envelope<T> = { data: T; meta: ResponseMeta };
 
 /** Official client for the unauthenticated Gapwise Public Campus API v1. */
 export class Gapwise {
+  /** University discovery and lookup operations. */
+  readonly universities = {
+    list: (
+      filters: UniversityListOptions = {},
+      options?: RequestOptions,
+    ): Promise<Collection<UniversityInfo>> =>
+      this.requestCollection<UniversityInfo>(`/universities${query(filters)}`, options),
+    get: (id: string, options?: RequestOptions): Promise<UniversityInfo> =>
+      this.request<UniversityInfo>(
+        `/universities/${encodeURIComponent(required(id, "id"))}`,
+        {},
+        options,
+      ).then((r) => r.data),
+  };
+
+  /** Campus discovery and lookup operations. */
+  readonly campuses = {
+    list: (
+      filters: CampusListOptions = {},
+      options?: RequestOptions,
+    ): Promise<Collection<CampusInfo>> =>
+      this.requestCollection<CampusInfo>(`/campuses${query(filters)}`, options),
+    get: (id: string, options?: RequestOptions): Promise<CampusInfo> =>
+      this.request<CampusInfo>(
+        `/campuses/${encodeURIComponent(required(id, "id"))}`,
+        {},
+        options,
+      ).then((r) => r.data),
+  };
+
   /** Building discovery and lookup operations. */
   readonly buildings = {
     list: (
@@ -86,12 +122,14 @@ export class Gapwise {
       options?: RequestOptions,
     ): Promise<Collection<Building>> =>
       this.requestCollection<Building>(`/buildings${query(filters)}`, options),
-    get: (building: string, options?: RequestOptions): Promise<Building> =>
-      this.request<Building>(
-        `/buildings/${encodeURIComponent(required(building, "building"))}`,
+    get: (building: string, options?: BuildingGetOptions & RequestOptions): Promise<Building> => {
+      const q = query({ university: options?.university, campus: options?.campus });
+      return this.request<Building>(
+        `/buildings/${encodeURIComponent(required(building, "building"))}${q}`,
         {},
         options,
-      ).then((r) => r.data),
+      ).then((r) => r.data);
+    },
   };
 
   /** Campus-place discovery and lookup operations. */
@@ -101,12 +139,14 @@ export class Gapwise {
       options?: RequestOptions,
     ): Promise<Collection<CampusPlace>> =>
       this.requestCollection<CampusPlace>(`/places${query(filters)}`, options),
-    get: (placeId: string, options?: RequestOptions): Promise<CampusPlace> =>
-      this.request<CampusPlace>(
-        `/places/${encodeURIComponent(required(placeId, "placeId"))}`,
+    get: (placeId: string, options?: PlaceGetOptions & RequestOptions): Promise<CampusPlace> => {
+      const q = query({ university: options?.university, campus: options?.campus });
+      return this.request<CampusPlace>(
+        `/places/${encodeURIComponent(required(placeId, "placeId"))}${q}`,
         {},
         options,
-      ).then((r) => r.data),
+      ).then((r) => r.data);
+    },
   };
 
   /** Campus route calculation operations. */

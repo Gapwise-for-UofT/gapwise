@@ -86,6 +86,75 @@ export function campusesForUniversity(university: University): string[] {
   return university.campuses;
 }
 
+export function universityByCampus(campusId: string): University | null {
+  const normalized = campusId.toLowerCase();
+  return (
+    manifest.universities.find(
+      (entry) =>
+        entry.campuses.some((c) => c.toLowerCase() === normalized) ||
+        (entry.id === "laurier" && normalized === "laurier") ||
+        (entry.id === "york" && normalized === "york") ||
+        (entry.id === "mcmaster" && normalized === "main"),
+    ) ?? null
+  );
+}
+
+export function allCampuses() {
+  return manifest.universities.flatMap((uni) =>
+    uni.campuses.map((campusId) => ({
+      id: campusId,
+      universityId: uni.id,
+      name:
+        campusId === "utm"
+          ? "University of Toronto Mississauga"
+          : campusId === "utsg"
+            ? "University of Toronto St. George"
+            : campusId === "utsc"
+              ? "University of Toronto Scarborough"
+              : uni.name,
+      shortName:
+        campusId === "utm"
+          ? "UTM"
+          : campusId === "utsg"
+            ? "UTSG"
+            : campusId === "utsc"
+              ? "UTSC"
+              : uni.shortName,
+      routable: uni.routableCampuses.includes(campusId),
+      defaultForUniversity: uni.defaultCampus === campusId,
+      status: uni.status,
+    })),
+  );
+}
+
+export function resolveUniversityAndCampus(
+  queryUniversity?: string | null,
+  queryCampus?: string | null,
+): { university: University; campusId: string } | null {
+  if (queryCampus) {
+    const uni = universityByCampus(queryCampus);
+    if (!uni) return null;
+    const normalized = queryCampus.toLowerCase();
+    const actualCampus =
+      uni.campuses.find((c) => c.toLowerCase() === normalized) ??
+      (normalized === "laurier"
+        ? "waterloo"
+        : normalized === "york"
+          ? "keele"
+          : normalized === "main"
+            ? "mcmaster"
+            : uni.defaultCampus);
+    return { university: uni, campusId: actualCampus };
+  }
+  if (queryUniversity) {
+    const uni = universityById(queryUniversity.toLowerCase());
+    if (!uni) return null;
+    return { university: uni, campusId: uni.defaultCampus };
+  }
+  const defaultUni = universityById("uoft")!;
+  return { university: defaultUni, campusId: "utm" };
+}
+
 export function supportedUniversities(): University[] {
   return manifest.universities.filter((entry) => entry.status === "supported");
 }

@@ -563,12 +563,15 @@ function AppLayout() {
             </span>
             <div className="min-w-0">
               <p className="flex items-center gap-2 truncate font-display text-base font-semibold tracking-[-0.035em]">
-                Gapwise <span className="brand-scope-pill">{university?.shortName}</span>
+                Gapwise{" "}
+                <span className="brand-scope-pill hidden min-[480px]:inline-flex">
+                  {university?.shortName}
+                </span>
               </p>
             </div>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
             <ResidenceSettings
               user={user}

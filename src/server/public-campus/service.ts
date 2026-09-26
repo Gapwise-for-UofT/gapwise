@@ -3,6 +3,7 @@ import { assessGap } from "../../features/gaps/assess-gap.js";
 import { sanitizeGapPreferences } from "../../features/gaps/preferences.js";
 import type { GapPreferences } from "../../features/gaps/types.js";
 import { findRoute } from "../../features/routing/engine.js";
+import { routeBetweenBuildings } from "../../features/routing/campus-outdoor-graph.js";
 import type {
   RoutePreferences,
   RouteResult,
@@ -10,6 +11,14 @@ import type {
 } from "../../features/routing/types.js";
 import type { UserPreferences } from "../../features/sync/preferences.js";
 import type { Gap, Meeting, Term, Weekday } from "../../lib/timetable-types.js";
+import {
+  campusBuildingConfigurations,
+  campusBuildingEntrances,
+  getCampusBuildingIdentity,
+} from "../../data/campuses/index.js";
+import type { BuildingConfiguration } from "../../data/utm/building-registry.js";
+import { resolveUniversityAndCampus, universityById } from "../../universities/registry.js";
+import { getCampusSnapshot } from "./campus-snapshots.js";
 import {
   PUBLIC_CAMPUS_DATA_VERSION,
   publicCampusBuildings,
@@ -34,6 +43,8 @@ export type PublicBuildingView = {
     lastVerified: string;
     verificationStatus: "verified" | "inferred" | "unknown";
   }>;
+  university?: string;
+  campus?: string;
 };
 
 export type PublicRouteResponse = {
@@ -117,22 +128,98 @@ export function publicBuildingView(building: PublicCampusBuilding): PublicBuildi
     accessibility: buildingAccessibility(building),
     indoorRoomNodeCount: building.indoorRoomNodeCount,
     provenance,
+    university: "uoft",
+    campus: "utm",
   };
 }
 
-export function listPublicBuildings(): PublicBuildingView[] {
-  return publicCampusBuildings().map(publicBuildingView);
+export function externalBuildingView(
+  building: BuildingConfiguration,
+  campusId: string,
+  universityId: string,
+): PublicBuildingView {
+  const entrances = campusBuildingEntrances(campusId, building.code);
+  const isRoutable = universityById(universityId)?.routableCampuses.includes(campusId) ?? false;
+  const provenance: PublicBuildingView["provenance"] =
+    entrances.length > 0
+      ? unique(
+          entrances.map((e) =>
+            JSON.stringify({
+              source: e.metadata.source || "Gapwise Data",
+              sourceUrl: e.metadata.sourceUrl || "",
+              lastVerified: e.metadata.lastVerified || "",
+              verificationStatus:
+                e.metadata.verificationStatus === "verified" ? "verified" : "inferred",
+            }),
+          ),
+        ).map((s) => JSON.parse(s))
+      : [
+          {
+            source: "Gapwise Campus Directory",
+            sourceUrl: "https://data.gapwise.ca",
+            lastVerified: "2026-08-24T00:00:00Z",
+            verificationStatus: "verified" as const,
+          },
+        ];
+
+  const hasAccessible = entrances.some((e) => e.access === "public");
+  const allRestricted = entrances.length > 0 && entrances.every((e) => e.access === "restricted");
+
+  return {
+    code: building.code,
+    name: building.name,
+    category: building.category,
+    aliases: building.aliases ?? [],
+    routingCoverage: isRoutable ? "mapped" : "identity-only",
+    entranceCount: entrances.length,
+    verifiedEntranceCount: entrances.filter((e) => e.metadata.verificationStatus === "verified")
+      .length,
+    accessibility: hasAccessible ? "accessible" : allRestricted ? "not_accessible" : "unknown",
+    indoorRoomNodeCount: 0,
+    provenance,
+    university: universityId,
+    campus: campusId,
+  };
 }
 
-export function getPublicBuilding(query: string) {
-  const resolution = resolvePublicBuilding(query);
-  if (resolution.status === "found") {
-    return { status: "found" as const, building: publicBuildingView(resolution.building) };
+export function listPublicBuildings(options?: {
+  university?: string;
+  campus?: string;
+}): PublicBuildingView[] {
+  const resolved = resolveUniversityAndCampus(options?.university, options?.campus);
+  if (!resolved) return [];
+  if (resolved.campusId === "utm") {
+    return publicCampusBuildings().map(publicBuildingView);
   }
-  if (resolution.status === "ambiguous") {
+  const configs = campusBuildingConfigurations(resolved.campusId);
+  return configs.map((b) => externalBuildingView(b, resolved.campusId, resolved.university.id));
+}
+
+export function getPublicBuilding(
+  query: string,
+  options?: { university?: string; campus?: string },
+) {
+  const resolved = resolveUniversityAndCampus(options?.university, options?.campus);
+  if (!resolved) return { status: "not_found" as const };
+  if (resolved.campusId === "utm") {
+    const resolution = resolvePublicBuilding(query);
+    if (resolution.status === "found") {
+      return { status: "found" as const, building: publicBuildingView(resolution.building) };
+    }
+    if (resolution.status === "ambiguous") {
+      return {
+        status: "ambiguous" as const,
+        candidates: resolution.candidates.map(publicBuildingView),
+      };
+    }
+    return { status: "not_found" as const };
+  }
+
+  const identity = getCampusBuildingIdentity(resolved.campusId, query);
+  if (identity) {
     return {
-      status: "ambiguous" as const,
-      candidates: resolution.candidates.map(publicBuildingView),
+      status: "found" as const,
+      building: externalBuildingView(identity, resolved.campusId, resolved.university.id),
     };
   }
   return { status: "not_found" as const };
@@ -223,75 +310,126 @@ function bestMappedRoute(
 export function routeBetweenPublicBuildings(input: {
   from: string;
   to: string;
+  university?: string;
+  campus?: string;
   preferences?: Partial<RoutePreferences> | null;
 }): PublicRouteResponse | PublicCampusError {
-  const fromResolution = resolvePublicBuilding(input.from);
-  const toResolution = resolvePublicBuilding(input.to);
-  if (fromResolution.status === "ambiguous" || toResolution.status === "ambiguous") {
-    return {
-      error: "ambiguous_building",
-      message:
-        "A building name matched more than one canonical UTM building. Use the canonical building code.",
-    };
-  }
-  if (fromResolution.status !== "found" || toResolution.status !== "found") {
+  const resolved = resolveUniversityAndCampus(input.university, input.campus);
+  if (!resolved) {
     return {
       error: "unknown_building",
-      message: "Gapwise could not resolve one or both building names to a canonical UTM building.",
+      message: "The requested university or campus could not be resolved.",
     };
   }
 
-  const from = fromResolution.building;
-  const to = toResolution.building;
-  const preferences = sanitizeRoutePreferences(input.preferences);
-  const base = {
-    dataVersion: PUBLIC_CAMPUS_DATA_VERSION,
-    from: publicBuildingView(from),
-    to: publicBuildingView(to),
-    preferences,
-  };
+  if (resolved.campusId === "utm") {
+    const fromResolution = resolvePublicBuilding(input.from);
+    const toResolution = resolvePublicBuilding(input.to);
+    if (fromResolution.status === "ambiguous" || toResolution.status === "ambiguous") {
+      return {
+        error: "ambiguous_building",
+        message:
+          "A building name matched more than one canonical building. Use the canonical building code.",
+      };
+    }
+    if (fromResolution.status !== "found" || toResolution.status !== "found") {
+      return {
+        error: "unknown_building",
+        message:
+          "Gapwise could not resolve one or both building names to a canonical campus building.",
+      };
+    }
 
-  if (from.code === to.code) {
-    return {
-      ...base,
-      status: "same-building",
-      accuracy: "Same building",
-      totalDistanceMeters: 0,
-      indoorDistanceMeters: 0,
-      outdoorDistanceMeters: 0,
-      estimatedSeconds: 0,
-      floorChanges: 0,
-      warnings: [
-        "Building identity matches, but this building-level route does not claim room-to-room indoor routing.",
-      ],
-      routeVerification: "verified",
+    const from = fromResolution.building;
+    const to = toResolution.building;
+    const preferences = sanitizeRoutePreferences(input.preferences);
+    const base = {
+      dataVersion: PUBLIC_CAMPUS_DATA_VERSION,
+      from: publicBuildingView(from),
+      to: publicBuildingView(to),
+      preferences,
     };
-  }
 
-  const mapped = bestMappedRoute(from, to, preferences);
-  if (mapped) {
-    return {
-      ...base,
-      status: "routed",
-      accuracy:
-        mapped.nodes.some((node) => node.kind === "room") ||
-        mapped.edges.some((edge) => edge.environment === "indoor")
-          ? "Verified outdoor route, indoor estimate"
-          : "Mapped campus path, indoor estimate",
-      totalDistanceMeters: mapped.totalDistanceMeters,
-      indoorDistanceMeters: mapped.indoorDistanceMeters,
-      outdoorDistanceMeters: mapped.outdoorDistanceMeters,
-      estimatedSeconds: mapped.estimatedSeconds,
-      floorChanges: mapped.floorChanges,
-      warnings: unique([
-        ...mapped.warnings,
-        "Building-level routing ends at mapped building entrances; room-level indoor travel may be estimated separately.",
-      ]),
-      routeVerification: verificationForRoute(mapped),
-    };
-  }
+    if (from.code === to.code) {
+      return {
+        ...base,
+        status: "same-building",
+        accuracy: "Same building",
+        totalDistanceMeters: 0,
+        indoorDistanceMeters: 0,
+        outdoorDistanceMeters: 0,
+        estimatedSeconds: 0,
+        floorChanges: 0,
+        warnings: [
+          "Building identity matches, but this building-level route does not claim room-to-room indoor routing.",
+        ],
+        routeVerification: "verified",
+      };
+    }
 
-  if (preferences.mode === "step-free") {
+    const mapped = bestMappedRoute(from, to, preferences);
+    if (mapped) {
+      return {
+        ...base,
+        status: "routed",
+        accuracy:
+          mapped.nodes.some((node) => node.kind === "room") ||
+          mapped.edges.some((edge) => edge.environment === "indoor")
+            ? "Verified outdoor route, indoor estimate"
+            : "Mapped campus path, indoor estimate",
+        totalDistanceMeters: mapped.totalDistanceMeters,
+        indoorDistanceMeters: mapped.indoorDistanceMeters,
+        outdoorDistanceMeters: mapped.outdoorDistanceMeters,
+        estimatedSeconds: mapped.estimatedSeconds,
+        floorChanges: mapped.floorChanges,
+        warnings: unique([
+          ...mapped.warnings,
+          "Building-level routing ends at mapped building entrances; room-level indoor travel may be estimated separately.",
+        ]),
+        routeVerification: verificationForRoute(mapped),
+      };
+    }
+
+    if (preferences.mode === "step-free") {
+      return {
+        ...base,
+        status: "unavailable",
+        accuracy: "Location unavailable",
+        totalDistanceMeters: null,
+        indoorDistanceMeters: null,
+        outdoorDistanceMeters: null,
+        estimatedSeconds: null,
+        floorChanges: null,
+        warnings: [
+          "No fully accessible mapped route could be verified for this building pair. Gapwise will not invent a step-free route.",
+        ],
+        routeVerification: "unavailable",
+      };
+    }
+
+    if (from.navigationPoint && to.navigationPoint) {
+      const direct = distanceMeters(from.navigationPoint, to.navigationPoint);
+      const approximateDistance = direct * 1.2;
+      const approximateSeconds =
+        approximateDistance / preferences.walkingSpeedMps +
+        ROUTING_DEFAULTS.buildingEntryExitSeconds * 2;
+      return {
+        ...base,
+        status: "approximate",
+        accuracy: "Approximate building-to-building estimate",
+        totalDistanceMeters: approximateDistance,
+        indoorDistanceMeters: null,
+        outdoorDistanceMeters: null,
+        estimatedSeconds: approximateSeconds,
+        floorChanges: null,
+        warnings: [
+          "No connected mapped campus path was available, so this is a conservative straight-line building estimate rather than a verified route.",
+          "Accessibility is not verified for the estimated path.",
+        ],
+        routeVerification: "inferred",
+      };
+    }
+
     return {
       ...base,
       status: "unavailable",
@@ -302,32 +440,122 @@ export function routeBetweenPublicBuildings(input: {
       estimatedSeconds: null,
       floorChanges: null,
       warnings: [
-        "No fully accessible mapped route could be verified for this building pair. Gapwise will not invent a step-free route.",
+        "Gapwise does not have enough mapped data to estimate this building-to-building route.",
       ],
       routeVerification: "unavailable",
     };
   }
 
-  if (from.navigationPoint && to.navigationPoint) {
-    const direct = distanceMeters(from.navigationPoint, to.navigationPoint);
-    const approximateDistance = direct * 1.2;
-    const approximateSeconds =
-      approximateDistance / preferences.walkingSpeedMps +
-      ROUTING_DEFAULTS.buildingEntryExitSeconds * 2;
+  // Multi-campus routing for other universities
+  const fromIdentity = getCampusBuildingIdentity(resolved.campusId, input.from);
+  const toIdentity = getCampusBuildingIdentity(resolved.campusId, input.to);
+  if (!fromIdentity || !toIdentity) {
+    return {
+      error: "unknown_building",
+      message: `Gapwise could not resolve one or both building names in ${resolved.university.shortName} (${resolved.campusId}).`,
+    };
+  }
+
+  const preferences = sanitizeRoutePreferences(input.preferences);
+  const fromView = externalBuildingView(fromIdentity, resolved.campusId, resolved.university.id);
+  const toView = externalBuildingView(toIdentity, resolved.campusId, resolved.university.id);
+  const base = {
+    dataVersion: PUBLIC_CAMPUS_DATA_VERSION,
+    from: fromView,
+    to: toView,
+    preferences,
+  };
+
+  if (fromIdentity.code.toUpperCase() === toIdentity.code.toUpperCase()) {
     return {
       ...base,
-      status: "approximate",
-      accuracy: "Approximate building-to-building estimate",
-      totalDistanceMeters: approximateDistance,
+      status: "same-building",
+      accuracy: "Same building",
+      totalDistanceMeters: 0,
+      indoorDistanceMeters: 0,
+      outdoorDistanceMeters: 0,
+      estimatedSeconds: 0,
+      floorChanges: 0,
+      warnings: ["Both locations are in the same building."],
+      routeVerification: "verified",
+    };
+  }
+
+  const isRoutable = resolved.university.routableCampuses.includes(resolved.campusId);
+  if (!isRoutable) {
+    return {
+      ...base,
+      status: "unavailable",
+      accuracy: "Location unavailable",
+      totalDistanceMeters: null,
       indoorDistanceMeters: null,
       outdoorDistanceMeters: null,
-      estimatedSeconds: approximateSeconds,
+      estimatedSeconds: null,
       floorChanges: null,
       warnings: [
-        "No connected mapped campus path was available, so this is a conservative straight-line building estimate rather than a verified route.",
-        "Accessibility is not verified for the estimated path.",
+        `Pedestrian routing network is not yet available for ${resolved.university.shortName} ${resolved.campusId}; building directory and geometry coverage are available.`,
       ],
-      routeVerification: "inferred",
+      routeVerification: "unavailable",
+    };
+  }
+
+  const snapshot = getCampusSnapshot(resolved.campusId);
+  if (!snapshot) {
+    return {
+      ...base,
+      status: "unavailable",
+      accuracy: "Location unavailable",
+      totalDistanceMeters: null,
+      indoorDistanceMeters: null,
+      outdoorDistanceMeters: null,
+      estimatedSeconds: null,
+      floorChanges: null,
+      warnings: ["Campus snapshot data not available."],
+      routeVerification: "unavailable",
+    };
+  }
+
+  const fromBuildingSnapshot = snapshot.buildings.find(
+    (b) =>
+      b.id === fromIdentity.code ||
+      b.nativeCodes.some((code) => code.toUpperCase() === fromIdentity.code.toUpperCase()) ||
+      b.name.toLowerCase() === fromIdentity.name.toLowerCase(),
+  );
+  const toBuildingSnapshot = snapshot.buildings.find(
+    (b) =>
+      b.id === toIdentity.code ||
+      b.nativeCodes.some((code) => code.toUpperCase() === toIdentity.code.toUpperCase()) ||
+      b.name.toLowerCase() === toIdentity.name.toLowerCase(),
+  );
+
+  if (!fromBuildingSnapshot || !toBuildingSnapshot) {
+    return {
+      error: "unknown_building",
+      message: `Building geometry record not found for one or both locations in ${resolved.campusId}.`,
+    };
+  }
+
+  const routeResult = routeBetweenBuildings(
+    fromBuildingSnapshot.id,
+    toBuildingSnapshot.id,
+    snapshot,
+    preferences.walkingSpeedMps,
+  );
+
+  if (routeResult.status === "ready") {
+    return {
+      ...base,
+      status: "routed",
+      accuracy: "Mapped campus path, indoor estimate",
+      totalDistanceMeters: routeResult.distanceMeters,
+      indoorDistanceMeters: 0,
+      outdoorDistanceMeters: routeResult.distanceMeters,
+      estimatedSeconds: routeResult.estimatedMinutes * 60,
+      floorChanges: 0,
+      warnings: [
+        "Building-level routing ends at mapped building entrances; room-level indoor travel may be estimated separately.",
+      ],
+      routeVerification: "verified",
     };
   }
 
@@ -340,9 +568,7 @@ export function routeBetweenPublicBuildings(input: {
     outdoorDistanceMeters: null,
     estimatedSeconds: null,
     floorChanges: null,
-    warnings: [
-      "Gapwise does not have enough mapped data to estimate this building-to-building route.",
-    ],
+    warnings: [routeResult.reason],
     routeVerification: "unavailable",
   };
 }

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Generic, Literal, NotRequired, TypedDict, TypeVar
+from typing import Any, Generic, Literal, NotRequired, TypedDict, TypeVar
 
 ApiVersion = Literal["v1"]
 VerificationStatus = Literal["verified", "inferred", "unknown"]
@@ -32,6 +32,42 @@ class FactProvenance(TypedDict):
     note: NotRequired[str]
 
 
+class CampusSummary(TypedDict):
+    id: str
+    name: str
+    shortName: str
+    city: str
+    isMainCampus: bool
+    routable: bool
+    buildingCount: int
+
+
+class UniversityInfo(TypedDict):
+    id: str
+    name: str
+    shortName: str
+    hostname: str
+    canonicalUrl: str
+    accentColor: str
+    campuses: list[CampusSummary]
+
+
+class CampusInfo(TypedDict):
+    id: str
+    universityId: str
+    universityName: str
+    name: str
+    shortName: str
+    city: str
+    isMainCampus: bool
+    routable: bool
+    centerCoordinates: NotRequired[list[float]]
+    bounds: NotRequired[list[list[float]]]
+    buildingCount: int
+    entranceCount: NotRequired[int]
+    pathSegmentCount: NotRequired[int]
+
+
 class Building(TypedDict):
     code: str
     name: str
@@ -43,6 +79,8 @@ class Building(TypedDict):
     accessibility: Literal["accessible", "not_accessible", "unknown"]
     indoorRoomNodeCount: int
     provenance: list[Provenance]
+    university: NotRequired[str]
+    campus: NotRequired[str]
 
 
 class PlaceAvailability(TypedDict):
@@ -63,6 +101,9 @@ class CampusPlace(TypedDict):
     hoursProvenance: FactProvenance
     metadataProvenance: FactProvenance
     availability: PlaceAvailability
+    university: NotRequired[str]
+    campus: NotRequired[str]
+    actions: NotRequired[list[dict[str, Any]]]
 
 
 class RoutePreferences(TypedDict):

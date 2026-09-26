@@ -1,6 +1,6 @@
 # Gapwise Platform
 
-Gapwise exposes a small public campus-intelligence surface for University of Toronto Mississauga projects. It is the same deterministic building/routing/gap-planning layer used by Gapwise product surfaces, with no private student timetable or account data required.
+Gapwise exposes a public campus-intelligence surface for applications serving Canadian university communities. It is the same deterministic building/routing/gap-planning layer used by Gapwise product surfaces, with no private student timetable or account data required.
 
 ## Public resources
 
@@ -18,8 +18,10 @@ The canonical public v1 surface intentionally stays small:
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| `GET` | `/v1` | API/data versions, capabilities, and privacy metadata |
-| `GET` | `/v1/buildings` | Canonical UTM building inventory, routing coverage, accessibility status, and provenance |
+| `GET` | `/v1` | API/data versions, capabilities, supported universities, and privacy metadata |
+| `GET` | `/v1/universities` | All supported university editions with campus summaries |
+| `GET` | `/v1/campuses` | All supported campuses; filter by `university` |
+| `GET` | `/v1/buildings` | Multi-campus building inventory, routing coverage, accessibility status, and provenance |
 | `GET` | `/v1/buildings/MN` | Resolve a canonical building by code/name/recognized alias |
 | `GET` | `/v1/places` | Discover source-backed campus places and availability |
 | `GET` | `/v1/places/utm-library` | Resolve a canonical campus place |

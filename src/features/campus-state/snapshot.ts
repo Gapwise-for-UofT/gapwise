@@ -1,5 +1,5 @@
-import { getRecognizedBuilding } from "../../data/utm/building-registry.js";
-import type { CampusPlace, CampusStateSnapshot } from "./types";
+import { getCampusBuildingIdentity } from "../../data/campuses/index.js";
+import type { CampusPlace, CampusStateSnapshot } from "./types.js";
 
 const RETRIEVED_AT = "2026-08-24T00:00:00Z";
 const unknownHours = (sourceId: string) => ({
@@ -16,7 +16,7 @@ const verified = (sourceId: string) => ({
 
 export const CAMPUS_STATE_SNAPSHOT: CampusStateSnapshot = {
   schemaVersion: 1,
-  version: "utm-campus-state-2026-08-24",
+  version: "campus-state-2026-08-24",
   generatedAt: RETRIEVED_AT,
   sources: [
     {
@@ -47,6 +47,8 @@ export const CAMPUS_STATE_SNAPSHOT: CampusStateSnapshot = {
       name: "Davis Food Court",
       kind: "dining",
       buildingCode: "DV",
+      university: "uoft",
+      campus: "utm",
       summary: "Dining options in the William G. Davis Building.",
       amenities: ["food"],
       hoursProvenance: unknownHours("utm-hospitality"),
@@ -64,6 +66,8 @@ export const CAMPUS_STATE_SNAPSHOT: CampusStateSnapshot = {
       name: "Hazel McCallion Academic Learning Centre",
       kind: "library",
       buildingCode: "HM",
+      university: "uoft",
+      campus: "utm",
       summary: "UTM's library and academic learning centre.",
       amenities: ["individual study", "group study", "library services"],
       hoursProvenance: unknownHours("utm-library"),
@@ -81,6 +85,8 @@ export const CAMPUS_STATE_SNAPSHOT: CampusStateSnapshot = {
       name: "Recreation, Athletics and Wellness Centre",
       kind: "recreation",
       buildingCode: "RAWC",
+      university: "uoft",
+      campus: "utm",
       summary: "Campus recreation, athletics and wellness facilities.",
       amenities: ["recreation", "fitness"],
       hoursProvenance: unknownHours("utm-athletics"),
@@ -106,7 +112,7 @@ function validateSnapshot(snapshot: CampusStateSnapshot) {
     ids.add(place.id);
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(place.id))
       throw new Error(`Invalid campus place id: ${place.id}`);
-    if (!getRecognizedBuilding(place.buildingCode))
+    if (!getCampusBuildingIdentity(place.campus ?? "utm", place.buildingCode))
       throw new Error(`Unknown building for campus place ${place.id}`);
     if (
       !sources.has(place.metadataProvenance.sourceId) ||
@@ -122,12 +128,33 @@ function validateSnapshot(snapshot: CampusStateSnapshot) {
 }
 validateSnapshot(CAMPUS_STATE_SNAPSHOT);
 
-export function listCampusPlaces(): readonly CampusPlace[] {
+export function listCampusPlaces(options?: {
+  university?: string;
+  campus?: string;
+}): readonly CampusPlace[] {
+  if (options?.campus) {
+    const campusId = options.campus.toLowerCase();
+    return CAMPUS_STATE_SNAPSHOT.places.filter((p) => p.campus?.toLowerCase() === campusId);
+  }
+  if (options?.university) {
+    const universityId = options.university.toLowerCase();
+    return CAMPUS_STATE_SNAPSHOT.places.filter((p) => p.university?.toLowerCase() === universityId);
+  }
   return CAMPUS_STATE_SNAPSHOT.places;
 }
-export function getCampusPlace(id: string): CampusPlace | null {
-  return CAMPUS_STATE_SNAPSHOT.places.find((place) => place.id === id) ?? null;
+
+export function getCampusPlace(
+  id: string,
+  options?: { university?: string; campus?: string },
+): CampusPlace | null {
+  const place = CAMPUS_STATE_SNAPSHOT.places.find((p) => p.id === id) ?? null;
+  if (!place) return null;
+  if (options?.campus && place.campus?.toLowerCase() !== options.campus.toLowerCase()) return null;
+  if (options?.university && place.university?.toLowerCase() !== options.university.toLowerCase())
+    return null;
+  return place;
 }
+
 export function getCampusSource(id: string) {
   return CAMPUS_STATE_SNAPSHOT.sources.find((source) => source.id === id) ?? null;
 }

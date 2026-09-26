@@ -78,4 +78,71 @@ describe("Gapwise marketing system", () => {
     expect(exportTheme).toContain('pra: "#b18bd0"');
     expect(exportTheme).toContain('reserved: "#dfad52"');
   });
+
+  test("showcases all seven supported universities with exact canonical destinations and valid branding", async () => {
+    const landing = await readFile("src/components/MarketingLandingImpl.tsx", "utf8");
+    const manifest = JSON.parse(await readFile("universities.json", "utf8"));
+
+    expect(landing).toContain('id="universities"');
+    expect(landing).toContain("Gapwise across Canada.");
+    expect(landing).toContain("supportedUniversities()");
+    expect(landing).toContain("canonicalUrlForUniversity");
+
+    const expectedUniversities = [
+      {
+        id: "uoft",
+        name: "University of Toronto",
+        url: "https://gapwise.ca",
+        scope: "UTM, St. George, and Scarborough",
+      },
+      {
+        id: "carleton",
+        name: "Carleton University",
+        url: "https://carleton.gapwise.ca",
+        scope: "Ottawa campus",
+      },
+      {
+        id: "tmu",
+        name: "Toronto Metropolitan University",
+        url: "https://tmu.gapwise.ca",
+        scope: "Downtown Toronto campus",
+      },
+      {
+        id: "queens",
+        name: "Queen's University",
+        url: "https://queens.gapwise.ca",
+        scope: "Kingston campus",
+      },
+      {
+        id: "laurier",
+        name: "Wilfrid Laurier University",
+        url: "https://laurier.gapwise.ca",
+        scope: "Waterloo campus",
+      },
+      {
+        id: "york",
+        name: "York University",
+        url: "https://york.gapwise.ca",
+        scope: "Keele campus",
+      },
+      {
+        id: "mcmaster",
+        name: "McMaster University",
+        url: "https://mcmaster.gapwise.ca",
+        scope: "Hamilton campus",
+      },
+    ];
+
+    expect(manifest.universities.length).toBe(7);
+
+    for (const expected of expectedUniversities) {
+      const entry = manifest.universities.find((u: { id: string }) => u.id === expected.id);
+      expect(entry).toBeDefined();
+      expect(entry.name).toBe(expected.name);
+      expect(`https://${entry.hosts[0]}`).toBe(expected.url);
+      expect(entry.campusScope).toBe(expected.scope);
+      expect(entry.accentColor).toMatch(/^#[0-9a-fA-F]{6}$/);
+      expect(entry.status).toBe("supported");
+    }
+  });
 });

@@ -1,12 +1,12 @@
 # Campus data and documentation boundaries
 
-Canonical public University of Toronto campus facts, geometry, provenance, and data-maintenance guidance live in [`GapwiseHQ/data`](https://github.com/GapwiseHQ/data). The compatibility snapshot and reviewed routing graph mirrored by this repository currently cover UTM.
+Canonical public multi-university campus facts, geometry, provenance, and data-maintenance guidance live in [`GapwiseHQ/data`](https://github.com/GapwiseHQ/data). The dataset covers 7 universities (University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, Wilfrid Laurier University, York University, and McMaster University) across 9 campus models.
 
-Public human-readable data documentation lives at **https://docs.gapwise.ca/data/**. The currently published raw UTM distribution lives at **https://data.gapwise.ca/datasets/utm/latest/**.
+Public human-readable data documentation lives at **https://docs.gapwise.ca/data/**. The currently published raw distributions live at **https://data.gapwise.ca/datasets/**.
 
 This repository intentionally retains only:
 
-- the validated runtime compatibility snapshot under `src/data/utm`;
+- the validated runtime compatibility snapshots under `src/data/campuses` and `src/data/utm`;
 - deterministic routing, gap-planning, map, API, and SDK behavior;
 - consumer-side tests and integration contracts;
 - the transitional data-maintenance adapters that are still coupled to core routing types.

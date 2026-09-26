@@ -54,7 +54,7 @@ const PAGES: readonly SeoPage[] = [
     path: "/",
     title: "Gapwise — University of Toronto",
     description:
-      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for University of Toronto students. Also available for Carleton, TMU, Queen's, and Laurier.",
+      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for University of Toronto students. Also available for Carleton, TMU, Queen's, Laurier, York, and McMaster.",
     heading: "Make the time between classes count.",
     detail:
       "Import an ACORN .ics timetable in your browser, preserve UTM, UTSG, UTSC, or mixed-campus context, understand the usable time between classes, and explore source-backed campus maps. Pedestrian routing is currently available for UTM. Guest mode and a demo work without an account.",
@@ -232,7 +232,7 @@ function homepageStructuredData(page: SeoPage, uniContext?: UniversityContext) {
         url: `${origin}/`,
         description: uniName
           ? `Privacy-first timetable intelligence, campus maps, and day planning for ${uniName} students.`
-          : "Privacy-first timetable intelligence, campus maps, and day planning for university students across Canada. Supports University of Toronto, Carleton University, TMU, Queen's University, and Wilfrid Laurier University.",
+          : "Privacy-first timetable intelligence, campus maps, and day planning for university students across Canada. Supports University of Toronto, Carleton University, TMU, Queen's University, Wilfrid Laurier University, York University, and McMaster University.",
         logo: {
           "@type": "ImageObject",
           url: `${origin}/icon-512.png`,
@@ -289,7 +289,7 @@ function homepageStructuredData(page: SeoPage, uniContext?: UniversityContext) {
           "@type": "Audience",
           audienceType: uniName
             ? `University students at ${uniName}`
-            : "University students at University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, and Wilfrid Laurier University",
+            : "University students at University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, Wilfrid Laurier University, York University, and McMaster University",
         },
         featureList: uniName
           ? [
@@ -300,9 +300,9 @@ function homepageStructuredData(page: SeoPage, uniContext?: UniversityContext) {
               "Optional encrypted private sync",
             ]
           : [
-              "Browser-local timetable import (ACORN .ics, Carleton Central, TMU, Queen's, Laurier schedule formats)",
-              "UTM, UTSG, UTSC, Carleton, TMU, Queen's, and Laurier campus timetable identity",
-              "Source-backed building maps for all 5 supported universities",
+              "Browser-local timetable import (ACORN .ics, Carleton Central, TMU, Queen's, Laurier, York, McMaster schedule formats)",
+              "UTM, UTSG, UTSC, Carleton, TMU, Queen's, Laurier, York, and McMaster campus timetable identity",
+              "Source-backed building maps for all 7 supported universities",
               "Source-backed UTM pedestrian routing",
               "Optional encrypted private sync",
             ],
@@ -399,7 +399,7 @@ function fallback(page: SeoPage, uniContext?: UniversityContext) {
 
   const disclaimer = uniContext
     ? `Gapwise is an independent student project for students at ${escapeHtml(uniContext.name)}. It is not an official service of ${escapeHtml(uniContext.name)} and does not claim university approval, sponsorship, or endorsement.`
-    : `Gapwise is an independent student project for students at the University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, and Wilfrid Laurier University. It is not an official service of any of these institutions and does not claim university approval, sponsorship, or endorsement.`;
+    : `Gapwise is an independent student project for students at the University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, Wilfrid Laurier University, York University, and McMaster University. It is not an official service of any of these institutions and does not claim university approval, sponsorship, or endorsement.`;
 
   return `<main data-gapwise-search-fallback style="max-width:60rem;margin:0 auto;padding:3rem 1.25rem;font-family:system-ui,sans-serif;line-height:1.65">
       <p><strong>Gapwise</strong> — Timetable &amp; Campus Navigation</p>

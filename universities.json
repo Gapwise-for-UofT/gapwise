@@ -80,6 +80,38 @@
       "routableCampuses": ["waterloo"],
       "dataPaths": ["universities/laurier/campus.json"],
       "status": "supported"
+    },
+    {
+      "id": "york",
+      "name": "York University",
+      "shortName": "York",
+      "hosts": ["york.gapwise.ca"],
+      "campuses": ["keele"],
+      "defaultCampus": "keele",
+      "timetableAdapter": "york-schedule",
+      "calendarSource": "Visual Schedule Builder & REM",
+      "calendarInstructions": "Paste your schedule text from the York Registration and Enrolment Module (REM) / Visual Schedule Builder (VSB), or upload an exported calendar (.ics) file.",
+      "calendarHelpUrl": "https://registrar.yorku.ca/enrol/guide",
+      "enabledFeatures": { "routing": true, "liveLocation": false },
+      "routableCampuses": ["keele"],
+      "dataPaths": ["universities/york/campus.json"],
+      "status": "supported"
+    },
+    {
+      "id": "mcmaster",
+      "name": "McMaster University",
+      "shortName": "McMaster",
+      "hosts": ["mcmaster.gapwise.ca"],
+      "campuses": ["mcmaster"],
+      "defaultCampus": "mcmaster",
+      "timetableAdapter": "mcmaster-schedule",
+      "calendarSource": "Mosaic & Outlook Calendar",
+      "calendarInstructions": "Upload your calendar (.ics) from Mosaic Timetable to Outlook, or paste your schedule text from Mosaic Class Schedule.",
+      "calendarHelpUrl": "https://mosaic.mcmaster.ca",
+      "enabledFeatures": { "routing": true, "liveLocation": false },
+      "routableCampuses": ["mcmaster"],
+      "dataPaths": ["universities/mcmaster/campus.json"],
+      "status": "supported"
     }
   ]
 }

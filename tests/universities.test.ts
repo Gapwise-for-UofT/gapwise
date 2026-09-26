@@ -56,12 +56,16 @@ describe("university registry", () => {
     expect(universityForHostname("tmu.gapwise.ca")?.id).toBe("tmu");
     expect(universityForHostname("queens.gapwise.ca")?.id).toBe("queens");
     expect(universityForHostname("laurier.gapwise.ca")?.id).toBe("laurier");
+    expect(universityForHostname("york.gapwise.ca")?.id).toBe("york");
+    expect(universityForHostname("mcmaster.gapwise.ca")?.id).toBe("mcmaster");
     expect(universityForHostname("localhost")?.id).toBe("uoft");
     expect(universityForHostname("localhost", "carleton")?.id).toBe("carleton");
     expect(universityForHostname("localhost", "tmu")?.id).toBe("tmu");
     expect(universityForHostname("preview-branch.vercel.app")?.id).toBe("uoft");
     expect(universityForHostname("preview-branch.vercel.app", "queens")?.id).toBe("queens");
     expect(universityForHostname("preview-branch.vercel.app", "laurier")?.id).toBe("laurier");
+    expect(universityForHostname("preview-branch.vercel.app", "york")?.id).toBe("york");
+    expect(universityForHostname("preview-branch.vercel.app", "mcmaster")?.id).toBe("mcmaster");
     expect(universityForHostname("gapwise.ca", "carleton")?.id).toBe("uoft");
     expect(universityForHostname("unknown.gapwise.ca")).toBeNull();
     expect(universityForHostname("attacker.com")).toBeNull();
@@ -156,6 +160,8 @@ describe("canonical meeting and campus data contracts", () => {
     expect(typeof timetableAdapters["tmu-schedule"]).toBe("function");
     expect(typeof timetableAdapters["queens-schedule"]).toBe("function");
     expect(typeof timetableAdapters["laurier-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["york-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["mcmaster-schedule"]).toBe("function");
 
     const uoftDemo = await loadDemoTimetable("acorn-ics");
     expect(uoftDemo.length).toBeGreaterThan(0);
@@ -176,6 +182,14 @@ describe("canonical meeting and campus data contracts", () => {
     const laurierDemo = await loadDemoTimetable("laurier-schedule");
     expect(laurierDemo.length).toBeGreaterThan(0);
     expect(laurierDemo.every((m) => m.universityId === "laurier")).toBe(true);
+
+    const yorkDemo = await loadDemoTimetable("york-schedule");
+    expect(yorkDemo.length).toBeGreaterThan(0);
+    expect(yorkDemo.every((m) => m.universityId === "york")).toBe(true);
+
+    const mcmasterDemo = await loadDemoTimetable("mcmaster-schedule");
+    expect(mcmasterDemo.length).toBeGreaterThan(0);
+    expect(mcmasterDemo.every((m) => m.universityId === "mcmaster")).toBe(true);
 
     const fallbackDemo = await loadDemoTimetable(undefined);
     expect(fallbackDemo).toEqual(uoftDemo);
@@ -200,5 +214,34 @@ describe("canonical meeting and campus data contracts", () => {
     const diffCampusRoute = planner(diffCampus, to, DEFAULT_ROUTE_PREFERENCES);
     expect(diffCampusRoute.status).toBe("unavailable");
     expect(diffCampusRoute.message).toContain("same campus");
+  });
+
+  test("loads York and McMaster campus models and plans transitions", async () => {
+    const { yorkCampus } = await import("@/universities/york/adapter");
+    const { mcmasterCampus } = await import("@/universities/mcmaster/adapter");
+
+    expect(yorkCampus.institution).toBe("york");
+    expect(yorkCampus.buildings.length).toBeGreaterThanOrEqual(30);
+    expect(yorkCampus.entrances.length).toBeGreaterThanOrEqual(30);
+
+    expect(mcmasterCampus.institution).toBe("mcmaster");
+    expect(mcmasterCampus.buildings.length).toBeGreaterThanOrEqual(30);
+    expect(mcmasterCampus.entrances.length).toBeGreaterThanOrEqual(30);
+
+    const yorkPlanner = createOutdoorCampusTransitionPlanner(yorkCampus);
+    const yorkDemo = await loadDemoTimetable("york-schedule");
+    const yFrom = yorkDemo.find((m) => m.courseCode === "EECS 1022" && m.activityType === "LEC")!;
+    const yTo = yorkDemo.find((m) => m.courseCode === "MATH 1013")!;
+    const yorkRoute = yorkPlanner(yFrom, yTo, DEFAULT_ROUTE_PREFERENCES);
+    expect(yorkRoute.status).toBe("routed");
+    expect(yorkRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
+
+    const macPlanner = createOutdoorCampusTransitionPlanner(mcmasterCampus);
+    const macDemo = await loadDemoTimetable("mcmaster-schedule");
+    const mFrom = macDemo.find((m) => m.courseCode === "COMPSCI 1MD3")!;
+    const mTo = macDemo.find((m) => m.courseCode === "MATH 1ZA3")!;
+    const macRoute = macPlanner(mFrom, mTo, DEFAULT_ROUTE_PREFERENCES);
+    expect(macRoute.status).toBe("routed");
+    expect(macRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
   });
 });

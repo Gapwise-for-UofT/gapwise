@@ -24,6 +24,14 @@ export const timetableAdapters: Record<string, (text: string) => Promise<ParsedT
     const { parseTimetable } = await import("./laurier/adapter");
     return parseTimetable(text);
   },
+  "york-schedule": async (text) => {
+    const { parseTimetable } = await import("./york/adapter");
+    return parseTimetable(text);
+  },
+  "mcmaster-schedule": async (text) => {
+    const { parseTimetable } = await import("./mcmaster/adapter");
+    return parseTimetable(text);
+  },
   // GAPWISE_ADAPTER_REGISTRY: the CLI inserts new timetable adapters here.
 };
 
@@ -56,6 +64,20 @@ export const demoTimetableLoaders: Record<string, () => Promise<Meeting[]>> = {
       import("./laurier/adapter"),
     ]);
     return DEMO_LAURIER_MEETINGS.flatMap(normalizeLaurierMeeting);
+  },
+  "york-schedule": async () => {
+    const [{ DEMO_YORK_MEETINGS }, { normalizeYorkMeeting }] = await Promise.all([
+      import("./york/demo-timetable"),
+      import("./york/adapter"),
+    ]);
+    return DEMO_YORK_MEETINGS.flatMap(normalizeYorkMeeting);
+  },
+  "mcmaster-schedule": async () => {
+    const [{ DEMO_MCMASTER_MEETINGS }, { normalizeMcMasterMeeting }] = await Promise.all([
+      import("./mcmaster/demo-timetable"),
+      import("./mcmaster/adapter"),
+    ]);
+    return DEMO_MCMASTER_MEETINGS.flatMap(normalizeMcMasterMeeting);
   },
   // GAPWISE_DEMO_LOADER_REGISTRY: the CLI inserts new demo loaders here.
 };

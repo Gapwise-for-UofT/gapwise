@@ -45,13 +45,17 @@ Gapwise is one application serving dedicated university editions via host-based 
 
 | University | Campus Scope | Timetable Source | Edition URL |
 | :--- | :--- | :--- | :--- |
-| **University of Toronto** | UTM, UTSG, UTSC | ACORN (`.ics` calendar export) | [gapwise.ca](https://gapwise.ca) |
+| **University of Toronto** | Mississauga, St. George, and Scarborough | ACORN (`.ics` calendar export) | [gapwise.ca](https://gapwise.ca) |
 | **Carleton University** | Main Campus | Carleton Central (text paste or `.ics`) | [carleton.gapwise.ca](https://carleton.gapwise.ca) |
 | **Toronto Metropolitan University** | Downtown Campus | MyServiceHub (text paste or Google Calendar `.ics`) | [tmu.gapwise.ca](https://tmu.gapwise.ca) |
 | **Queen's University** | Kingston Main Campus | SOLUS Student Center (text paste or `.ics`) | [queens.gapwise.ca](https://queens.gapwise.ca) |
 | **Wilfrid Laurier University** | Waterloo Campus | LORIS (text paste or `.ics`) | [laurier.gapwise.ca](https://laurier.gapwise.ca) |
 | **York University** | Keele Campus | York Courses Timetable (text paste or `.ics`) | [york.gapwise.ca](https://york.gapwise.ca) |
 | **McMaster University** | Hamilton Main Campus | Mosaic Student Center (text paste or `.ics`) | [mcmaster.gapwise.ca](https://mcmaster.gapwise.ca) |
+| **Western University** | London Campus | Student Center (text paste or `.ics`) | [western.gapwise.ca](https://western.gapwise.ca) |
+| **University of Guelph** | Guelph Campus | WebAdvisor (text paste or `.ics`) | [guelph.gapwise.ca](https://guelph.gapwise.ca) |
+| **University of Ottawa** | Downtown Campus | uoCampus (text paste or `.ics`) | [uottawa.gapwise.ca](https://uottawa.gapwise.ca) |
+| **Brock University** | St. Catharines Campus | BrockDB / Student Portal (text paste or `.ics`) | [brock.gapwise.ca](https://brock.gapwise.ca) |
 
 ---
 

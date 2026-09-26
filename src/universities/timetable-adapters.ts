@@ -32,6 +32,22 @@ export const timetableAdapters: Record<string, (text: string) => Promise<ParsedT
     const { parseTimetable } = await import("./mcmaster/adapter");
     return parseTimetable(text);
   },
+  "western-schedule": async (text) => {
+    const { parseTimetable } = await import("./western/adapter");
+    return parseTimetable(text);
+  },
+  "guelph-schedule": async (text) => {
+    const { parseTimetable } = await import("./guelph/adapter");
+    return parseTimetable(text);
+  },
+  "uottawa-schedule": async (text) => {
+    const { parseTimetable } = await import("./uottawa/adapter");
+    return parseTimetable(text);
+  },
+  "brock-schedule": async (text) => {
+    const { parseTimetable } = await import("./brock/adapter");
+    return parseTimetable(text);
+  },
   // GAPWISE_ADAPTER_REGISTRY: the CLI inserts new timetable adapters here.
 };
 
@@ -78,6 +94,34 @@ export const demoTimetableLoaders: Record<string, () => Promise<Meeting[]>> = {
       import("./mcmaster/adapter"),
     ]);
     return DEMO_MCMASTER_MEETINGS.flatMap(normalizeMcMasterMeeting);
+  },
+  "western-schedule": async () => {
+    const [{ DEMO_WESTERN_MEETINGS }, { normalizeWesternMeeting }] = await Promise.all([
+      import("./western/demo-timetable"),
+      import("./western/adapter"),
+    ]);
+    return DEMO_WESTERN_MEETINGS.flatMap(normalizeWesternMeeting);
+  },
+  "guelph-schedule": async () => {
+    const [{ DEMO_GUELPH_MEETINGS }, { normalizeGuelphMeeting }] = await Promise.all([
+      import("./guelph/demo-timetable"),
+      import("./guelph/adapter"),
+    ]);
+    return DEMO_GUELPH_MEETINGS.flatMap(normalizeGuelphMeeting);
+  },
+  "uottawa-schedule": async () => {
+    const [{ DEMO_UOTTAWA_MEETINGS }, { normalizeUOttawaMeeting }] = await Promise.all([
+      import("./uottawa/demo-timetable"),
+      import("./uottawa/adapter"),
+    ]);
+    return DEMO_UOTTAWA_MEETINGS.flatMap(normalizeUOttawaMeeting);
+  },
+  "brock-schedule": async () => {
+    const [{ DEMO_BROCK_MEETINGS }, { normalizeBrockMeeting }] = await Promise.all([
+      import("./brock/demo-timetable"),
+      import("./brock/adapter"),
+    ]);
+    return DEMO_BROCK_MEETINGS.flatMap(normalizeBrockMeeting);
   },
   // GAPWISE_DEMO_LOADER_REGISTRY: the CLI inserts new demo loaders here.
 };

@@ -682,6 +682,286 @@
       "destination": "/_universities/mcmaster/index.html"
     },
     {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/western/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/western/og-card.png"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/western/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/western/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/western/_seo/$1.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/western/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "western.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/western/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/guelph/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/guelph/og-card.png"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/guelph/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/guelph/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/guelph/_seo/$1.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/guelph/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "guelph.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/guelph/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/uottawa/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/uottawa/og-card.png"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/uottawa/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/uottawa/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/uottawa/_seo/$1.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/uottawa/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "uottawa.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/uottawa/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/brock/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/brock/og-card.png"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/brock/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/brock/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/brock/_seo/$1.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/brock/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "brock.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/brock/index.html"
+    },
+    {
       "source": "/(og-card.png|og-gapwise.png)",
       "destination": "/universities/uoft/og-card.png"
     },

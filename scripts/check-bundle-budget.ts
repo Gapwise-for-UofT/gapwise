@@ -35,9 +35,9 @@ const totals = [...files].reduce(
   { js: 0, css: 0 },
 );
 
-// These leave modest headroom above the measured Phase 5 baseline while still
+// These leave modest headroom above the measured 11-university baseline while still
 // catching accidental eager loading of MapLibre or timetable parsing code.
-const budgets = { js: 430 * 1024, css: 45 * 1024 };
+const budgets = { js: 460 * 1024, css: 45 * 1024 };
 for (const kind of ["js", "css"] as const) {
   if (totals[kind] > budgets[kind]) {
     throw new Error(

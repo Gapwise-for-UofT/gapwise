@@ -21,14 +21,14 @@ export const PUBLIC_FEATURE_PAGES = {
     title: "A campus planner built around the time between classes.",
     seoTitle: "About Gapwise — Multi-University Student Planning",
     description:
-      "See how Gapwise connects university timetables, gap planning, and source-backed campus context in one focused student-built product for U of T, Carleton, TMU, Queen's, Laurier, York, and McMaster.",
+      "See how Gapwise connects university timetables, gap planning, and source-backed campus context in one focused student-built product for U of T, Carleton, TMU, Queen's, Laurier, York, McMaster, Western, Guelph, uOttawa, and Brock.",
     lead: "Gapwise is built for the part of university life a timetable leaves blank: what to do next, how much time you actually have, and where you need to go.",
     sections: [
       {
         title: "One day, one system",
         body: "Your timetable, gaps, buildings, routes, and academic work stay connected instead of living in separate tools.",
         bullets: [
-          "Timetable import for U of T (ACORN), Carleton, TMU, Queen's, Laurier, York, and McMaster",
+          "Timetable import for U of T (ACORN), Carleton, TMU, Queen's, Laurier, York, McMaster, Western, Guelph, uOttawa, and Brock",
           "Gap budgets between classes",
           "Source-backed campus building maps",
           "Academic work planning",
@@ -40,7 +40,7 @@ export const PUBLIC_FEATURE_PAGES = {
       },
       {
         title: "Made for multiple universities",
-        body: "Timetable identity and source-backed building maps are supported for all seven universities. Pedestrian routing, verified entrances, and campus places are currently most complete for UTM.",
+        body: "Timetable identity and source-backed building maps are supported for all eleven universities. Pedestrian routing, verified entrances, and campus places are currently most complete for UTM.",
       },
     ],
   },
@@ -73,7 +73,7 @@ export const PUBLIC_FEATURE_PAGES = {
     title: "Explore campus with a map built around your day.",
     seoTitle: "University Campus Map — Gapwise",
     description:
-      "Explore source-backed campus building maps for University of Toronto (UTM, UTSG, UTSC), Carleton, TMU, Queen's, Laurier, York, and McMaster — with pedestrian routes and schedule context where supported.",
+      "Explore source-backed campus building maps for University of Toronto (Mississauga, St. George, Scarborough), Carleton, TMU, Queen's, Laurier, York, McMaster, Western, Guelph, uOttawa, and Brock — with pedestrian routes and schedule context where supported.",
     lead: "The Gapwise campus explorer connects campus buildings and schedule context. Verified entrance, place, and pedestrian-route coverage is currently most complete for UTM.",
     sections: [
       {

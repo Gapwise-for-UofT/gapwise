@@ -33,6 +33,10 @@ const INSTITUTION_MARKETING_METRICS: Record<
   laurier: { count: 25, sampleCodes: ["LH", "SC", "DAWB", "BA"] },
   york: { count: 42, sampleCodes: ["CLH", "LAS", "DB", "ACW"] },
   mcmaster: { count: 38, sampleCodes: ["BSB", "MDCL", "JHE", "PGCLL"] },
+  western: { count: 20, sampleCodes: ["UCC", "SSC", "NSC", "MC"] },
+  guelph: { count: 15, sampleCodes: ["UC", "LIB", "ROZH", "MCKN"] },
+  uottawa: { count: 17, sampleCodes: ["UCU", "TBT", "MRT", "DMS"] },
+  brock: { count: 12, sampleCodes: ["ST", "TH", "MC", "GSB"] },
 };
 
 export function MarketingLandingImpl({

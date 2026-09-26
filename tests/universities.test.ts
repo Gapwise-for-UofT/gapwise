@@ -58,6 +58,10 @@ describe("university registry", () => {
     expect(universityForHostname("laurier.gapwise.ca")?.id).toBe("laurier");
     expect(universityForHostname("york.gapwise.ca")?.id).toBe("york");
     expect(universityForHostname("mcmaster.gapwise.ca")?.id).toBe("mcmaster");
+    expect(universityForHostname("western.gapwise.ca")?.id).toBe("western");
+    expect(universityForHostname("guelph.gapwise.ca")?.id).toBe("guelph");
+    expect(universityForHostname("uottawa.gapwise.ca")?.id).toBe("uottawa");
+    expect(universityForHostname("brock.gapwise.ca")?.id).toBe("brock");
     expect(universityForHostname("localhost")?.id).toBe("uoft");
     expect(universityForHostname("localhost", "carleton")?.id).toBe("carleton");
     expect(universityForHostname("localhost", "tmu")?.id).toBe("tmu");
@@ -66,6 +70,10 @@ describe("university registry", () => {
     expect(universityForHostname("preview-branch.vercel.app", "laurier")?.id).toBe("laurier");
     expect(universityForHostname("preview-branch.vercel.app", "york")?.id).toBe("york");
     expect(universityForHostname("preview-branch.vercel.app", "mcmaster")?.id).toBe("mcmaster");
+    expect(universityForHostname("preview-branch.vercel.app", "western")?.id).toBe("western");
+    expect(universityForHostname("preview-branch.vercel.app", "guelph")?.id).toBe("guelph");
+    expect(universityForHostname("preview-branch.vercel.app", "uottawa")?.id).toBe("uottawa");
+    expect(universityForHostname("preview-branch.vercel.app", "brock")?.id).toBe("brock");
     expect(universityForHostname("gapwise.ca", "carleton")?.id).toBe("uoft");
     expect(universityForHostname("unknown.gapwise.ca")).toBeNull();
     expect(universityForHostname("attacker.com")).toBeNull();
@@ -162,6 +170,10 @@ describe("canonical meeting and campus data contracts", () => {
     expect(typeof timetableAdapters["laurier-schedule"]).toBe("function");
     expect(typeof timetableAdapters["york-schedule"]).toBe("function");
     expect(typeof timetableAdapters["mcmaster-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["western-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["guelph-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["uottawa-schedule"]).toBe("function");
+    expect(typeof timetableAdapters["brock-schedule"]).toBe("function");
 
     const uoftDemo = await loadDemoTimetable("acorn-ics");
     expect(uoftDemo.length).toBeGreaterThan(0);
@@ -190,6 +202,22 @@ describe("canonical meeting and campus data contracts", () => {
     const mcmasterDemo = await loadDemoTimetable("mcmaster-schedule");
     expect(mcmasterDemo.length).toBeGreaterThan(0);
     expect(mcmasterDemo.every((m) => m.universityId === "mcmaster")).toBe(true);
+
+    const westernDemo = await loadDemoTimetable("western-schedule");
+    expect(westernDemo.length).toBeGreaterThan(0);
+    expect(westernDemo.every((m) => m.universityId === "western")).toBe(true);
+
+    const guelphDemo = await loadDemoTimetable("guelph-schedule");
+    expect(guelphDemo.length).toBeGreaterThan(0);
+    expect(guelphDemo.every((m) => m.universityId === "guelph")).toBe(true);
+
+    const uottawaDemo = await loadDemoTimetable("uottawa-schedule");
+    expect(uottawaDemo.length).toBeGreaterThan(0);
+    expect(uottawaDemo.every((m) => m.universityId === "uottawa")).toBe(true);
+
+    const brockDemo = await loadDemoTimetable("brock-schedule");
+    expect(brockDemo.length).toBeGreaterThan(0);
+    expect(brockDemo.every((m) => m.universityId === "brock")).toBe(true);
 
     const fallbackDemo = await loadDemoTimetable(undefined);
     expect(fallbackDemo).toEqual(uoftDemo);
@@ -243,5 +271,60 @@ describe("canonical meeting and campus data contracts", () => {
     const macRoute = macPlanner(mFrom, mTo, DEFAULT_ROUTE_PREFERENCES);
     expect(macRoute.status).toBe("routed");
     expect(macRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
+  });
+
+  test("loads Western, Guelph, uOttawa, and Brock campus models and plans transitions", async () => {
+    const { westernCampus } = await import("@/universities/western/adapter");
+    const { guelphCampus } = await import("@/universities/guelph/adapter");
+    const { uottawaCampus } = await import("@/universities/uottawa/adapter");
+    const { brockCampus } = await import("@/universities/brock/adapter");
+
+    expect(westernCampus.institution).toBe("western");
+    expect(westernCampus.buildings.length).toBeGreaterThanOrEqual(15);
+    expect(westernCampus.entrances.length).toBeGreaterThanOrEqual(15);
+
+    expect(guelphCampus.institution).toBe("guelph");
+    expect(guelphCampus.buildings.length).toBeGreaterThanOrEqual(12);
+    expect(guelphCampus.entrances.length).toBeGreaterThanOrEqual(12);
+
+    expect(uottawaCampus.institution).toBe("uottawa");
+    expect(uottawaCampus.buildings.length).toBeGreaterThanOrEqual(15);
+    expect(uottawaCampus.entrances.length).toBeGreaterThanOrEqual(15);
+
+    expect(brockCampus.institution).toBe("brock");
+    expect(brockCampus.buildings.length).toBeGreaterThanOrEqual(10);
+    expect(brockCampus.entrances.length).toBeGreaterThanOrEqual(10);
+
+    const westernPlanner = createOutdoorCampusTransitionPlanner(westernCampus);
+    const westernDemo = await loadDemoTimetable("western-schedule");
+    const wFrom = westernDemo.find((m) => m.courseCode === "COMPSCI 1026A")!;
+    const wTo = westernDemo.find((m) => m.courseCode === "MATH 1600A")!;
+    const westernRoute = westernPlanner(wFrom, wTo, DEFAULT_ROUTE_PREFERENCES);
+    expect(westernRoute.status).toBe("routed");
+    expect(westernRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
+
+    const guelphPlanner = createOutdoorCampusTransitionPlanner(guelphCampus);
+    const guelphDemo = await loadDemoTimetable("guelph-schedule");
+    const gFrom = guelphDemo.find((m) => m.courseCode === "CIS 1300")!;
+    const gTo = guelphDemo.find((m) => m.courseCode === "MATH 1200")!;
+    const guelphRoute = guelphPlanner(gFrom, gTo, DEFAULT_ROUTE_PREFERENCES);
+    expect(guelphRoute.status).toBe("routed");
+    expect(guelphRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
+
+    const uottawaPlanner = createOutdoorCampusTransitionPlanner(uottawaCampus);
+    const uottawaDemo = await loadDemoTimetable("uottawa-schedule");
+    const uFrom = uottawaDemo.find((m) => m.courseCode === "CSI 2110")!;
+    const uTo = uottawaDemo.find((m) => m.courseCode === "MAT 1320")!;
+    const uottawaRoute = uottawaPlanner(uFrom, uTo, DEFAULT_ROUTE_PREFERENCES);
+    expect(uottawaRoute.status).toBe("routed");
+    expect(uottawaRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
+
+    const brockPlanner = createOutdoorCampusTransitionPlanner(brockCampus);
+    const brockDemo = await loadDemoTimetable("brock-schedule");
+    const bFrom = brockDemo.find((m) => m.courseCode === "COSC 1P02")!;
+    const bTo = brockDemo.find((m) => m.courseCode === "MATH 1P66")!;
+    const brockRoute = brockPlanner(bFrom, bTo, DEFAULT_ROUTE_PREFERENCES);
+    expect(brockRoute.status).toBe("routed");
+    expect(brockRoute.result?.outdoorDistanceMeters).toBeGreaterThan(0);
   });
 });

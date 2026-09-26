@@ -20,6 +20,10 @@ import queensCatalogRaw from "./queens/catalog.json?raw";
 import laurierCatalogRaw from "./laurier/catalog.json?raw";
 import yorkCatalogRaw from "./york/catalog.json?raw";
 import mcmasterCatalogRaw from "./mcmaster/catalog.json?raw";
+import westernCatalogRaw from "./western/catalog.json?raw";
+import guelphCatalogRaw from "./guelph/catalog.json?raw";
+import uottawaCatalogRaw from "./uottawa/catalog.json?raw";
+import brockCatalogRaw from "./brock/catalog.json?raw";
 
 const universityCatalogRaw: Record<string, string> = {
   carleton: carletonCatalogRaw,
@@ -31,6 +35,10 @@ const universityCatalogRaw: Record<string, string> = {
   york: yorkCatalogRaw,
   main: mcmasterCatalogRaw,
   mcmaster: mcmasterCatalogRaw,
+  western: westernCatalogRaw,
+  guelph: guelphCatalogRaw,
+  uottawa: uottawaCatalogRaw,
+  brock: brockCatalogRaw,
   // GAPWISE_CAMPUS_CATALOG_REGISTRY: the CLI inserts new catalog imports here.
 };
 

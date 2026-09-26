@@ -3,9 +3,30 @@ import { dirname, join } from "node:path";
 import { PUBLIC_FEATURE_PAGES } from "../src/content/public-feature-pages";
 
 const SITE_ORIGIN = "https://gapwise.ca";
-const SOCIAL_IMAGE = `${SITE_ORIGIN}/og-gapwise.png`;
 const GITHUB_ORGANIZATION = "https://github.com/GapwiseHQ";
 const GITHUB_CORE = `${GITHUB_ORGANIZATION}/gapwise`;
+
+export type UniversityContext = {
+  id: string;
+  name: string;
+  shortName: string;
+  origin: string;
+  routable: boolean;
+};
+
+export const UOFT_CONTEXT: UniversityContext = {
+  id: "uoft",
+  name: "University of Toronto",
+  shortName: "U of T",
+  origin: SITE_ORIGIN,
+  routable: true,
+};
+
+function socialImageUrl(uniContext?: UniversityContext) {
+  const origin = uniContext?.origin ?? SITE_ORIGIN;
+  const id = uniContext?.id ?? "uoft";
+  return `${origin}/universities/${id}/og-card.png`;
+}
 
 type SeoSection = { title: string; body: string; bullets?: readonly string[] };
 type SeoPage = {
@@ -185,20 +206,12 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-type UniversityContext = {
-  id: string;
-  name: string;
-  shortName: string;
-  origin: string;
-  routable: boolean;
-};
-
 function canonicalUrl(path: string, origin: string = SITE_ORIGIN) {
   return new URL(path, `${origin}/`).href;
 }
 
 function outputPath(path: string) {
-  if (path === "/") return "index.html";
+  if (path === "/") return "_seo/index.html";
   return `_seo/${path.slice(1).replaceAll("/", "--")}.html`;
 }
 
@@ -300,13 +313,16 @@ function homepageStructuredData(page: SeoPage, uniContext?: UniversityContext) {
 }
 
 function metadata(page: SeoPage, uniContext?: UniversityContext) {
-  const origin = uniContext?.origin ?? SITE_ORIGIN;
+  const effectiveUni = uniContext ?? UOFT_CONTEXT;
+  const origin = effectiveUni.origin;
   const canonical = canonicalUrl(page.path, origin);
   const title = escapeHtml(page.title);
   const description = escapeHtml(page.description);
+  const socialImage = socialImageUrl(effectiveUni);
+  const socialImageAlt = `Gapwise — ${escapeHtml(effectiveUni.name)}`;
   const schema =
     page.path === "/"
-      ? `\n    <script type="application/ld+json">${JSON.stringify(homepageStructuredData(page, uniContext)).replaceAll("<", "\\u003c")}</script>`
+      ? `\n    <script type="application/ld+json">${JSON.stringify(homepageStructuredData(page, effectiveUni)).replaceAll("<", "\\u003c")}</script>`
       : "";
 
   return `
@@ -321,14 +337,16 @@ function metadata(page: SeoPage, uniContext?: UniversityContext) {
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:url" content="${canonical}" />
-    <meta property="og:image" content="${SOCIAL_IMAGE}" />
+    <meta property="og:image" content="${socialImage}" />
+    <meta property="og:image:secure_url" content="${socialImage}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Gapwise — make the time between classes count" />
+    <meta property="og:image:alt" content="${socialImageAlt}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
-    <meta name="twitter:image" content="${SOCIAL_IMAGE}" />${schema}`;
+    <meta name="twitter:image" content="${socialImage}" />
+    <meta name="twitter:image:alt" content="${socialImageAlt}" />${schema}`;
 }
 
 function fallback(page: SeoPage, uniContext?: UniversityContext) {
@@ -539,7 +557,7 @@ const baseHtml = await readFile(distIndexPath, "utf8");
 for (const page of PAGES) {
   const destination = join("dist", outputPath(page.path));
   await mkdir(dirname(destination), { recursive: true });
-  await writeFile(destination, renderDocument(baseHtml, page));
+  await writeFile(destination, renderDocument(baseHtml, page, UOFT_CONTEXT));
 }
 
 const expectedSitemap = renderSitemap();
@@ -547,12 +565,20 @@ const committedSitemap = await readFile(join("public", "sitemap.xml"), "utf8");
 if (committedSitemap !== expectedSitemap) {
   throw new Error("public/sitemap.xml is out of sync with the production SEO page inventory.");
 }
-// Remove root sitemap and robots so they do not shadow host-specific rewrites on Vercel
-await rm(join("dist", "sitemap.xml"), { force: true });
-await rm(join("dist", "robots.txt"), { force: true });
 await writeFile(join("dist", "_seo", "sitemap.xml"), expectedSitemap);
 await writeFile(
   join("dist", "_seo", "robots.txt"),
+  await readFile(join("public", "robots.txt"), "utf8"),
+);
+
+// Write U of T tenant entry point and sitemap/robots
+const uoftTenantDir = join("dist", "_universities", "uoft");
+await mkdir(uoftTenantDir, { recursive: true });
+const uoftHomeHtml = renderDocument(baseHtml, PAGES[0]!, UOFT_CONTEXT);
+await writeFile(join(uoftTenantDir, "index.html"), uoftHomeHtml);
+await writeFile(join(uoftTenantDir, "sitemap.xml"), expectedSitemap);
+await writeFile(
+  join(uoftTenantDir, "robots.txt"),
   await readFile(join("public", "robots.txt"), "utf8"),
 );
 
@@ -599,6 +625,13 @@ for (const uni of universitiesManifest.universities) {
   universityPageCounts[uni.id] = uniPageCount;
   universityCount++;
 }
+
+// Remove root files so they cannot shadow host-specific rewrites on Vercel
+await rm(join("dist", "index.html"), { force: true });
+await rm(join("dist", "sitemap.xml"), { force: true });
+await rm(join("dist", "robots.txt"), { force: true });
+await rm(join("dist", "og-gapwise.png"), { force: true });
+await rm(join("dist", "og-card.png"), { force: true });
 
 const uoftPageCount = PAGES.filter((p) => p.sitemap).length;
 console.log(

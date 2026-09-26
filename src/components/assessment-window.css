@@ -45,11 +45,13 @@
   --route-component-accent: var(--color-lec);
 }
 
-[role="dialog"]:has(.activity-badge[data-activity="TUT"]) .button-primary:has(.lucide-navigation) {
+[role="dialog"]:has(.activity-badge[data-activity="TUT"]) .button-primary:has(.lucide-navigation),
+[role="dialog"]:has(.activity-badge[data-activity="SEM"]) .button-primary:has(.lucide-navigation) {
   --route-component-accent: var(--color-tut);
 }
 
-[role="dialog"]:has(.activity-badge[data-activity="PRA"]) .button-primary:has(.lucide-navigation) {
+[role="dialog"]:has(.activity-badge[data-activity="PRA"]) .button-primary:has(.lucide-navigation),
+[role="dialog"]:has(.activity-badge[data-activity="LAB"]) .button-primary:has(.lucide-navigation) {
   --route-component-accent: var(--color-pra);
 }
 

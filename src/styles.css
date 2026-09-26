@@ -639,9 +639,18 @@
   }
 
   .meeting-card[data-activity="PRA"],
+  .meeting-card[data-activity="LAB"],
   .activity-badge[data-activity="PRA"],
-  .activity-dot[data-activity="PRA"] {
+  .activity-badge[data-activity="LAB"],
+  .activity-dot[data-activity="PRA"],
+  .activity-dot[data-activity="LAB"] {
     --meeting-accent: var(--color-pra);
+  }
+
+  .meeting-card[data-activity="SEM"],
+  .activity-badge[data-activity="SEM"],
+  .activity-dot[data-activity="SEM"] {
+    --meeting-accent: var(--color-tut);
   }
 
   .meeting-card {

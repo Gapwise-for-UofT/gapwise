@@ -226,6 +226,242 @@
   ],
   "rewrites": [
     {
+      "source": "/openai-review",
+      "destination": "/openai-review/index.html"
+    },
+    {
+      "source": "/api/version",
+      "destination": "/api/health?view=version"
+    },
+    {
+      "source": "/v1",
+      "destination": "/api/v1?resource=root"
+    },
+    {
+      "source": "/v1/buildings",
+      "destination": "/api/v1?resource=buildings"
+    },
+    {
+      "source": "/v1/buildings/:building",
+      "destination": "/api/v1?resource=building&building=:building"
+    },
+    {
+      "source": "/v1/places",
+      "destination": "/api/v1?resource=places"
+    },
+    {
+      "source": "/v1/places/:placeId",
+      "destination": "/api/v1?resource=place&placeId=:placeId"
+    },
+    {
+      "source": "/v1/routes",
+      "destination": "/api/v1?resource=routes"
+    },
+    {
+      "source": "/v1/gaps/plan",
+      "destination": "/api/v1?resource=gap-plan"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/carleton/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/_seo/$1.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/tmu/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/_seo/$1.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/queens/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/_seo/$1.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/laurier/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/_seo/$1.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/index.html"
+    },
+    {
       "source": "/about",
       "destination": "/_seo/about.html"
     },
@@ -296,122 +532,6 @@
     {
       "source": "/terms",
       "destination": "/_seo/terms.html"
-    },
-    {
-      "source": "/openai-review",
-      "destination": "/openai-review/index.html"
-    },
-    {
-      "source": "/api/version",
-      "destination": "/api/health?view=version"
-    },
-    {
-      "source": "/v1",
-      "destination": "/api/v1?resource=root"
-    },
-    {
-      "source": "/v1/buildings",
-      "destination": "/api/v1?resource=buildings"
-    },
-    {
-      "source": "/v1/buildings/:building",
-      "destination": "/api/v1?resource=building&building=:building"
-    },
-    {
-      "source": "/v1/places",
-      "destination": "/api/v1?resource=places"
-    },
-    {
-      "source": "/v1/places/:placeId",
-      "destination": "/api/v1?resource=place&placeId=:placeId"
-    },
-    {
-      "source": "/v1/routes",
-      "destination": "/api/v1?resource=routes"
-    },
-    {
-      "source": "/v1/gaps/plan",
-      "destination": "/api/v1?resource=gap-plan"
-    },
-    {
-      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
-      "has": [
-        {
-          "type": "host",
-          "value": "carleton.gapwise.ca"
-        }
-      ],
-      "destination": "/universities/carleton/$1"
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "carleton.gapwise.ca"
-        }
-      ],
-      "destination": "/_universities/carleton/index.html"
-    },
-    {
-      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
-      "has": [
-        {
-          "type": "host",
-          "value": "tmu.gapwise.ca"
-        }
-      ],
-      "destination": "/universities/tmu/$1"
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "tmu.gapwise.ca"
-        }
-      ],
-      "destination": "/_universities/tmu/index.html"
-    },
-    {
-      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
-      "has": [
-        {
-          "type": "host",
-          "value": "queens.gapwise.ca"
-        }
-      ],
-      "destination": "/universities/queens/$1"
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "queens.gapwise.ca"
-        }
-      ],
-      "destination": "/_universities/queens/index.html"
-    },
-    {
-      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
-      "has": [
-        {
-          "type": "host",
-          "value": "laurier.gapwise.ca"
-        }
-      ],
-      "destination": "/universities/laurier/$1"
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "laurier.gapwise.ca"
-        }
-      ],
-      "destination": "/_universities/laurier/index.html"
     },
     {
       "source": "/(.*)",

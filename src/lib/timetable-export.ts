@@ -32,6 +32,8 @@ export interface TimetableExportPalette {
   lec: string;
   tut: string;
   pra: string;
+  lab: string;
+  sem: string;
   reserved: string;
   other: string;
   shadow: string;
@@ -55,6 +57,8 @@ export const EXPORT_PALETTES: Record<ExportTheme, TimetableExportPalette> = {
     lec: "#3769b8",
     tut: "#237a92",
     pra: "#8554a8",
+    lab: "#8554a8",
+    sem: "#1f8a70",
     reserved: "#a66d1d",
     other: "#687386",
     shadow: "#1720331a",
@@ -76,6 +80,8 @@ export const EXPORT_PALETTES: Record<ExportTheme, TimetableExportPalette> = {
     lec: "#78a6e8",
     tut: "#72bdcf",
     pra: "#b18bd0",
+    lab: "#b18bd0",
+    sem: "#56c596",
     reserved: "#dfad52",
     other: "#a6afbd",
     shadow: "#00000066",
@@ -294,6 +300,8 @@ export function meetingExportStyle(
     LEC: palette.lec,
     TUT: palette.tut,
     PRA: palette.pra,
+    LAB: palette.lab,
+    SEM: palette.sem,
     OTHER: palette.other,
   };
   const custom = meeting.color && /^#[0-9a-f]{6}$/i.test(meeting.color) ? meeting.color : null;
@@ -323,7 +331,13 @@ export function meetingExportStyle(
     ),
     dashed: study || reserved,
     reserved,
-    label: reserved ? "RES" : study ? "STUDY" : personal ? "PERSONAL" : meeting.activityType,
+    label: reserved
+      ? "RES"
+      : study
+        ? "STUDY"
+        : personal
+          ? "PERSONAL"
+          : (meeting.nativeComponentType ?? meeting.activityType),
   };
 }
 

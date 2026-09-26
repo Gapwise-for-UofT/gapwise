@@ -8,8 +8,17 @@ import type {
 } from "@/lib/timetable-types";
 import { TERMS, WEEKDAYS } from "@/lib/timetable-types";
 
-const ACTIVITY_TYPES: ActivityType[] = ["LEC", "TUT", "PRA", "OTHER"];
-const CAMPUSES: Campus[] = ["UTSG", "UTM", "UTSC", "UNKNOWN"];
+const ACTIVITY_TYPES: ActivityType[] = ["LEC", "TUT", "PRA", "LAB", "SEM", "OTHER"];
+const CAMPUSES: Campus[] = [
+  "UTSG",
+  "UTM",
+  "UTSC",
+  "CARLETON",
+  "TMU",
+  "QUEENS",
+  "WATERLOO",
+  "UNKNOWN",
+];
 const LOCATION_TYPES: MeetingLocationType[] = ["physical", "tba", "online", "unknown"];
 const deserializationCache = new WeakMap<object, Meeting[]>();
 
@@ -34,6 +43,9 @@ function deserializeMeeting(value: unknown): Meeting | null {
   const courseCode = value["courseCode"];
   const activityType = value["activityType"] as ActivityType;
   const sectionCode = value["sectionCode"];
+  const universityId = value["universityId"];
+  const nativeSection = value["nativeSection"];
+  const nativeComponentType = value["nativeComponentType"];
   const courseName = value["courseName"];
   const startTime = value["startTime"];
   const endTime = value["endTime"];
@@ -111,6 +123,9 @@ function deserializeMeeting(value: unknown): Meeting | null {
     term,
     locationUnknown,
   };
+  if (typeof universityId === "string") meeting.universityId = universityId;
+  if (typeof nativeSection === "string") meeting.nativeSection = nativeSection;
+  if (typeof nativeComponentType === "string") meeting.nativeComponentType = nativeComponentType;
   if (campus !== undefined) meeting.campus = campus;
   if (sourceLocation !== undefined) meeting.sourceLocation = sourceLocation as string;
   if (notes !== undefined) meeting.notes = notes as string;
@@ -154,6 +169,9 @@ export function serializeSchedule(meetings: Meeting[]): Meeting[] {
       term: meeting.term,
       locationUnknown: meeting.locationUnknown,
     };
+    if (meeting.universityId) serialized.universityId = meeting.universityId;
+    if (meeting.nativeSection) serialized.nativeSection = meeting.nativeSection;
+    if (meeting.nativeComponentType) serialized.nativeComponentType = meeting.nativeComponentType;
     if (meeting.campus) serialized.campus = meeting.campus;
     if (meeting.sourceLocation !== undefined) serialized.sourceLocation = meeting.sourceLocation;
     if (meeting.notes) serialized.notes = meeting.notes;

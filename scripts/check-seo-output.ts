@@ -120,4 +120,171 @@ requireText(robots, "Disallow: /api/", "robots.txt");
 requireText(robots, "Disallow: /oauth/", "robots.txt");
 requireText(robots, "Sitemap: https://gapwise.ca/sitemap.xml", "robots.txt");
 
+// ── Per-university sitemap and robots regression checks ──────────────────────
+
+/** U of T-specific paths that must NEVER appear in non-UofT university sitemaps. */
+const UOFT_ONLY_PATHS = [
+  "/utm-timetable",
+  "/acorn-import",
+  "/places",
+  "/places/davis-food-court",
+  "/places/utm-library",
+  "/places/rawc",
+];
+
+const UNIVERSITY_IDS = ["carleton", "tmu", "queens", "laurier"] as const;
+type UniversityId = (typeof UNIVERSITY_IDS)[number];
+const UNIVERSITY_ORIGINS: Record<UniversityId, string> = {
+  carleton: "https://carleton.gapwise.ca",
+  tmu: "https://tmu.gapwise.ca",
+  queens: "https://queens.gapwise.ca",
+  laurier: "https://laurier.gapwise.ca",
+};
+
+function getUniversityOrigin(uniId: UniversityId): string {
+  const origin = UNIVERSITY_ORIGINS[uniId];
+  if (!origin) throw new Error(`Missing origin configuration for university: ${uniId}`);
+  return origin;
+}
+
+const COMMON_SEO_PATHS = [
+  "/about",
+  "/campus-map",
+  "/gap-planner",
+  "/campus-routing",
+  "/developers",
+  "/ai",
+  "/support",
+  "/trust",
+  "/privacy",
+  "/security",
+  "/accessibility",
+] as const;
+
+for (const uniId of UNIVERSITY_IDS) {
+  const uniOrigin = getUniversityOrigin(uniId);
+  const uniSitemapPath = `dist/_universities/${uniId}/sitemap.xml`;
+  const uniRobotsPath = `dist/_universities/${uniId}/robots.txt`;
+  const uniHtmlPath = `dist/_universities/${uniId}/index.html`;
+
+  const [uniSitemap, uniRobots, uniHtml] = await Promise.all([
+    readFile(uniSitemapPath, "utf8"),
+    readFile(uniRobotsPath, "utf8"),
+    readFile(uniHtmlPath, "utf8"),
+  ]);
+
+  // Sitemap must be valid XML with urlset
+  if (!uniSitemap.includes("<urlset")) {
+    throw new Error(`${uniId} sitemap is missing <urlset>`);
+  }
+
+  // Sitemap must contain the university's own origin
+  requireText(uniSitemap, uniOrigin, `${uniId} sitemap`);
+
+  // Sitemap must NOT contain gapwise.ca (U of T) URLs
+  if (uniSitemap.includes("https://gapwise.ca")) {
+    throw new Error(
+      `${uniId} sitemap contains gapwise.ca — university sitemaps must use their own hostname`,
+    );
+  }
+
+  // Sitemap must NOT contain other universities' hostnames
+  for (const otherId of UNIVERSITY_IDS) {
+    if (otherId === uniId) continue;
+    if (uniSitemap.includes(getUniversityOrigin(otherId))) {
+      throw new Error(
+        `${uniId} sitemap contains ${otherId} hostname — each sitemap must only contain its own university URLs`,
+      );
+    }
+  }
+
+  // Sitemap must NOT contain U of T-specific paths
+  for (const path of UOFT_ONLY_PATHS) {
+    if (uniSitemap.includes(path)) {
+      throw new Error(
+        `${uniId} sitemap contains U of T-specific path ${path} — this path must not appear in non-UofT university sitemaps`,
+      );
+    }
+  }
+
+  // Sitemap must contain at least the homepage URL
+  requireText(uniSitemap, `<loc>${uniOrigin}/</loc>`, `${uniId} sitemap`);
+
+  // Sitemap must contain each of the common SEO paths with the university origin
+  for (const path of COMMON_SEO_PATHS) {
+    requireText(uniSitemap, `<loc>${uniOrigin}${path}</loc>`, `${uniId} sitemap`);
+  }
+
+  // Robots.txt must reference the university's own sitemap
+  requireText(uniRobots, `Sitemap: ${uniOrigin}/sitemap.xml`, `${uniId} robots.txt`);
+
+  // University HTML must have canonical URL pointing to the university origin (not gapwise.ca)
+  if (uniHtml.includes(`rel="canonical" href="https://gapwise.ca`)) {
+    throw new Error(
+      `${uniId} index.html has canonical URL pointing to gapwise.ca — must use ${uniOrigin}`,
+    );
+  }
+  requireText(uniHtml, `rel="canonical" href="${uniOrigin}/"`, `${uniId} index canonical`);
+
+  // University HTML must have OG URL pointing to the university origin
+  if (uniHtml.includes(`property="og:url" content="https://gapwise.ca`)) {
+    throw new Error(
+      `${uniId} index.html has og:url pointing to gapwise.ca — must use ${uniOrigin}`,
+    );
+  }
+  requireText(uniHtml, `property="og:url" content="${uniOrigin}/"`, `${uniId} index og:url`);
+
+  // University HTML must have JSON-LD with the university origin (not gapwise.ca/#organization etc.)
+  if (uniHtml.includes(`"https://gapwise.ca/#`)) {
+    throw new Error(
+      `${uniId} index.html has JSON-LD entity IDs still pointing to gapwise.ca — must use ${uniOrigin}`,
+    );
+  }
+
+  // University HTML must not leak U of T fallback navigation links
+  for (const path of UOFT_ONLY_PATHS) {
+    if (uniHtml.includes(`href="${path}"`)) {
+      throw new Error(`${uniId} index.html fallback links contain U of T-specific path ${path}`);
+    }
+  }
+
+  // Check each university _seo/*.html page
+  for (const path of COMMON_SEO_PATHS) {
+    const fileName = `${path.slice(1).replaceAll("/", "--")}.html`;
+    const seoPagePath = `dist/_universities/${uniId}/_seo/${fileName}`;
+    const pageHtml = await readFile(seoPagePath, "utf8");
+
+    // Canonical and OG URLs must use the university origin
+    requireText(
+      pageHtml,
+      `rel="canonical" href="${uniOrigin}${path}"`,
+      `${uniId} ${path} canonical`,
+    );
+    requireText(
+      pageHtml,
+      `property="og:url" content="${uniOrigin}${path}"`,
+      `${uniId} ${path} og:url`,
+    );
+
+    // No gapwise.ca canonical leak
+    if (pageHtml.includes(`rel="canonical" href="https://gapwise.ca`)) {
+      throw new Error(
+        `${uniId} ${fileName} has canonical URL pointing to gapwise.ca — must use ${uniOrigin}`,
+      );
+    }
+
+    // No U of T navigation leaks in fallback
+    for (const uoftPath of UOFT_ONLY_PATHS) {
+      if (pageHtml.includes(`href="${uoftPath}"`)) {
+        throw new Error(
+          `${uniId} ${fileName} fallback navigation contains U of T-specific path ${uoftPath}`,
+        );
+      }
+    }
+  }
+}
+
 console.log("Generated SEO output verified.");
+console.log(
+  `Verified per-university sitemaps, robots.txt, canonical URLs, OG URLs, JSON-LD, and ${COMMON_SEO_PATHS.length + 1} SEO pages for: ${UNIVERSITY_IDS.join(", ")}.`,
+);

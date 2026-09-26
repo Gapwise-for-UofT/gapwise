@@ -43,16 +43,24 @@ export default defineConfig({
           if (!req.url) return next();
           const parsed = new URL(req.url, "http://localhost");
           const host = (req.headers.host || "").toLowerCase();
+          const KNOWN_UNIVERSITIES = new Set(["uoft", "carleton", "tmu", "queens", "laurier"]);
           let uniId = "uoft";
           if (host.includes("carleton")) uniId = "carleton";
           else if (host.includes("tmu")) uniId = "tmu";
           else if (host.includes("queens")) uniId = "queens";
           else if (host.includes("laurier")) uniId = "laurier";
-          else if (parsed.searchParams.get("university")) {
-            uniId = parsed.searchParams.get("university")!;
+          else {
+            const queryUni = parsed.searchParams.get("university");
+            if (queryUni && KNOWN_UNIVERSITIES.has(queryUni)) {
+              uniId = queryUni;
+            }
           }
 
-          if (parsed.pathname === "/" || parsed.pathname === "") {
+          if (
+            parsed.pathname === "/" ||
+            parsed.pathname === "" ||
+            parsed.pathname === "/index.html"
+          ) {
             req.url = `/_universities/${uniId}/index.html`;
           } else if (parsed.pathname === "/og-card.png" || parsed.pathname === "/og-gapwise.png") {
             req.url = `/universities/${uniId}/og-card.png`;

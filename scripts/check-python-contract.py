@@ -53,6 +53,8 @@ for alias, (schema_name, property_name) in checks.items():
 
 client_source = Path("sdk/python/src/gapwise/client.py").read_text()
 for method, path in [
+    ("GET", "/universities"),
+    ("GET", "/campuses"),
     ("GET", "/buildings"),
     ("GET", "/places"),
     ("POST", "/routes"),

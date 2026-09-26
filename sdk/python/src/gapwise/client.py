@@ -13,6 +13,7 @@ from .types import (
     AvailabilityState,
     Building,
     BuildingCategory,
+    CampusInfo,
     CampusPlace,
     GapPlanResult,
     Page,
@@ -20,6 +21,7 @@ from .types import (
     RouteMode,
     RouteResult,
     Term,
+    UniversityInfo,
     Weekday,
 )
 
@@ -109,20 +111,85 @@ def _route_payload(
     from_building: str,
     to_building: str,
     *,
-    mode: RouteMode | None,
-    walking_speed_mps: float | None,
-    transition_buffer_minutes: float | None,
+    university: str | None = None,
+    campus: str | None = None,
+    mode: RouteMode | None = None,
+    walking_speed_mps: float | None = None,
+    transition_buffer_minutes: float | None = None,
 ) -> dict[str, Any]:
     preferences = _params(
         mode=mode,
         walkingSpeedMps=walking_speed_mps,
         transitionBufferMinutes=transition_buffer_minutes,
     )
-    return {
+    payload: dict[str, Any] = {
         "from": from_building,
         "to": to_building,
-        **({"preferences": preferences} if preferences else {}),
     }
+    if university is not None:
+        payload["university"] = university
+    if campus is not None:
+        payload["campus"] = campus
+    if preferences:
+        payload["preferences"] = preferences
+    return payload
+
+
+class _SyncUniversities:
+    def __init__(self, owner: Gapwise):
+        self._owner = owner
+
+    def list(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> Page[UniversityInfo]:
+        return cast(
+            Page[UniversityInfo],
+            _page(
+                self._owner._request(
+                    "GET",
+                    "/universities",
+                    params=_params(limit=limit, offset=offset),
+                )
+            ),
+        )
+
+    def get(self, id: str) -> UniversityInfo:
+        return cast(
+            UniversityInfo,
+            _decode(self._owner._request("GET", f"/universities/{quote(id, safe='')}"))[0],
+        )
+
+
+class _SyncCampuses:
+    def __init__(self, owner: Gapwise):
+        self._owner = owner
+
+    def list(
+        self,
+        *,
+        university: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> Page[CampusInfo]:
+        return cast(
+            Page[CampusInfo],
+            _page(
+                self._owner._request(
+                    "GET",
+                    "/campuses",
+                    params=_params(university=university, limit=limit, offset=offset),
+                )
+            ),
+        )
+
+    def get(self, id: str) -> CampusInfo:
+        return cast(
+            CampusInfo,
+            _decode(self._owner._request("GET", f"/campuses/{quote(id, safe='')}"))[0],
+        )
 
 
 class _SyncBuildings:
@@ -134,6 +201,8 @@ class _SyncBuildings:
         *,
         q: str | None = None,
         category: BuildingCategory | None = None,
+        university: str | None = None,
+        campus: str | None = None,
         limit: int | None = None,
         offset: int | None = None,
     ) -> Page[Building]:
@@ -143,15 +212,34 @@ class _SyncBuildings:
                 self._owner._request(
                     "GET",
                     "/buildings",
-                    params=_params(q=q, category=category, limit=limit, offset=offset),
+                    params=_params(
+                        q=q,
+                        category=category,
+                        university=university,
+                        campus=campus,
+                        limit=limit,
+                        offset=offset,
+                    ),
                 )
             ),
         )
 
-    def get(self, building: str) -> Building:
+    def get(
+        self,
+        building: str,
+        *,
+        university: str | None = None,
+        campus: str | None = None,
+    ) -> Building:
         return cast(
             Building,
-            _decode(self._owner._request("GET", f"/buildings/{quote(building, safe='')}"))[0],
+            _decode(
+                self._owner._request(
+                    "GET",
+                    f"/buildings/{quote(building, safe='')}",
+                    params=_params(university=university, campus=campus),
+                )
+            )[0],
         )
 
 
@@ -165,6 +253,8 @@ class _SyncPlaces:
         q: str | None = None,
         kind: PlaceKind | None = None,
         building: str | None = None,
+        university: str | None = None,
+        campus: str | None = None,
         open_now: AvailabilityState | None = None,
         limit: int | None = None,
         offset: int | None = None,
@@ -179,6 +269,8 @@ class _SyncPlaces:
                         q=q,
                         kind=kind,
                         building=building,
+                        university=university,
+                        campus=campus,
                         openNow=open_now,
                         limit=limit,
                         offset=offset,
@@ -187,10 +279,22 @@ class _SyncPlaces:
             ),
         )
 
-    def get(self, place_id: str) -> CampusPlace:
+    def get(
+        self,
+        place_id: str,
+        *,
+        university: str | None = None,
+        campus: str | None = None,
+    ) -> CampusPlace:
         return cast(
             CampusPlace,
-            _decode(self._owner._request("GET", f"/places/{quote(place_id, safe='')}"))[0],
+            _decode(
+                self._owner._request(
+                    "GET",
+                    f"/places/{quote(place_id, safe='')}",
+                    params=_params(university=university, campus=campus),
+                )
+            )[0],
         )
 
 
@@ -203,6 +307,8 @@ class _SyncRoutes:
         *,
         from_building: str,
         to_building: str,
+        university: str | None = None,
+        campus: str | None = None,
         mode: RouteMode | None = None,
         walking_speed_mps: float | None = None,
         transition_buffer_minutes: float | None = None,
@@ -210,6 +316,8 @@ class _SyncRoutes:
         payload = _route_payload(
             from_building,
             to_building,
+            university=university,
+            campus=campus,
             mode=mode,
             walking_speed_mps=walking_speed_mps,
             transition_buffer_minutes=transition_buffer_minutes,
@@ -230,6 +338,8 @@ class _SyncGaps:
         weekday: Weekday,
         start_time: int,
         end_time: int,
+        university: str | None = None,
+        campus: str | None = None,
         route_preferences: Mapping[str, object] | None = None,
         gap_preferences: Mapping[str, object] | None = None,
     ) -> GapPlanResult:
@@ -240,6 +350,8 @@ class _SyncGaps:
             "weekday": weekday,
             "startTime": start_time,
             "endTime": end_time,
+            **({"university": university} if university is not None else {}),
+            **({"campus": campus} if campus is not None else {}),
             **({"routePreferences": dict(route_preferences)} if route_preferences else {}),
             **({"gapPreferences": dict(gap_preferences)} if gap_preferences else {}),
         }
@@ -264,7 +376,9 @@ class Gapwise:
         self._owns_client = client is None
         self._client = client or httpx.Client(timeout=timeout)
         self._headers = {"Accept": "application/json", **(headers or {})}
-        self.buildings, self.places, self.routes, self.gaps = (
+        self.universities, self.campuses, self.buildings, self.places, self.routes, self.gaps = (
+            _SyncUniversities(self),
+            _SyncCampuses(self),
             _SyncBuildings(self),
             _SyncPlaces(self),
             _SyncRoutes(self),
@@ -293,6 +407,63 @@ class Gapwise:
         self.close()
 
 
+class _AsyncUniversities:
+    def __init__(self, owner: AsyncGapwise):
+        self._owner = owner
+
+    async def list(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> Page[UniversityInfo]:
+        return cast(
+            Page[UniversityInfo],
+            _page(
+                await self._owner._request(
+                    "GET",
+                    "/universities",
+                    params=_params(limit=limit, offset=offset),
+                )
+            ),
+        )
+
+    async def get(self, id: str) -> UniversityInfo:
+        return cast(
+            UniversityInfo,
+            _decode(await self._owner._request("GET", f"/universities/{quote(id, safe='')}"))[0],
+        )
+
+
+class _AsyncCampuses:
+    def __init__(self, owner: AsyncGapwise):
+        self._owner = owner
+
+    async def list(
+        self,
+        *,
+        university: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> Page[CampusInfo]:
+        return cast(
+            Page[CampusInfo],
+            _page(
+                await self._owner._request(
+                    "GET",
+                    "/campuses",
+                    params=_params(university=university, limit=limit, offset=offset),
+                )
+            ),
+        )
+
+    async def get(self, id: str) -> CampusInfo:
+        return cast(
+            CampusInfo,
+            _decode(await self._owner._request("GET", f"/campuses/{quote(id, safe='')}"))[0],
+        )
+
+
 class _AsyncBuildings:
     def __init__(self, owner: AsyncGapwise):
         self._owner = owner
@@ -302,6 +473,8 @@ class _AsyncBuildings:
         *,
         q: str | None = None,
         category: BuildingCategory | None = None,
+        university: str | None = None,
+        campus: str | None = None,
         limit: int | None = None,
         offset: int | None = None,
     ) -> Page[Building]:
@@ -311,15 +484,34 @@ class _AsyncBuildings:
                 await self._owner._request(
                     "GET",
                     "/buildings",
-                    params=_params(q=q, category=category, limit=limit, offset=offset),
+                    params=_params(
+                        q=q,
+                        category=category,
+                        university=university,
+                        campus=campus,
+                        limit=limit,
+                        offset=offset,
+                    ),
                 )
             ),
         )
 
-    async def get(self, building: str) -> Building:
+    async def get(
+        self,
+        building: str,
+        *,
+        university: str | None = None,
+        campus: str | None = None,
+    ) -> Building:
         return cast(
             Building,
-            _decode(await self._owner._request("GET", f"/buildings/{quote(building, safe='')}"))[0],
+            _decode(
+                await self._owner._request(
+                    "GET",
+                    f"/buildings/{quote(building, safe='')}",
+                    params=_params(university=university, campus=campus),
+                )
+            )[0],
         )
 
 
@@ -333,6 +525,8 @@ class _AsyncPlaces:
         q: str | None = None,
         kind: PlaceKind | None = None,
         building: str | None = None,
+        university: str | None = None,
+        campus: str | None = None,
         open_now: AvailabilityState | None = None,
         limit: int | None = None,
         offset: int | None = None,
@@ -347,6 +541,8 @@ class _AsyncPlaces:
                         q=q,
                         kind=kind,
                         building=building,
+                        university=university,
+                        campus=campus,
                         openNow=open_now,
                         limit=limit,
                         offset=offset,
@@ -355,10 +551,22 @@ class _AsyncPlaces:
             ),
         )
 
-    async def get(self, place_id: str) -> CampusPlace:
+    async def get(
+        self,
+        place_id: str,
+        *,
+        university: str | None = None,
+        campus: str | None = None,
+    ) -> CampusPlace:
         return cast(
             CampusPlace,
-            _decode(await self._owner._request("GET", f"/places/{quote(place_id, safe='')}"))[0],
+            _decode(
+                await self._owner._request(
+                    "GET",
+                    f"/places/{quote(place_id, safe='')}",
+                    params=_params(university=university, campus=campus),
+                )
+            )[0],
         )
 
 
@@ -371,6 +579,8 @@ class _AsyncRoutes:
         *,
         from_building: str,
         to_building: str,
+        university: str | None = None,
+        campus: str | None = None,
         mode: RouteMode | None = None,
         walking_speed_mps: float | None = None,
         transition_buffer_minutes: float | None = None,
@@ -378,6 +588,8 @@ class _AsyncRoutes:
         payload = _route_payload(
             from_building,
             to_building,
+            university=university,
+            campus=campus,
             mode=mode,
             walking_speed_mps=walking_speed_mps,
             transition_buffer_minutes=transition_buffer_minutes,
@@ -401,6 +613,8 @@ class _AsyncGaps:
         weekday: Weekday,
         start_time: int,
         end_time: int,
+        university: str | None = None,
+        campus: str | None = None,
         route_preferences: Mapping[str, object] | None = None,
         gap_preferences: Mapping[str, object] | None = None,
     ) -> GapPlanResult:
@@ -411,6 +625,8 @@ class _AsyncGaps:
             "weekday": weekday,
             "startTime": start_time,
             "endTime": end_time,
+            **({"university": university} if university is not None else {}),
+            **({"campus": campus} if campus is not None else {}),
             **({"routePreferences": dict(route_preferences)} if route_preferences else {}),
             **({"gapPreferences": dict(gap_preferences)} if gap_preferences else {}),
         }
@@ -435,7 +651,9 @@ class AsyncGapwise:
         self._owns_client = client is None
         self._client = client or httpx.AsyncClient(timeout=timeout)
         self._headers = {"Accept": "application/json", **(headers or {})}
-        self.buildings, self.places, self.routes, self.gaps = (
+        self.universities, self.campuses, self.buildings, self.places, self.routes, self.gaps = (
+            _AsyncUniversities(self),
+            _AsyncCampuses(self),
             _AsyncBuildings(self),
             _AsyncPlaces(self),
             _AsyncRoutes(self),

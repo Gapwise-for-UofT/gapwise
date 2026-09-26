@@ -369,7 +369,7 @@ export function getCampusBuildingIdentity(campusId: GapwiseCampusId, value: stri
   const normalized = normalizeText(value);
   return (
     CONFIGURATIONS[campusId]?.find((building) =>
-      [building.code, ...(building.aliases ?? [])].some(
+      [building.code, building.name, ...(building.aliases ?? [])].some(
         (candidate) => normalizeText(candidate) === normalized,
       ),
     ) ?? null

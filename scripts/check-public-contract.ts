@@ -14,6 +14,8 @@ type Json = Record<string, any> & {
 };
 type GapwiseClient = {
   info(): Promise<unknown>;
+  universities: { list(): Promise<unknown>; get(id: string): Promise<unknown> };
+  campuses: { list(): Promise<unknown>; get(id: string): Promise<unknown> };
   buildings: { list(): Promise<unknown>; get(building: string): Promise<unknown> };
   places: { list(): Promise<unknown>; get(placeId: string): Promise<unknown> };
   routes: { calculate(input: { from: string; to: string }): Promise<unknown> };
@@ -52,8 +54,12 @@ const expectedOperations = [
   "GET /",
   "GET /buildings",
   "GET /buildings/{building}",
+  "GET /campuses",
+  "GET /campuses/{id}",
   "GET /places",
   "GET /places/{placeId}",
+  "GET /universities",
+  "GET /universities/{id}",
   "POST /gaps/plan",
   "POST /routes",
 ].sort();
@@ -96,13 +102,18 @@ const calls: string[] = [];
 const fixtureFetch: typeof fetch = async (input, init) => {
   const url = new URL(String(input));
   calls.push(`${init?.method ?? "GET"} ${url.pathname.replace("/v1", "") || "/"}`);
+  const isCollection =
+    url.pathname.endsWith("/buildings") ||
+    url.pathname.endsWith("/places") ||
+    url.pathname.endsWith("/universities") ||
+    url.pathname.endsWith("/campuses");
   return Response.json({
-    data: url.pathname.endsWith("/buildings") || url.pathname.endsWith("/places") ? [] : {},
+    data: isCollection ? [] : {},
     meta: {
       apiVersion: "v1",
       dataVersion: "fixture-v1",
       requestId: "contract-fixture",
-      ...(url.pathname.endsWith("/buildings") || url.pathname.endsWith("/places")
+      ...(isCollection
         ? { pagination: { limit: 50, offset: 0, count: 0, total: 0, nextOffset: null } }
         : {}),
     },
@@ -115,6 +126,10 @@ const sdkModulePath = "../sdk/javascript/src/index";
 const { Gapwise } = (await import(sdkModulePath)) as GapwiseModule;
 const client = new Gapwise({ fetch: fixtureFetch });
 await client.info();
+await client.universities.list();
+await client.universities.get("uoft");
+await client.campuses.list();
+await client.campuses.get("carleton");
 await client.buildings.list();
 await client.buildings.get("MN");
 await client.places.list();
@@ -132,6 +147,8 @@ await client.gaps.plan({
 const normalizedCalls = calls
   .map((call) =>
     call
+      .replace("/universities/uoft", "/universities/{id}")
+      .replace("/campuses/carleton", "/campuses/{id}")
       .replace("/buildings/MN", "/buildings/{building}")
       .replace("/places/utm-library", "/places/{placeId}"),
   )
@@ -144,6 +161,10 @@ if (JSON.stringify(normalizedCalls) !== JSON.stringify(expectedOperations))
 
 const runtimeCases = [
   ["root", "GET"],
+  ["universities", "GET"],
+  ["university&id=uoft", "GET"],
+  ["campuses", "GET"],
+  ["campus&id=carleton", "GET"],
   ["buildings", "GET"],
   ["building&building=MN", "GET"],
   ["places", "GET"],

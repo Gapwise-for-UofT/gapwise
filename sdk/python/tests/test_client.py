@@ -73,6 +73,82 @@ def test_sync_every_resource_and_serialization():
     assert request_json(seen[4])["startTime"] == 600
 
 
+def test_sync_universities_and_campuses_and_multi_campus():
+    seen = []
+
+    def handler(request: httpx.Request):
+        seen.append(request)
+        path = request.url.path
+        if path == "/v1/universities/uoft":
+            return httpx.Response(
+                200, json=envelope({"id": "uoft", "name": "University of Toronto"})
+            )
+        if path == "/v1/universities":
+            return httpx.Response(
+                200,
+                json=envelope(
+                    [{"id": "uoft"}],
+                    pagination={
+                        "limit": 10,
+                        "offset": 0,
+                        "count": 1,
+                        "total": 1,
+                        "nextOffset": None,
+                    },
+                ),
+            )
+        if path == "/v1/campuses/carleton":
+            return httpx.Response(200, json=envelope({"id": "carleton", "name": "Carleton Campus"}))
+        if path == "/v1/campuses":
+            return httpx.Response(
+                200,
+                json=envelope(
+                    [{"id": "utm"}],
+                    pagination={
+                        "limit": 10,
+                        "offset": 0,
+                        "count": 1,
+                        "total": 1,
+                        "nextOffset": None,
+                    },
+                ),
+            )
+        if "/buildings/TB" in path:
+            return httpx.Response(200, json=envelope({"code": "TB", "university": "carleton"}))
+        if "/places/carleton-dining" in path:
+            return httpx.Response(
+                200, json=envelope({"id": "carleton-dining", "university": "carleton"})
+            )
+        return httpx.Response(200, json=envelope({}))
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as http:
+        client = Gapwise(client=http)
+        unis = client.universities.list(limit=10)
+        assert len(unis.items) == 1
+        uoft = client.universities.get("uoft")
+        assert uoft["id"] == "uoft"
+
+        campuses = client.campuses.list(university="uoft")
+        assert len(campuses.items) == 1
+        carleton = client.campuses.get("carleton")
+        assert carleton["id"] == "carleton"
+
+        building = client.buildings.get("TB", university="carleton", campus="carleton")
+        assert building["code"] == "TB"
+
+        place = client.places.get("carleton-dining", university="carleton")
+        assert place["id"] == "carleton-dining"
+
+    assert [str(r.url) for r in seen] == [
+        "https://api.gapwise.ca/v1/universities?limit=10",
+        "https://api.gapwise.ca/v1/universities/uoft",
+        "https://api.gapwise.ca/v1/campuses?university=uoft",
+        "https://api.gapwise.ca/v1/campuses/carleton",
+        "https://api.gapwise.ca/v1/buildings/TB?university=carleton&campus=carleton",
+        "https://api.gapwise.ca/v1/places/carleton-dining?university=carleton",
+    ]
+
+
 def test_sync_discovery_custom_base_headers_and_page():
     seen = []
     pagination = {"limit": 1, "offset": 2, "count": 1, "total": 4, "nextOffset": 3}

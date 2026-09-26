@@ -110,6 +110,38 @@ const CARDS: CardConfig[] = [
     tagline: "Make the time between classes count.",
     detail: "McMaster University",
   },
+  {
+    outputPath: "public/universities/western/og-card.png",
+    accentColor: "#4F2683",
+    textColor: "#c4b5fd",
+    title: "Gapwise",
+    tagline: "Make the time between classes count.",
+    detail: "Western University",
+  },
+  {
+    outputPath: "public/universities/guelph/og-card.png",
+    accentColor: "#C20430",
+    textColor: "#fca5a5",
+    title: "Gapwise",
+    tagline: "Make the time between classes count.",
+    detail: "University of Guelph",
+  },
+  {
+    outputPath: "public/universities/uottawa/og-card.png",
+    accentColor: "#8F001A",
+    textColor: "#fca5a5",
+    title: "Gapwise",
+    tagline: "Make the time between classes count.",
+    detail: "University of Ottawa",
+  },
+  {
+    outputPath: "public/universities/brock/og-card.png",
+    accentColor: "#CC0000",
+    textColor: "#fca5a5",
+    title: "Gapwise",
+    tagline: "Make the time between classes count.",
+    detail: "Brock University",
+  },
   // ── Root fallbacks (U of T default) ──────────────────────
   {
     outputPath: "public/og-card.png",

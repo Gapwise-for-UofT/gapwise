@@ -128,6 +128,10 @@ for (const needle of [
   '<a href="https://laurier.gapwise.ca">Wilfrid Laurier University</a>',
   '<a href="https://york.gapwise.ca">York University</a>',
   '<a href="https://mcmaster.gapwise.ca">McMaster University</a>',
+  '<a href="https://western.gapwise.ca">Western University</a>',
+  '<a href="https://guelph.gapwise.ca">University of Guelph</a>',
+  '<a href="https://uottawa.gapwise.ca">University of Ottawa</a>',
+  '<a href="https://brock.gapwise.ca">Brock University</a>',
 ])
   requireText(home, needle, "homepage crawlable content and discovery");
 
@@ -164,7 +168,18 @@ const UOFT_ONLY_PATHS = [
   "/places/rawc",
 ];
 
-const UNIVERSITY_IDS = ["carleton", "tmu", "queens", "laurier", "york", "mcmaster"] as const;
+const UNIVERSITY_IDS = [
+  "carleton",
+  "tmu",
+  "queens",
+  "laurier",
+  "york",
+  "mcmaster",
+  "western",
+  "guelph",
+  "uottawa",
+  "brock",
+] as const;
 type UniversityId = (typeof UNIVERSITY_IDS)[number];
 const UNIVERSITY_ORIGINS: Record<UniversityId, string> = {
   carleton: "https://carleton.gapwise.ca",
@@ -173,6 +188,10 @@ const UNIVERSITY_ORIGINS: Record<UniversityId, string> = {
   laurier: "https://laurier.gapwise.ca",
   york: "https://york.gapwise.ca",
   mcmaster: "https://mcmaster.gapwise.ca",
+  western: "https://western.gapwise.ca",
+  guelph: "https://guelph.gapwise.ca",
+  uottawa: "https://uottawa.gapwise.ca",
+  brock: "https://brock.gapwise.ca",
 };
 
 function getUniversityOrigin(uniId: UniversityId): string {
@@ -327,6 +346,10 @@ const ALL_UNIVERSITY_IDS = [
   "laurier",
   "york",
   "mcmaster",
+  "western",
+  "guelph",
+  "uottawa",
+  "brock",
 ] as const;
 type AnyUniversityId = (typeof ALL_UNIVERSITY_IDS)[number];
 const ALL_UNIVERSITY_NAMES: Record<AnyUniversityId, string> = {
@@ -337,6 +360,10 @@ const ALL_UNIVERSITY_NAMES: Record<AnyUniversityId, string> = {
   laurier: "Wilfrid Laurier University",
   york: "York University",
   mcmaster: "McMaster University",
+  western: "Western University",
+  guelph: "University of Guelph",
+  uottawa: "University of Ottawa",
+  brock: "Brock University",
 };
 const ALL_UNIVERSITY_ORIGINS: Record<AnyUniversityId, string> = {
   uoft: "https://gapwise.ca",
@@ -346,6 +373,10 @@ const ALL_UNIVERSITY_ORIGINS: Record<AnyUniversityId, string> = {
   laurier: "https://laurier.gapwise.ca",
   york: "https://york.gapwise.ca",
   mcmaster: "https://mcmaster.gapwise.ca",
+  western: "https://western.gapwise.ca",
+  guelph: "https://guelph.gapwise.ca",
+  uottawa: "https://uottawa.gapwise.ca",
+  brock: "https://brock.gapwise.ca",
 };
 
 function pngDimensions(bytes: Buffer) {

@@ -79,7 +79,7 @@ describe("Gapwise marketing system", () => {
     expect(exportTheme).toContain('reserved: "#dfad52"');
   });
 
-  test("showcases all seven supported universities with exact canonical destinations and valid branding", async () => {
+  test("showcases all eleven supported universities with exact canonical destinations and valid branding", async () => {
     const landing = await readFile("src/components/MarketingLandingImpl.tsx", "utf8");
     const manifest = JSON.parse(await readFile("universities.json", "utf8"));
 
@@ -131,9 +131,33 @@ describe("Gapwise marketing system", () => {
         url: "https://mcmaster.gapwise.ca",
         scope: "Hamilton campus",
       },
+      {
+        id: "western",
+        name: "Western University",
+        url: "https://western.gapwise.ca",
+        scope: "London campus",
+      },
+      {
+        id: "guelph",
+        name: "University of Guelph",
+        url: "https://guelph.gapwise.ca",
+        scope: "Guelph campus",
+      },
+      {
+        id: "uottawa",
+        name: "University of Ottawa",
+        url: "https://uottawa.gapwise.ca",
+        scope: "Downtown Ottawa campus",
+      },
+      {
+        id: "brock",
+        name: "Brock University",
+        url: "https://brock.gapwise.ca",
+        scope: "St. Catharines campus",
+      },
     ];
 
-    expect(manifest.universities.length).toBe(7);
+    expect(manifest.universities.length).toBe(11);
 
     for (const expected of expectedUniversities) {
       const entry = manifest.universities.find((u: { id: string }) => u.id === expected.id);

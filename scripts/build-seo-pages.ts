@@ -57,7 +57,7 @@ const PAGES: readonly SeoPage[] = [
       "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for students across multiple Canadian universities.",
     heading: "Make the time between classes count.",
     detail:
-      "Import your timetable in your browser, explore source-backed campus maps, understand the usable time between classes, and plan your campus day across Canadian universities. The default edition supports University of Toronto (UTM, UTSG, UTSC) with ACORN import and pedestrian routing for UTM. Dedicated editions are available for Carleton, TMU, Queen's, Laurier, York, and McMaster.",
+      "Import your timetable in your browser, explore source-backed campus maps, understand the usable time between classes, and plan your campus day across Canadian universities. The default edition supports University of Toronto (UTM, UTSG, UTSC) with ACORN import and pedestrian routing for UTM. Dedicated editions are available for Carleton, TMU, Queen's, Laurier, York, McMaster, Western, Guelph, uOttawa, and Brock.",
     sections: [
       {
         title: "Your timetable, connected to campus context",
@@ -301,9 +301,9 @@ function homepageStructuredData(page: SeoPage, uniContext?: UniversityContext) {
               "Optional encrypted private sync",
             ]
           : [
-              "Browser-local timetable import (ACORN .ics, Carleton Central, TMU, Queen's, Laurier, York, McMaster schedule formats)",
-              "UTM, UTSG, UTSC, Carleton, TMU, Queen's, Laurier, York, and McMaster campus timetable identity",
-              "Source-backed building maps for all 7 supported universities",
+              "Browser-local timetable import (ACORN .ics, Carleton Central, TMU, Queen's, Laurier, York, McMaster, Western, Guelph, uOttawa, Brock schedule formats)",
+              "Mississauga, St. George, Scarborough, Carleton, TMU, Queen's, Laurier, York, McMaster, Western, Guelph, uOttawa, and Brock campus timetable identity",
+              "Source-backed building maps for all 11 supported universities",
               "Source-backed UTM pedestrian routing",
               "Optional encrypted private sync",
             ],
@@ -416,6 +416,10 @@ function fallback(page: SeoPage, uniContext?: UniversityContext) {
           <li><a href="https://laurier.gapwise.ca">Wilfrid Laurier University</a> — Waterloo campus</li>
           <li><a href="https://york.gapwise.ca">York University</a> — Keele campus</li>
           <li><a href="https://mcmaster.gapwise.ca">McMaster University</a> — Hamilton campus</li>
+          <li><a href="https://western.gapwise.ca">Western University</a> — London campus</li>
+          <li><a href="https://guelph.gapwise.ca">University of Guelph</a> — Guelph campus</li>
+          <li><a href="https://uottawa.gapwise.ca">University of Ottawa</a> — Downtown Ottawa campus</li>
+          <li><a href="https://brock.gapwise.ca">Brock University</a> — St. Catharines campus</li>
         </ul>
       </section>`
       : "";

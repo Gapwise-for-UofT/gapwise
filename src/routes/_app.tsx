@@ -947,7 +947,7 @@ function AppLayout() {
                 <img src="/logo-mark.svg" alt="" aria-hidden="true" className="h-4 w-4" />
                 Gapwise{" "}
                 <span className="font-normal text-muted-foreground">
-                  Built for {university?.shortName}
+                  Free and open source for students across Canada.
                 </span>
               </p>
               <nav aria-label="Gapwise ecosystem" className="flex flex-wrap gap-x-4 gap-y-2">

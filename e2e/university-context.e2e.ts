@@ -41,7 +41,7 @@ test("UofT local default remains University of Toronto", async ({ page, baseURL 
   if (!baseURL) throw new Error("Playwright baseURL is required");
   const failures = watchForAppFailures(page, baseURL);
   await page.goto("/");
-  await expect(page).toHaveTitle("Gapwise — University of Toronto");
+  await expect(page).toHaveTitle("Gapwise — University Timetable & Campus Navigation");
   await expect(page.getByRole("button", { name: "Import ACORN" })).toBeVisible();
   failures.assertClean();
 });

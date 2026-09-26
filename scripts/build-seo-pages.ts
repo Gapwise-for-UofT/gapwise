@@ -52,12 +52,12 @@ const FEATURE_PAGES: readonly SeoPage[] = Object.values(PUBLIC_FEATURE_PAGES).ma
 const PAGES: readonly SeoPage[] = [
   {
     path: "/",
-    title: "Gapwise — University of Toronto",
+    title: "Gapwise — University Timetable & Campus Navigation",
     description:
-      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for University of Toronto students. Also available for Carleton, TMU, Queen's, Laurier, York, and McMaster.",
+      "Gapwise is a free and open-source timetable, campus navigation, and student planning platform for students across multiple Canadian universities.",
     heading: "Make the time between classes count.",
     detail:
-      "Import an ACORN .ics timetable in your browser, preserve UTM, UTSG, UTSC, or mixed-campus context, understand the usable time between classes, and explore source-backed campus maps. Pedestrian routing is currently available for UTM. Guest mode and a demo work without an account.",
+      "Import your timetable in your browser, explore source-backed campus maps, understand the usable time between classes, and plan your campus day across Canadian universities. The default edition supports University of Toronto (UTM, UTSG, UTSC) with ACORN import and pedestrian routing for UTM. Dedicated editions are available for Carleton, TMU, Queen's, Laurier, York, and McMaster.",
     sections: [
       {
         title: "Your timetable, connected to campus context",
@@ -221,7 +221,8 @@ function homepageStructuredData(page: SeoPage, uniContext?: UniversityContext) {
   const websiteId = `${origin}/#website`;
   const appId = `${origin}/#app`;
   const founderId = `${origin}/#andrew-muratov`;
-  const uniName = uniContext ? uniContext.name : null;
+  const isDedicatedTenant = uniContext && uniContext.id !== "uoft";
+  const uniName = isDedicatedTenant ? uniContext.name : null;
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -397,9 +398,27 @@ function fallback(page: SeoPage, uniContext?: UniversityContext) {
     )
     .join("\n");
 
-  const disclaimer = uniContext
+  const isDedicatedTenant = uniContext && uniContext.id !== "uoft";
+  const disclaimer = isDedicatedTenant
     ? `Gapwise is an independent student project for students at ${escapeHtml(uniContext.name)}. It is not an official service of ${escapeHtml(uniContext.name)} and does not claim university approval, sponsorship, or endorsement.`
     : `Gapwise is an independent student project for students at the University of Toronto, Carleton University, Toronto Metropolitan University, Queen's University, Wilfrid Laurier University, York University, and McMaster University. It is not an official service of any of these institutions and does not claim university approval, sponsorship, or endorsement.`;
+
+  const universitiesSection =
+    page.path === "/" && !isDedicatedTenant
+      ? `<section aria-labelledby="supported-universities-heading">
+        <h2 id="supported-universities-heading">Supported Canadian Universities</h2>
+        <p>Gapwise provides dedicated editions with university-specific timetable import, campus data, and verified destinations:</p>
+        <ul>
+          <li><a href="https://gapwise.ca">University of Toronto</a> — St. George, UTM, Scarborough</li>
+          <li><a href="https://carleton.gapwise.ca">Carleton University</a> — Ottawa campus</li>
+          <li><a href="https://tmu.gapwise.ca">Toronto Metropolitan University</a> — Downtown Toronto campus</li>
+          <li><a href="https://queens.gapwise.ca">Queen's University</a> — Kingston campus</li>
+          <li><a href="https://laurier.gapwise.ca">Wilfrid Laurier University</a> — Waterloo campus</li>
+          <li><a href="https://york.gapwise.ca">York University</a> — Keele campus</li>
+          <li><a href="https://mcmaster.gapwise.ca">McMaster University</a> — Hamilton campus</li>
+        </ul>
+      </section>`
+      : "";
 
   return `<main data-gapwise-search-fallback style="max-width:60rem;margin:0 auto;padding:3rem 1.25rem;font-family:system-ui,sans-serif;line-height:1.65">
       <p><strong>Gapwise</strong> — Timetable &amp; Campus Navigation</p>
@@ -407,6 +426,7 @@ function fallback(page: SeoPage, uniContext?: UniversityContext) {
       <p>${escapeHtml(page.description)}</p>
       <p>${escapeHtml(page.detail)}</p>
       ${page.path === "/" ? '<p>Gapwise was created by <a href="https://www.donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/GapwiseHQ/gapwise">Gapwise is open source on GitHub</a>.</p>' : ""}
+      ${universitiesSection}
       ${sections}
       <p>${disclaimer}</p>
       <nav aria-label="Gapwise public pages">${navigation}</nav>

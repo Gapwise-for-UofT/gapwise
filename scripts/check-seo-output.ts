@@ -119,8 +119,17 @@ for (const needle of [
   "Gapwise was created by",
   '<a href="https://www.donotdisconnect.online/">Andrew Muratov</a>',
   '<a href="https://github.com/GapwiseHQ/gapwise">Gapwise is open source on GitHub</a>',
+  "<title>Gapwise — University Timetable &amp; Campus Navigation</title>",
+  'content="Gapwise is a free and open-source timetable, campus navigation, and student planning platform for students across multiple Canadian universities."',
+  '<a href="https://gapwise.ca">University of Toronto</a>',
+  '<a href="https://carleton.gapwise.ca">Carleton University</a>',
+  '<a href="https://tmu.gapwise.ca">Toronto Metropolitan University</a>',
+  '<a href="https://queens.gapwise.ca">Queen\'s University</a>',
+  '<a href="https://laurier.gapwise.ca">Wilfrid Laurier University</a>',
+  '<a href="https://york.gapwise.ca">York University</a>',
+  '<a href="https://mcmaster.gapwise.ca">McMaster University</a>',
 ])
-  requireText(home, needle, "homepage crawlable creator attribution");
+  requireText(home, needle, "homepage crawlable content and discovery");
 
 for (const path of [
   "/about",
@@ -155,13 +164,15 @@ const UOFT_ONLY_PATHS = [
   "/places/rawc",
 ];
 
-const UNIVERSITY_IDS = ["carleton", "tmu", "queens", "laurier"] as const;
+const UNIVERSITY_IDS = ["carleton", "tmu", "queens", "laurier", "york", "mcmaster"] as const;
 type UniversityId = (typeof UNIVERSITY_IDS)[number];
 const UNIVERSITY_ORIGINS: Record<UniversityId, string> = {
   carleton: "https://carleton.gapwise.ca",
   tmu: "https://tmu.gapwise.ca",
   queens: "https://queens.gapwise.ca",
   laurier: "https://laurier.gapwise.ca",
+  york: "https://york.gapwise.ca",
+  mcmaster: "https://mcmaster.gapwise.ca",
 };
 
 function getUniversityOrigin(uniId: UniversityId): string {
@@ -388,12 +399,12 @@ for (const uniId of ALL_UNIVERSITY_IDS) {
     `<meta name="twitter:image:alt" content="${expectedAlt}" />`,
     `${uniId} twitter:image:alt`,
   );
-  requireText(
-    html,
-    `<meta property="og:title" content="Gapwise — ${escapedName}" />`,
-    `${uniId} og:title`,
-  );
-  requireText(html, `<title>Gapwise — ${escapedName}</title>`, `${uniId} title`);
+  const expectedTitle =
+    uniId === "uoft"
+      ? "Gapwise — University Timetable &amp; Campus Navigation"
+      : `Gapwise — ${escapedName}`;
+  requireText(html, `<meta property="og:title" content="${expectedTitle}" />`, `${uniId} og:title`);
+  requireText(html, `<title>${expectedTitle}</title>`, `${uniId} title`);
 
   if (uniId !== "uoft") {
     const titleMatch = html.match(/<title>([^<]+)<\/title>/)?.[1] || "";

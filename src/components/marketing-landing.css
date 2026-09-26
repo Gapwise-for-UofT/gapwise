@@ -668,6 +668,28 @@
   list-style: none;
 }
 
+@media (min-width: 68rem) {
+  .universities-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .university-grid-item:last-child:nth-child(3n + 1) {
+    grid-column: 2;
+  }
+}
+
+@media (min-width: 44rem) and (max-width: 67.99rem) {
+  .universities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .university-grid-item:last-child:nth-child(2n + 1) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - (clamp(1rem, 2vw, 1.35rem) / 2));
+  }
+}
+
 .university-grid-item {
   display: flex;
 }

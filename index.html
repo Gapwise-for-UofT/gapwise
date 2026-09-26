@@ -14,6 +14,8 @@
             tmu: "Toronto Metropolitan University",
             queens: "Queen's University",
             laurier: "Wilfrid Laurier University",
+            york: "York University",
+            mcmaster: "McMaster University",
           };
           if (
             q &&
@@ -29,7 +31,9 @@
             u = h.slice(0, -".gapwise.test".length);
           }
           var title =
-            u && unis[u] ? "Gapwise \u2014 " + unis[u] : "Gapwise \u2014 University of Toronto";
+            u && unis[u]
+              ? "Gapwise \u2014 " + unis[u]
+              : "Gapwise \u2014 University Timetable & Campus Navigation";
           document.title = title;
           var prefix = u && unis[u] ? "/universities/" + u : "";
           function addIcon(rel, href, type, sizes, id) {

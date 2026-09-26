@@ -1,7 +1,7 @@
 {
   "name": "@gapwise/sdk",
-  "version": "0.1.1",
-  "description": "Official JavaScript and TypeScript client for the Gapwise public campus API",
+  "version": "0.1.2",
+  "description": "Official JavaScript and TypeScript client for the Gapwise multi-university public campus API",
   "author": {
     "name": "Andrew Muratov",
     "url": "https://github.com/andrewmuratov"

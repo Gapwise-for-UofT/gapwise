@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gapwise"
-version = "0.1.0"
-description = "Official Python client for the Gapwise public campus API"
+version = "0.1.1"
+description = "Official Python client for the Gapwise multi-university public campus API"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"

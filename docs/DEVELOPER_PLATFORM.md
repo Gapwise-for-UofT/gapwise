@@ -13,12 +13,12 @@ curl -X POST https://api.gapwise.ca/v1/routes -H 'content-type: application/json
 Official SDK implementations are published through three registry surfaces:
 
 ```bash
-npm install @gapwise/sdk@0.1.1
-# Deno / JSR: deno add jsr:@gapwise/sdk@0.1.1
-python -m pip install gapwise==0.1.0
+npm install @gapwise/sdk@0.1.2
+# Deno / JSR: deno add jsr:@gapwise/sdk@0.1.2
+python -m pip install gapwise==0.1.1
 ```
 
-The JavaScript/TypeScript implementation is `@gapwise/sdk@0.1.1` on npm and JSR. The Python implementation is `gapwise==0.1.0` on PyPI. Source quickstarts and recipes live in [`../sdk/javascript`](../sdk/javascript) and [`../sdk/python`](../sdk/python).
+The JavaScript/TypeScript implementation is `@gapwise/sdk@0.1.2` on npm and JSR. The Python implementation is `gapwise==0.1.1` on PyPI. Source quickstarts and recipes live in [`../sdk/javascript`](../sdk/javascript) and [`../sdk/python`](../sdk/python).
 
 ## Resources and discovery
 

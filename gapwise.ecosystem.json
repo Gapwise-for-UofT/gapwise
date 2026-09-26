@@ -63,11 +63,11 @@
       "package": "@gapwise/sdk",
       "source": "sdk/javascript",
       "registries": {
-        "npm": { "version": "0.1.1", "state": "published", "role": "canonical" },
-        "jsr": { "version": "0.1.1", "state": "published", "role": "canonical" },
+        "npm": { "version": "0.1.2", "state": "published", "role": "canonical" },
+        "jsr": { "version": "0.1.2", "state": "published", "role": "canonical" },
         "githubPackages": {
           "package": "@gapwisehq/sdk",
-          "version": "0.1.1",
+          "version": "0.1.2",
           "state": "published",
           "role": "mirror"
         }
@@ -79,10 +79,10 @@
       "package": "gapwise",
       "source": "sdk/python",
       "registries": {
-        "pypi": { "version": "0.1.0", "state": "published", "role": "canonical" },
+        "pypi": { "version": "0.1.1", "state": "published", "role": "canonical" },
         "githubReleases": {
-          "version": "0.1.0",
-          "tag": "python-v0.1.0",
+          "version": "0.1.1",
+          "tag": "python-v0.1.1",
           "state": "published",
           "role": "mirror"
         }

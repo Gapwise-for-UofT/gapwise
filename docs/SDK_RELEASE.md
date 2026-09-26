@@ -14,13 +14,13 @@ The release workflow is `.github/workflows/release-sdks.yml`. npm publishing is 
 <!-- prettier-ignore -->
 | Implementation | Distribution | Package / artifact | Runtime / consumer role | Release state |
 | -------------- | ------------ | ------------------ | ----------------------- | ------------- |
-| TypeScript | npm | `@gapwise/sdk` | Primary Node.js, Bun, browser-bundler, and npm-compatible distribution | `0.1.1` published |
-| TypeScript | JSR | `@gapwise/sdk` | Deno-first/portable TypeScript distribution plus Node/Bun-compatible JSR consumption | `0.1.1` published |
-| TypeScript | GitHub Packages | `@gapwisehq/sdk` | Source-adjacent GitHub npm registry mirror of the same JavaScript SDK artifact (historical 0.1.1 under `@gapwise-for-uoft/sdk`) | `0.1.1` published, public |
-| Python | PyPI | `gapwise` | Canonical Python sync + async package index distribution | `0.1.0` published |
+| TypeScript | npm | `@gapwise/sdk` | Primary Node.js, Bun, browser-bundler, and npm-compatible distribution | `0.1.2` published |
+| TypeScript | JSR | `@gapwise/sdk` | Deno-first/portable TypeScript distribution plus Node/Bun-compatible JSR consumption | `0.1.2` published |
+| TypeScript | GitHub Packages | `@gapwisehq/sdk` | Source-adjacent GitHub npm registry mirror of the same JavaScript SDK artifact (historical 0.1.1 under `@gapwise-for-uoft/sdk`) | `0.1.2` published, public |
+| Python | PyPI | `gapwise` | Canonical Python sync + async package index distribution | `0.1.1` published |
 | Python | GitHub Releases | `gapwise-<version>-py3-none-any.whl` + source distribution | Source-adjacent mirror of the exact tagged Python release artifacts | automated from `python-v*` tags |
 
-The initial TypeScript `0.1.0` publication established the npm/JSR package identities and trusted-publishing paths. The current verified TypeScript release is `@gapwise/sdk@0.1.1` on both npm and JSR. Future registry claims remain evidence-based: update release-state documentation only after the relevant publish job and registry confirm the version.
+The initial TypeScript `0.1.0` publication established the npm/JSR package identities and trusted-publishing paths. The current verified TypeScript release is `@gapwise/sdk@0.1.2` on both npm and JSR. Future registry claims remain evidence-based: update release-state documentation only after the relevant publish job and registry confirm the version.
 
 GitHub Packages requires the npm scope to match the GitHub organization owner, so its public mirror is named `@gapwisehq/sdk` rather than `@gapwise/sdk` (previously `@gapwise-for-uoft/sdk`). This is a registry-specific package identity for the same built implementation, not a fork or a fourth SDK. npm remains the primary npm-compatible installation channel; consumers choosing GitHub Packages must configure `@gapwisehq` for `https://npm.pkg.github.com` and follow GitHub's registry-authentication requirements.
 
@@ -34,8 +34,8 @@ GitHub Packages does **not** expose a Python/PyPI registry. Do not publish a fak
 
 Each tagged Python SDK release is also mirrored on GitHub Releases under the same `python-v<version>` tag. The mirror contains:
 
-- the built universal wheel, for example `gapwise-0.1.0-py3-none-any.whl`;
-- the source distribution, for example `gapwise-0.1.0.tar.gz`;
+- the built universal wheel, for example `gapwise-0.1.1-py3-none-any.whl`;
+- the source distribution, for example `gapwise-0.1.1.tar.gz`;
 - `SHA256SUMS.txt` covering both artifacts.
 
 The GitHub Release mirror is supplemental. `python -m pip install gapwise==<version>` from PyPI remains the canonical installation path.
@@ -52,7 +52,7 @@ The manual `python-github` target can repair/backfill the GitHub Release mirror 
 
 ## npm Trusted Publishing
 
-`@gapwise/sdk@0.1.1` is currently published to npm. The one-time initial-package bootstrap completed with the 0.1.0 release and must not be repeated.
+`@gapwise/sdk@0.1.2` is currently published to npm. The one-time initial-package bootstrap completed with the 0.1.0 release and must not be repeated.
 
 The package's GitHub Actions Trusted Publisher should be configured with the current canonical repository identity:
 
@@ -83,7 +83,7 @@ No JSR token belongs in GitHub secrets. The JSR publish job receives only `conte
 
 ## PyPI Trusted Publishing
 
-`gapwise==0.1.0` has been published to PyPI through GitHub Actions Trusted Publishing. The pending publisher successfully created the project and became the trusted publisher for future releases.
+`gapwise==0.1.1` has been published to PyPI through GitHub Actions Trusted Publishing. The pending publisher successfully created the project and became the trusted publisher for future releases.
 
 The publisher should be configured with the current canonical repository identity:
 
@@ -107,7 +107,7 @@ Before the next npm, JSR, or PyPI publication:
 4. Do not work around a stale provider link by introducing a long-lived registry token.
 5. After the first post-transfer version publishes, record the successful run and exact registry version as the new evidence baseline.
 
-The already-published `@gapwise/sdk@0.1.1` and `gapwise==0.1.0` versions prove current package availability; by themselves they do not prove that every provider-side trusted-publisher configuration has already been migrated for the next version.
+The already-published `@gapwise/sdk@0.1.2` and `gapwise==0.1.1` versions prove current package availability; by themselves they do not prove that every provider-side trusted-publisher configuration has already been migrated for the next version.
 
 ## Automated Python releases
 

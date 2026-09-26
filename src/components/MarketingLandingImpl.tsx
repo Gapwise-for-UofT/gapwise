@@ -64,9 +64,6 @@ export function MarketingLandingImpl({
           </p>
           <div className="marketing-hero-links">
             <a href="#universities">Supported Universities</a>
-            <Link to="/timetable" onClick={onDemo}>
-              Open Timetable
-            </Link>
             <Link to="/developers">Developers</Link>
           </div>
         </div>
@@ -93,13 +90,13 @@ export function MarketingLandingImpl({
       <nav className="product-story-nav" aria-label="Gapwise platform navigation">
         <span>Explore</span>
         <div>
-          <a href="#capabilities">
-            <i aria-hidden="true" />
-            Timetable
-          </a>
           <a href="#universities" data-active="true">
             <i aria-hidden="true" />
             Universities
+          </a>
+          <a href="#capabilities">
+            <i aria-hidden="true" />
+            Platform
           </a>
           <a href="https://ai.gapwise.ca" target="_blank" rel="noreferrer">
             <i aria-hidden="true" />

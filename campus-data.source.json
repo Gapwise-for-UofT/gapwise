@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "canonicalRepository": "Gapwise-for-UofT/data",
+  "canonicalRepository": "GapwiseHQ/data",
   "canonicalPath": "data/utm",
-  "consumerRepository": "Gapwise-for-UofT/gapwise",
+  "consumerRepository": "GapwiseHQ/gapwise",
   "mirrorPath": "src/data/utm",
   "additionalCanonicalSnapshots": [
     "data/utsg/buildings.json",

@@ -74,7 +74,7 @@ describe("Gapwise searchability and entity metadata", () => {
     expect(builder).toContain('"@type": "Organization"');
     expect(builder).toContain('name: "Gapwise"');
     expect(builder).not.toContain("alternateName:");
-    expect(builder).toContain("https://github.com/Gapwise-for-UofT");
+    expect(builder).toContain("https://github.com/GapwiseHQ");
     expect(builder).toContain("data-gapwise-search-fallback");
   });
 

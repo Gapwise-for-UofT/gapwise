@@ -4,7 +4,7 @@ import { PUBLIC_FEATURE_PAGES } from "../src/content/public-feature-pages";
 
 const SITE_ORIGIN = "https://gapwise.ca";
 const SOCIAL_IMAGE = `${SITE_ORIGIN}/og-gapwise.png`;
-const GITHUB_ORGANIZATION = "https://github.com/Gapwise-for-UofT";
+const GITHUB_ORGANIZATION = "https://github.com/GapwiseHQ";
 const GITHUB_CORE = `${GITHUB_ORGANIZATION}/gapwise`;
 
 type SeoSection = { title: string; body: string; bullets?: readonly string[] };
@@ -388,7 +388,7 @@ function fallback(page: SeoPage, uniContext?: UniversityContext) {
       <h1>${escapeHtml(page.heading)}</h1>
       <p>${escapeHtml(page.description)}</p>
       <p>${escapeHtml(page.detail)}</p>
-      ${page.path === "/" ? '<p>Gapwise was created by <a href="https://www.donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/Gapwise-for-UofT/gapwise">Gapwise is open source on GitHub</a>.</p>' : ""}
+      ${page.path === "/" ? '<p>Gapwise was created by <a href="https://www.donotdisconnect.online/">Andrew Muratov</a>, a University of Toronto student and the lead engineer of the project. <a href="https://github.com/GapwiseHQ/gapwise">Gapwise is open source on GitHub</a>.</p>' : ""}
       ${sections}
       <p>${disclaimer}</p>
       <nav aria-label="Gapwise public pages">${navigation}</nav>

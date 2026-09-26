@@ -69,7 +69,7 @@ for (const needle of [
   '"@type":"WebSite"',
   '"@type":"Organization"',
   '"name":"Gapwise"',
-  "https://github.com/Gapwise-for-UofT",
+  "https://github.com/GapwiseHQ",
 ])
   requireText(home, needle, "homepage metadata");
 
@@ -118,7 +118,7 @@ for (const profile of [
 for (const needle of [
   "Gapwise was created by",
   '<a href="https://www.donotdisconnect.online/">Andrew Muratov</a>',
-  '<a href="https://github.com/Gapwise-for-UofT/gapwise">Gapwise is open source on GitHub</a>',
+  '<a href="https://github.com/GapwiseHQ/gapwise">Gapwise is open source on GitHub</a>',
 ])
   requireText(home, needle, "homepage crawlable creator attribution");
 

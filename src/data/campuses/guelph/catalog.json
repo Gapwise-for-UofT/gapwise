@@ -22,7 +22,7 @@
       "licenseOrTerms": "Open Database License (ODbL) 1.0",
       "redistribution": "permitted",
       "transformation": "Extracted campus building footprints, verified entrance nodes, and outdoor pedestrian path ways",
-      "attribution": "\u00a9 OpenStreetMap contributors"
+      "attribution": "© OpenStreetMap contributors"
     },
     {
       "id": "guelph-official-map-2025",
@@ -151,7 +151,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136472535",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "UC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "mclaughlin-library",
@@ -236,7 +248,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136469097",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "LIB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "rozanski-hall",
@@ -309,7 +333,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136467970",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "ROZH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "mackinnon-building",
@@ -602,7 +638,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136468433",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "MCKN",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "macnaughton-building",
@@ -711,7 +759,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136547108",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "MACN",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "summerlee-science-complex",
@@ -960,7 +1020,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136546715",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "SSC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "thornbrough-building",
@@ -1310,7 +1382,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/238265421",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "THRN",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "alexander-hall",
@@ -1511,7 +1595,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136547109",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "ALXH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "johnston-hall",
@@ -1678,7 +1774,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136469992",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "JH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "war-memorial-hall",
@@ -1791,7 +1899,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/161118801",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "WMH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "reynolds-building",
@@ -1876,7 +1996,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136472615",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "REYN",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "hutt-building",
@@ -1921,7 +2053,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136472575",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "HUTT",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "animal-science-nutrition",
@@ -2070,7 +2214,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/137354259",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "ANNU",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "creelman-hall",
@@ -2237,7 +2393,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/161119744",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "CREE",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "athletic-centre",
@@ -2378,7 +2546,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-guelph-2026-09",
+          "nativeId": "way/136468152",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "guelph-official-map-2025",
+          "nativeId": "GGAC",
+          "verification": "source-backed"
+        }
+      ]
     }
   ],
   "entrances": [

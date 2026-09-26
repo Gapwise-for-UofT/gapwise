@@ -19,6 +19,9 @@ export function validateUniversityManifest(
     if (entry.routableCampuses.some((campus) => !entry.campuses.includes(campus)))
       errors.push(`${entry.id}: routable campus must be listed`);
     if (!entry.timetableAdapter.trim()) errors.push(`${entry.id}: timetable adapter is required`);
+    if (!entry.accentColor?.trim() || !/^#[0-9a-fA-F]{6}$/.test(entry.accentColor))
+      errors.push(`${entry.id}: valid hex accentColor is required`);
+    if (!entry.campusScope?.trim()) errors.push(`${entry.id}: campusScope is required`);
     if (entry.status !== "planned" && !entry.dataPaths.length)
       errors.push(`${entry.id}: data paths are required`);
     for (const campus of entry.campuses) {
@@ -85,6 +88,10 @@ export function campusesForUniversity(university: University): string[] {
 
 export function supportedUniversities(): University[] {
   return manifest.universities.filter((entry) => entry.status === "supported");
+}
+
+export function canonicalUrlForUniversity(uni: University): string {
+  return `https://${uni.hosts[0]}`;
 }
 
 export function urlForUniversity(uni: University): string {

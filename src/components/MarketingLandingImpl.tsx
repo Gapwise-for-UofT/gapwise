@@ -1,26 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
 import { UploadPanel } from "@/components/UploadPanel";
 import type { MarketingLandingProps } from "./MarketingLanding";
-import { MARKETING_PRODUCTS, type MarketingProductId } from "./marketing-products";
-import { activeUniversity } from "@/universities/registry";
+import {
+  activeUniversity,
+  supportedUniversities,
+  canonicalUrlForUniversity,
+} from "@/universities/registry";
 import "./marketing-landing.css";
 
 function ProductMark() {
   return <span className="product-brand-mark" aria-hidden="true" />;
-}
-
-function ProductHeading({ label, title, body }: { label: string; title: string; body: string }) {
-  return (
-    <div className="product-story-copy">
-      <p className="product-story-label">
-        <ProductMark />
-        {label}
-      </p>
-      <h2>{title}</h2>
-      <p>{body}</p>
-    </div>
-  );
 }
 
 function ExternalProductLink({ href, children }: { href: string; children: string }) {
@@ -41,6 +30,8 @@ const INSTITUTION_MARKETING_METRICS: Record<
   tmu: { count: 30, sampleCodes: ["SLC", "ENG", "VIC", "SHE"] },
   queens: { count: 33, sampleCodes: ["DUN", "STF", "WLH", "JEF"] },
   laurier: { count: 25, sampleCodes: ["LH", "SC", "DAWB", "BA"] },
+  york: { count: 42, sampleCodes: ["CLH", "LAS", "DB", "ACW"] },
+  mcmaster: { count: 38, sampleCodes: ["BSB", "MDCL", "JHE", "PGCLL"] },
 };
 
 export function MarketingLandingImpl({
@@ -54,53 +45,13 @@ export function MarketingLandingImpl({
   rememberAvailable,
 }: MarketingLandingProps) {
   const university = activeUniversity();
+  const universities = supportedUniversities();
   const metrics =
     INSTITUTION_MARKETING_METRICS[university?.id ?? "uoft"] ??
     INSTITUTION_MARKETING_METRICS["uoft"]!;
-  const rootRef = useRef<HTMLDivElement>(null);
-  const [activeProduct, setActiveProduct] = useState<MarketingProductId>("gapwise");
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root || !("IntersectionObserver" in window)) return;
-
-    const entriesBySection = new Map<Element, IntersectionObserverEntry>();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) entriesBySection.set(entry.target, entry);
-        const viewportCenter = window.innerHeight * 0.45;
-        const visible = [...entriesBySection.values()]
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => {
-            const aCenter = a.boundingClientRect.top + a.boundingClientRect.height / 2;
-            const bCenter = b.boundingClientRect.top + b.boundingClientRect.height / 2;
-            return Math.abs(aCenter - viewportCenter) - Math.abs(bCenter - viewportCenter);
-          });
-        const next = visible[0]?.target.getAttribute("data-product") as MarketingProductId | null;
-        if (next) setActiveProduct(next);
-      },
-      { rootMargin: "-34% 0px -48% 0px", threshold: 0 },
-    );
-
-    root.querySelectorAll<HTMLElement>("[data-product]").forEach((section) => {
-      observer.observe(section);
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.landingProduct = activeProduct;
-  }, [activeProduct]);
-
-  useEffect(
-    () => () => {
-      delete document.documentElement.dataset.landingProduct;
-    },
-    [],
-  );
 
   return (
-    <div ref={rootRef} className="marketing-home" data-active-product={activeProduct}>
+    <div className="marketing-home">
       <section className="marketing-hero" aria-labelledby="marketing-title">
         <div className="marketing-hero-copy">
           <p className="marketing-eyebrow">For {university?.name ?? "your campus"}</p>
@@ -112,7 +63,10 @@ export function MarketingLandingImpl({
             between classes, and source-backed campus context where available.
           </p>
           <div className="marketing-hero-links">
-            <a href="#gapwise">Explore Gapwise</a>
+            <a href="#universities">Supported Universities</a>
+            <Link to="/timetable" onClick={onDemo}>
+              Open Timetable
+            </Link>
             <Link to="/developers">Developers</Link>
           </div>
         </div>
@@ -136,247 +90,216 @@ export function MarketingLandingImpl({
         </div>
       </section>
 
-      <nav className="product-story-nav" aria-label="Gapwise products">
-        <span>Products</span>
+      <nav className="product-story-nav" aria-label="Gapwise platform navigation">
+        <span>Explore</span>
         <div>
-          {MARKETING_PRODUCTS.map((product) => {
-            const active = activeProduct === product.id;
-            return (
-              <a
-                key={product.id}
-                href={`#${product.id}`}
-                data-active={active ? "true" : undefined}
-                aria-current={active ? "location" : undefined}
-              >
-                <i aria-hidden="true" />
-                {product.shortLabel}
-              </a>
-            );
-          })}
+          <a href="#capabilities">
+            <i aria-hidden="true" />
+            Timetable
+          </a>
+          <a href="#universities" data-active="true">
+            <i aria-hidden="true" />
+            Universities
+          </a>
+          <a href="https://ai.gapwise.ca" target="_blank" rel="noreferrer">
+            <i aria-hidden="true" />
+            AI
+          </a>
+          <a href="https://docs.gapwise.ca" target="_blank" rel="noreferrer">
+            <i aria-hidden="true" />
+            Docs
+          </a>
+          <a href="https://data.gapwise.ca" target="_blank" rel="noreferrer">
+            <i aria-hidden="true" />
+            Data
+          </a>
         </div>
       </nav>
 
-      <div className="product-story">
-        <article
-          id="gapwise"
-          data-product="gapwise"
-          data-active={activeProduct === "gapwise" ? "true" : undefined}
-          className="product-story-section product-story-core"
-        >
-          <div>
-            <ProductHeading
-              label="Gapwise"
-              title="Plan the time between classes."
-              body="Your weekly timetable, gap plan, and campus movement share one schedule context, so every view stays focused on what comes next."
-            />
-            <div className="product-story-actions">
-              <Link className="product-story-link" to="/timetable" onClick={onDemo}>
-                Timetable <span aria-hidden="true">↗</span>
-              </Link>
-              <Link className="product-story-link" to="/gaps" onClick={onDemo}>
-                Gap planner <span aria-hidden="true">↗</span>
-              </Link>
-            </div>
-          </div>
-
-          <div className="product-stage timetable-stage" aria-label="Gapwise timetable preview">
-            <div className="stage-toolbar">
-              <span>Monday</span>
-              <span>Fall</span>
-            </div>
-            <div className="timeline-row">
-              <time>09:00</time>
-              <div className="timeline-line" />
-              <div className="timeline-event">
-                <strong>Class</strong>
-                <span>MN</span>
-              </div>
-            </div>
-            <div className="timeline-row timeline-gap">
-              <time>11:00</time>
-              <div className="timeline-line" />
-              <div className="timeline-event">
-                <strong>2h gap</strong>
-                <span>Plan · route · focus</span>
-              </div>
-            </div>
-            <div className="timeline-row">
-              <time>13:00</time>
-              <div className="timeline-line" />
-              <div className="timeline-event">
-                <strong>Class</strong>
-                <span>IB</span>
-              </div>
-            </div>
-            <div className="stage-route">
-              <span className="stage-symbol" aria-hidden="true">
-                ⌁
-              </span>
-              <span>Schedule context flows into Gap Plan and Day Route</span>
-            </div>
-          </div>
-        </article>
-
-        <article
-          id="gapwise-ai"
-          data-product="gapwise-ai"
-          data-active={activeProduct === "gapwise-ai" ? "true" : undefined}
-          className="product-story-section product-story-ai"
-        >
-          <div>
-            <ProductHeading
-              label="Gapwise AI"
-              title="Campus context, permissioned."
-              body="The Gapwise MCP layer exposes deterministic public campus intelligence plus student context you explicitly delegate. Your connected AI client supplies the reasoning."
-            />
-            <div className="product-story-actions">
-              <ExternalProductLink href="https://ai.gapwise.ca">Gapwise AI</ExternalProductLink>
-            </div>
-          </div>
-
-          <div className="product-stage ai-stage" aria-label="Gapwise AI tool preview">
-            <div className="ai-command">
+      <section
+        id="capabilities"
+        className="product-story-section product-story-core"
+        aria-labelledby="capabilities-heading"
+      >
+        <div>
+          <div className="product-story-copy">
+            <p className="product-story-label">
               <ProductMark />
-              <span>Use Gapwise context</span>
-              <kbd>MCP</kbd>
-            </div>
-            <div className="ai-tool-grid">
-              <span>Campus route</span>
-              <span>Gap plan</span>
-              <span>My day</span>
-              <span>Academic work</span>
-            </div>
-            <div className="ai-response-lines" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </div>
-            <p>Public campus tools and delegated private tools stay separate.</p>
+              Gapwise
+            </p>
+            <h2 id="capabilities-heading">Plan the time between classes.</h2>
+            <p>
+              Your weekly timetable, gap plan, and campus movement share one schedule context, so
+              every view stays focused on what comes next.
+            </p>
           </div>
-        </article>
+          <div className="product-story-actions">
+            <Link className="product-story-link" to="/timetable" onClick={onDemo}>
+              Timetable <span aria-hidden="true">↗</span>
+            </Link>
+            <Link className="product-story-link" to="/gaps" onClick={onDemo}>
+              Gap planner <span aria-hidden="true">↗</span>
+            </Link>
+          </div>
+        </div>
 
-        <article
-          id="gapwise-docs"
-          data-product="gapwise-docs"
-          data-active={activeProduct === "gapwise-docs" ? "true" : undefined}
-          className="product-story-section product-story-docs"
-        >
-          <div>
-            <ProductHeading
-              label="Gapwise Docs"
-              title="Contracts you can build against."
-              body="Canonical OpenAPI, JavaScript and Python SDK references, platform guides, security boundaries, and AI integration documentation live in one technical surface."
-            />
-            <div className="product-story-actions">
+        <div className="product-stage timetable-stage" aria-label="Gapwise timetable preview">
+          <div className="stage-toolbar">
+            <span>Monday</span>
+            <span>Fall</span>
+          </div>
+          <div className="timeline-row">
+            <time>09:00</time>
+            <div className="timeline-line" />
+            <div className="timeline-event">
+              <strong>Class</strong>
+              <span>{metrics.sampleCodes[0]}</span>
+            </div>
+          </div>
+          <div className="timeline-row timeline-gap">
+            <time>11:00</time>
+            <div className="timeline-line" />
+            <div className="timeline-event">
+              <strong>2h gap</strong>
+              <span>Plan · route · focus</span>
+            </div>
+          </div>
+          <div className="timeline-row">
+            <time>13:00</time>
+            <div className="timeline-line" />
+            <div className="timeline-event">
+              <strong>Class</strong>
+              <span>{metrics.sampleCodes[1]}</span>
+            </div>
+          </div>
+          <div className="stage-route">
+            <span className="stage-symbol" aria-hidden="true">
+              ⌁
+            </span>
+            <span>Schedule context flows into Gap Plan and Day Route</span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="universities"
+        className="marketing-universities-section"
+        aria-labelledby="universities-title"
+      >
+        <div className="universities-section-header">
+          <p className="marketing-eyebrow">Universities</p>
+          <h2 id="universities-title">Gapwise across Canada.</h2>
+          <p className="universities-section-lede">
+            Gapwise adapts to each university's campus, buildings, timetable terminology, navigation
+            data, routing, and schedule context.
+          </p>
+        </div>
+
+        <ul className="universities-grid" role="list">
+          {universities.map((uni) => {
+            const href = canonicalUrlForUniversity(uni);
+            const isCurrent = (university?.id ?? "uoft") === uni.id;
+            return (
+              <li key={uni.id} className="university-grid-item">
+                <a
+                  href={href}
+                  className="university-card"
+                  style={{ "--uni-card-accent": uni.accentColor } as React.CSSProperties}
+                  aria-label={`${uni.name} — ${uni.campusScope} (${uni.hosts[0]})`}
+                >
+                  <div className="university-card-indicator" aria-hidden="true" />
+                  <div className="university-card-content">
+                    <div className="university-card-top">
+                      <div className="university-card-identity">
+                        <span className="university-short-name">{uni.shortName}</span>
+                        <h3 className="university-name">{uni.name}</h3>
+                      </div>
+                      <span className="university-card-arrow" aria-hidden="true">
+                        ↗
+                      </span>
+                    </div>
+                    <p className="university-scope">{uni.campusScope}</p>
+                    <div className="university-card-meta">
+                      <span className="university-host">{uni.hosts[0]}</span>
+                      {isCurrent ? (
+                        <span className="university-badge-current">This edition</span>
+                      ) : null}
+                    </div>
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section
+        id="ecosystem"
+        className="marketing-ecosystem-section"
+        aria-labelledby="ecosystem-title"
+      >
+        <div className="ecosystem-section-header">
+          <p className="marketing-eyebrow">Platform</p>
+          <h2 id="ecosystem-title">The Gapwise ecosystem.</h2>
+          <p className="ecosystem-section-lede">
+            Explore open data, AI tooling, technical contracts, and operational status across all
+            supported university campuses.
+          </p>
+        </div>
+
+        <div className="ecosystem-grid">
+          <div className="ecosystem-card">
+            <div className="ecosystem-card-header">
+              <span className="ecosystem-card-badge">AI</span>
+              <h3>Gapwise AI</h3>
+            </div>
+            <p>
+              Permissioned campus intelligence with Model Context Protocol (MCP) tool integration.
+            </p>
+            <ExternalProductLink href="https://ai.gapwise.ca">Gapwise AI</ExternalProductLink>
+          </div>
+
+          <div className="ecosystem-card">
+            <div className="ecosystem-card-header">
+              <span className="ecosystem-card-badge">Docs</span>
+              <h3>Gapwise Docs</h3>
+            </div>
+            <p>
+              Canonical OpenAPI specifications, JavaScript and Python SDK guides, and developer
+              references.
+            </p>
+            <div className="ecosystem-card-actions">
               <ExternalProductLink href="https://docs.gapwise.ca">Open Docs</ExternalProductLink>
               <Link className="product-story-link" to="/developers">
-                Developer platform <span aria-hidden="true">↗</span>
+                Developers <span aria-hidden="true">↗</span>
               </Link>
             </div>
           </div>
 
-          <div className="product-stage docs-stage" aria-label="Gapwise Docs preview">
-            <div className="docs-sidebar">
-              <ProductMark />
-              <strong>Platform</strong>
-              <span>API</span>
-              <span>JavaScript</span>
-              <span>Python</span>
-              <span>AI / MCP</span>
+          <div className="ecosystem-card">
+            <div className="ecosystem-card-header">
+              <span className="ecosystem-card-badge">Data</span>
+              <h3>Gapwise Data</h3>
             </div>
-            <pre>
-              <code>{`import { Gapwise } from "@gapwise/sdk";\n\nconst gapwise = new Gapwise();\nawait gapwise.routes.calculate({\n  from: "${metrics.sampleCodes[0]}",\n  to: "${metrics.sampleCodes[1]}"\n});`}</code>
-            </pre>
-          </div>
-        </article>
-
-        <article
-          id="gapwise-data"
-          data-product="gapwise-data"
-          data-active={activeProduct === "gapwise-data" ? "true" : undefined}
-          className="product-story-section product-story-data"
-        >
-          <div>
-            <ProductHeading
-              label="Gapwise Data"
-              title={`${university?.shortName ?? "Campus"} facts with provenance.`}
-              body={`The open data layer owns canonical campus identity, geometry, entrances, routing inputs, provenance, and validation — including ${metrics.count} ${university?.shortName ?? "campus"} buildings and facilities in the published snapshot.`}
-            />
-            <div className="product-story-actions">
-              <ExternalProductLink href="https://data.gapwise.ca">Explore Data</ExternalProductLink>
-            </div>
+            <p>
+              Canada's largest free and open multi-university campus navigation dataset with
+              provenance.
+            </p>
+            <ExternalProductLink href="https://data.gapwise.ca">Explore Data</ExternalProductLink>
           </div>
 
-          <div className="product-stage data-stage" aria-label="Gapwise Data preview">
-            <div className="data-stage-header">
-              <ProductMark />
-              <span>Campus registry</span>
-              <strong>{metrics.count}</strong>
+          <div className="ecosystem-card">
+            <div className="ecosystem-card-header">
+              <span className="ecosystem-card-badge">Status</span>
+              <h3>Gapwise Status</h3>
             </div>
-            <div className="data-table" role="presentation">
-              <div>
-                <strong>{metrics.sampleCodes[0]}</strong>
-                <span>Geometry</span>
-                <span>Entrances</span>
-                <i />
-              </div>
-              <div>
-                <strong>{metrics.sampleCodes[1]}</strong>
-                <span>Geometry</span>
-                <span>Routing</span>
-                <i />
-              </div>
-              <div>
-                <strong>{metrics.sampleCodes[2]}</strong>
-                <span>Geometry</span>
-                <span>Provenance</span>
-                <i />
-              </div>
-              <div>
-                <strong>{metrics.sampleCodes[3]}</strong>
-                <span>Identity</span>
-                <span>Validation</span>
-                <i />
-              </div>
-            </div>
+            <p>
+              Independent uptime probes and operational incident history for all public services.
+            </p>
+            <ExternalProductLink href="https://status.gapwise.ca">Open Status</ExternalProductLink>
           </div>
-        </article>
-
-        <article
-          id="gapwise-status"
-          data-product="gapwise-status"
-          data-active={activeProduct === "gapwise-status" ? "true" : undefined}
-          className="product-story-section product-story-status"
-        >
-          <div>
-            <ProductHeading
-              label="Gapwise Status"
-              title="Operations stay separate."
-              body="An independently deployed status surface tracks public Gapwise services, preserves incident history, and runs automated public-surface checks every 15 minutes."
-            />
-            <div className="product-story-actions">
-              <ExternalProductLink href="https://status.gapwise.ca">
-                Open Status
-              </ExternalProductLink>
-            </div>
-          </div>
-
-          <div className="product-stage status-stage" aria-label="Gapwise monitored surfaces">
-            <div className="status-stage-header">
-              <ProductMark />
-              <span>Monitored surfaces</span>
-              <small>15 min probes</small>
-            </div>
-            {["Gapwise", "API", "Gapwise AI", "Docs", "Data"].map((service) => (
-              <div key={service} className="status-service">
-                <span>{service}</span>
-                <i aria-hidden="true" />
-                <small>Monitored</small>
-              </div>
-            ))}
-          </div>
-        </article>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

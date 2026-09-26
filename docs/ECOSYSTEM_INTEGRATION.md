@@ -6,10 +6,10 @@ Gapwise is one product ecosystem implemented across seven product repositories a
 
 | Repository | Owns                                                                                             | Consumes                                                                          |
 | ---------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| `data`     | Canonical U of T campus facts and geometry; reviewed UTM entrances and routing graph             | Reviewed public/field evidence; core consumer tests                               |
-| `gapwise`  | Web/PWA, timetable/gap/routing semantics, encrypted private state, API v1, OpenAPI and both SDKs | Validated build-time Data mirror; explicit AI delegation                          |
-| `android`  | Kotlin/Compose UX, Keystore persistence, native import and encrypted-sync adapter                | Core HTTP/crypto contracts and public campus APIs                                 |
-| `ios`      | SwiftUI UX and portable local timetable foundation                                               | Campus-scoped identity; broader native campus/account integrations remain pending |
+| `data`     | Canonical multi-university campus facts and geometry across 7 universities; routing graphs and reviewed entrances | Reviewed public/field evidence; core consumer tests                               |
+| `gapwise`  | Web/PWA across 7 university editions, timetable/gap/routing semantics, encrypted private state, API v1, OpenAPI and both SDKs | Validated build-time Data mirror; explicit AI delegation                          |
+| `android`  | Kotlin/Compose UX, Keystore persistence, native import and encrypted-sync adapter (focuses on U of T) | Core HTTP/crypto contracts and public campus APIs                                 |
+| `ios`      | SwiftUI UX and portable local timetable foundation (focuses on U of T)                               | Campus-scoped identity; broader native campus/account integrations remain pending |
 | `ai`       | OAuth/MCP authorization, minimized snapshots and bounded preference actions                      | Core public API and browser-authoritative delegated snapshots                     |
 | `docs`     | Public developer documentation                                                                   | Released producer contracts, including AI's generated MCP manifest                |
 | `status`   | Independent probes and incident presentation                                                     | Public service endpoints and operator-confirmed facts                             |
@@ -19,7 +19,7 @@ Gapwise is one product ecosystem implemented across seven product repositories a
 
 Canonical endpoints and packages:
 
-- App: `https://gapwise.ca`
+- App editions: `https://gapwise.ca` (U of T), `https://carleton.gapwise.ca` (Carleton), `https://tmu.gapwise.ca` (TMU), `https://queens.gapwise.ca` (Queen's), `https://laurier.gapwise.ca` (Laurier), `https://york.gapwise.ca` (York), `https://mcmaster.gapwise.ca` (McMaster)
 - Public API: `https://api.gapwise.ca/v1`
 - OpenAPI 3.1: `https://api.gapwise.ca/openapi.json`
 - Developer docs: `https://docs.gapwise.ca`

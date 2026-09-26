@@ -619,6 +619,290 @@
   }
 }
 
+/* ── Supported Universities Section ──────────────────────── */
+
+.marketing-universities-section {
+  position: relative;
+  padding-block: clamp(3.5rem, 6vw, 6rem);
+  scroll-margin-top: 4rem;
+}
+
+.marketing-universities-section::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--product-story-bleed));
+  bottom: -1px;
+  left: calc(-1 * var(--product-story-bleed));
+  height: 1px;
+  pointer-events: none;
+  background: var(--marketing-line);
+}
+
+.universities-section-header {
+  max-width: 44rem;
+  margin-bottom: clamp(2rem, 4vw, 3.2rem);
+}
+
+.universities-section-header h2 {
+  margin-top: 0.85rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  font-weight: 520;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.universities-section-lede {
+  margin-top: 1rem;
+  color: var(--color-muted-foreground);
+  font-size: clamp(0.92rem, 1.2vw, 1.04rem);
+  line-height: 1.68;
+}
+
+.universities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: clamp(1rem, 2vw, 1.35rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.university-grid-item {
+  display: flex;
+}
+
+.university-card {
+  --uni-card-accent: #2ea8ff;
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--marketing-line);
+  border-radius: 0.65rem;
+  padding: 1.35rem 1.45rem;
+  background: var(--color-card);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    transform 220ms ease;
+}
+
+.university-card:hover {
+  border-color: color-mix(in oklab, var(--uni-card-accent) 55%, var(--color-border));
+  background: color-mix(in oklab, var(--uni-card-accent) 3.5%, var(--color-card));
+  transform: translateY(-2px);
+}
+
+.university-card:focus-visible {
+  border-radius: 0.65rem;
+  outline: 2px solid var(--uni-card-accent);
+  outline-offset: 3px;
+}
+
+.university-card-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--uni-card-accent);
+  opacity: 0.85;
+  transition: opacity 220ms ease;
+}
+
+.university-card:hover .university-card-indicator {
+  opacity: 1;
+}
+
+.university-card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.university-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.university-card-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.university-short-name {
+  color: var(--uni-card-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.university-name {
+  margin: 0;
+  color: var(--color-foreground);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 560;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.university-card-arrow {
+  color: var(--color-muted-foreground);
+  font-size: 1.1rem;
+  transition:
+    transform 220ms ease,
+    color 220ms ease;
+}
+
+.university-card:hover .university-card-arrow {
+  color: var(--uni-card-accent);
+  transform: translate(2px, -2px);
+}
+
+.university-scope {
+  flex: 1;
+  margin-top: 0.75rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.university-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent);
+  padding-top: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.university-host {
+  color: var(--color-muted-foreground);
+}
+
+.university-badge-current {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  background: color-mix(in oklab, var(--uni-card-accent) 12%, transparent);
+  color: var(--uni-card-accent);
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+/* ── Supporting Ecosystem Section ────────────────────────── */
+
+.marketing-ecosystem-section {
+  position: relative;
+  padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  scroll-margin-top: 4rem;
+}
+
+.marketing-ecosystem-section::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--product-story-bleed));
+  bottom: -1px;
+  left: calc(-1 * var(--product-story-bleed));
+  height: 1px;
+  pointer-events: none;
+  background: var(--marketing-line);
+}
+
+.ecosystem-section-header {
+  max-width: 44rem;
+  margin-bottom: clamp(1.8rem, 3.5vw, 2.75rem);
+}
+
+.ecosystem-section-header h2 {
+  margin-top: 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 520;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.ecosystem-section-lede {
+  margin-top: 0.95rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: clamp(1rem, 2vw, 1.35rem);
+}
+
+.ecosystem-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--marketing-line);
+  border-radius: 0.65rem;
+  padding: 1.25rem 1.35rem;
+  background: color-mix(in oklab, var(--color-card) 98%, var(--color-background));
+  transition: border-color 200ms ease;
+}
+
+.ecosystem-card:hover {
+  border-color: color-mix(in oklab, var(--color-foreground) 24%, var(--color-border));
+}
+
+.ecosystem-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.ecosystem-card-badge {
+  border-radius: 0.25rem;
+  padding: 0.15rem 0.4rem;
+  background: color-mix(in oklab, var(--color-foreground) 8%, transparent);
+  color: var(--color-muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.ecosystem-card-header h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 560;
+}
+
+.ecosystem-card p {
+  flex: 1;
+  margin-bottom: 1.15rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.ecosystem-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
 @media (max-width: 800px) {
   .marketing-home {
     --product-story-bleed: 0.75rem;
@@ -701,7 +985,10 @@
   .product-story-nav::after,
   .product-story-nav a,
   .product-story-nav a i,
-  .product-story-section > * {
+  .product-story-section > *,
+  .university-card,
+  .university-card-arrow,
+  .ecosystem-card {
     animation: none !important;
     transition: none !important;
     transform: none !important;

@@ -18,7 +18,7 @@ This is a dated evidence record, not a legal opinion or a blanket compliance cla
 ### Live production/account evidence
 
 - **Live:** the Gapwise Vercel team is on the **Hobby** plan.
-- **Live:** the core `gapwise` project is linked to `andrewmuratov/gapwise` and serves `gapwise.ca`, `www.gapwise.ca`, and `api.gapwise.ca`.
+- **Live:** the core `gapwise` project is linked to `GapwiseHQ/gapwise` (migrated from `andrewmuratov/gapwise`) and serves `gapwise.ca`, `www.gapwise.ca`, and `api.gapwise.ca`.
 - **Live:** core commit `2f76a34e42890eed81947854de56adbb87c0f650` deployed successfully to production and reached `READY`.
 - **Live:** the Hobby runtime-log window exposed by the connected Vercel API is approximately one hour. Fresh searches on the exact merged production deployment found no `Bearer` or `service_role` matches in the retained window.
 - **Live:** reviewed production build output contained ordinary dependency/build/chunk/deployment information and no whole-environment dump or credential-shaped output was observed.

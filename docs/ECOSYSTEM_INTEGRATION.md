@@ -27,10 +27,10 @@ Canonical endpoints and packages:
 - AI/MCP: `https://ai.gapwise.ca/api/mcp`
 - Status: `https://status.gapwise.ca`
 - TypeScript SDK: `@gapwise/sdk`
-  - npm: `0.1.1` published with provenance
-  - JSR: `@gapwise/sdk@0.1.1` published through GitHub Actions OIDC with provenance
+  - npm: `0.1.2` published with provenance
+  - JSR: `@gapwise/sdk@0.1.2` published through GitHub Actions OIDC with provenance
   - GitHub Packages: public source-adjacent mirror `@gapwisehq/sdk` (historical `0.1.1` under `@gapwise-for-uoft/sdk`)
-- Python SDK: `gapwise==0.1.0` on PyPI through Trusted Publishing
+- Python SDK: `gapwise==0.1.1` on PyPI through Trusted Publishing
 
 The TypeScript SDK is one portable implementation, not separate Node, Deno, and Bun SDKs. npm and JSR are distribution channels; Node, Bun, and Deno are runtime targets. Python remains an equal first-party implementation with the same public v1 semantics.
 

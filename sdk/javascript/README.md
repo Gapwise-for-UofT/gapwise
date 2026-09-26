@@ -8,8 +8,8 @@ Official dependency-free TypeScript client for the unauthenticated Gapwise Publi
 
 The canonical JavaScript package identity is `@gapwise/sdk`.
 
-- **npm:** `@gapwise/sdk@0.1.1` is published with provenance and is the primary package for Node.js, Bun, browser bundlers, and npm-compatible tooling.
-- **JSR:** `@gapwise/sdk@0.1.1` is published from the same TypeScript source through GitHub Actions OIDC with provenance. JSR publishes the source entry point directly from `src/index.ts`.
+- **npm:** `@gapwise/sdk@0.1.2` is published with provenance and is the primary package for Node.js, Bun, browser bundlers, and npm-compatible tooling.
+- **JSR:** `@gapwise/sdk@0.1.2` is published from the same TypeScript source through GitHub Actions OIDC with provenance. JSR publishes the source entry point directly from `src/index.ts`.
 - **GitHub Packages:** `@gapwisehq/sdk` is the organization-scoped mirror of the same JavaScript package (historical `0.1.1` published under `@gapwise-for-uoft/sdk`).
 - **Node.js:** supported through the npm package; package metadata requires Node 20+.
 - **Bun:** first-party test/runtime target using the same package and source.
@@ -21,7 +21,7 @@ The canonical JavaScript package identity is `@gapwise/sdk`.
 Python is an equal first-party SDK, not a fallback implementation. It is maintained in [`../python`](../python), published as `gapwise` on PyPI, and mirrored as wheel/source artifacts on the matching `python-v*` GitHub Release.
 
 ```bash
-python -m pip install gapwise==0.1.0
+python -m pip install gapwise==0.1.1
 ```
 
 ```python
@@ -39,19 +39,19 @@ Public API changes must preserve contract parity across the TypeScript and Pytho
 Install the released npm package with:
 
 ```bash
-npm install @gapwise/sdk@0.1.1
+npm install @gapwise/sdk@0.1.2
 ```
 
 Install the same released TypeScript SDK from JSR with Deno:
 
 ```bash
-deno add jsr:@gapwise/sdk@0.1.1
+deno add jsr:@gapwise/sdk@0.1.2
 ```
 
 Or import the exact JSR version directly:
 
 ```ts
-import { Gapwise } from "jsr:@gapwise/sdk@0.1.1";
+import { Gapwise } from "jsr:@gapwise/sdk@0.1.2";
 ```
 
 For unreleased repository work, a local checkout can still be installed with `npm install ./sdk/javascript`.

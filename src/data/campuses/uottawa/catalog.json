@@ -22,7 +22,7 @@
       "licenseOrTerms": "Open Database License (ODbL) 1.0",
       "redistribution": "permitted",
       "transformation": "Extracted campus building footprints, verified entrance nodes, and outdoor pedestrian path ways",
-      "attribution": "\u00a9 OpenStreetMap contributors"
+      "attribution": "© OpenStreetMap contributors"
     },
     {
       "id": "uottawa-official-map-2025",
@@ -180,7 +180,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/34244686",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "UCU",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "tabaret-hall",
@@ -361,7 +373,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/68665449",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "TBT",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "morisset-hall",
@@ -370,7 +394,7 @@
         "MRT"
       ],
       "aliases": [
-        "Biblioth\u00e8que Morisset",
+        "Bibliothèque Morisset",
         "Morisset Library"
       ],
       "geometry": {
@@ -839,7 +863,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/68665290",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "MRT",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "desmarais-building",
@@ -957,7 +993,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/264538297",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "DMS",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "site-building",
@@ -1354,7 +1402,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/34244676",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "STE",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "faculty-social-sciences",
@@ -1363,7 +1423,7 @@
         "FSS"
       ],
       "aliases": [
-        "Facult\u00e9 des sciences sociales"
+        "Faculté des sciences sociales"
       ],
       "geometry": {
         "type": "Polygon",
@@ -1483,7 +1543,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/638327786",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "FSS",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "montpetit-hall",
@@ -1668,7 +1740,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/162799164",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "MNT",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "marion-hall",
@@ -1761,7 +1845,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/68709953",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "MRN",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "simard-hall",
@@ -1922,7 +2018,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/68665368",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "SMD",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "hamelin-hall",
@@ -1976,7 +2084,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/123936823",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "MHN",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "colonel-by-hall",
@@ -2161,7 +2281,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/68710212",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "CBY",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "stem-complex",
@@ -2246,7 +2378,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/638327766",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "STM",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "lamoureux-hall",
@@ -2391,7 +2535,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/164257817",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "LMX",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "learning-crossroads",
@@ -2452,7 +2608,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/638327780",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "CRX",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "advanced-research-complex",
@@ -2461,7 +2629,7 @@
         "ARC"
       ],
       "aliases": [
-        "Complexe de recherche avanc\u00e9e"
+        "Complexe de recherche avancée"
       ],
       "geometry": {
         "type": "Polygon",
@@ -2513,16 +2681,28 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/307247853",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "ARC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "perez-hall",
-      "name": "P\u00e9rez Hall",
+      "name": "Pérez Hall",
       "nativeCodes": [
         "PRZ"
       ],
       "aliases": [
-        "Pavillon P\u00e9rez",
+        "Pavillon Pérez",
         "Music Building"
       ],
       "geometry": {
@@ -2615,7 +2795,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/165790733",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "PRZ",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "fauteux-hall",
@@ -2753,7 +2945,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-uottawa-2026-09",
+          "nativeId": "way/68665491",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "uottawa-official-map-2025",
+          "nativeId": "FTX",
+          "verification": "source-backed"
+        }
+      ]
     }
   ],
   "entrances": [

@@ -5,7 +5,7 @@
     "bounds": [
       [
         -81.285,
-        43.0
+        43
       ],
       [
         -81.265,
@@ -22,7 +22,7 @@
       "licenseOrTerms": "Open Database License (ODbL) 1.0",
       "redistribution": "permitted",
       "transformation": "Extracted campus building footprints, verified entrance nodes, and outdoor pedestrian path ways",
-      "attribution": "\u00a9 OpenStreetMap contributors"
+      "attribution": "© OpenStreetMap contributors"
     },
     {
       "id": "western-official-map-2025",
@@ -208,7 +208,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/141710486",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "UCC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "social-science-centre",
@@ -389,7 +401,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/141710484",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "SSC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "natural-sciences-centre",
@@ -498,7 +522,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/116779542",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "NSC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "middlesex-college",
@@ -739,7 +775,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/118764099",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "MC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "north-campus-building",
@@ -860,7 +908,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/142286116",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "NCB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "talbot-college",
@@ -969,7 +1029,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/116779543",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "TC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "spencer-engineering-building",
@@ -1246,7 +1318,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/118764110",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "SEB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "western-science-centre",
@@ -1403,7 +1487,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/118764093",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "WSC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "weldon-library",
@@ -1809,7 +1905,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/118764108",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "WELDON",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "taylor-library",
@@ -1898,7 +2006,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/141710485",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "TAYLOR",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "arts-humanities-building",
@@ -1979,7 +2099,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/1203774692",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "AHB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "amit-chakma-engineering",
@@ -2020,7 +2152,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/626520018",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "ACEB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "alumni-hall",
@@ -2147,7 +2291,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/142216959",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "AH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "somerville-house",
@@ -2270,7 +2426,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/142216964",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "SH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "thames-hall",
@@ -2409,7 +2577,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/118764095",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "TH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "medical-sciences-building",
@@ -2598,7 +2778,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/141710482",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "MSB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "health-sciences-building",
@@ -2707,7 +2899,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/126668543",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "HSB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "law-building",
@@ -2824,7 +3028,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/118764097",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "LB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "physics-building",
@@ -2957,7 +3173,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/142286122",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "PAB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "music-building",
@@ -2996,7 +3224,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-western-2026-09",
+          "nativeId": "way/1264685790",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "western-official-map-2025",
+          "nativeId": "MB",
+          "verification": "source-backed"
+        }
+      ]
     }
   ],
   "entrances": [

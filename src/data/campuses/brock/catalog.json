@@ -22,7 +22,7 @@
       "licenseOrTerms": "Open Database License (ODbL) 1.0",
       "redistribution": "permitted",
       "transformation": "Extracted campus building footprints, verified entrance nodes, and outdoor pedestrian path ways",
-      "attribution": "\u00a9 OpenStreetMap contributors"
+      "attribution": "© OpenStreetMap contributors"
     },
     {
       "id": "brock-official-map-2025",
@@ -84,7 +84,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1080586464",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "ST",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "thistle-complex",
@@ -409,7 +421,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1080586463",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "TH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "mackenzie-chown-complex",
@@ -558,7 +582,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1182288086",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "MC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "goodman-school-business",
@@ -756,7 +792,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1080586460",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "GSB",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "plaza-building",
@@ -873,7 +921,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1080586457",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "PLZ",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "cairns-complex",
@@ -1106,7 +1166,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/473685802",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "CFHBRC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "walker-complex",
@@ -1448,7 +1520,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1080586467",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "WC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "welch-hall",
@@ -1601,7 +1685,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1080586461",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "WH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "decew-residence",
@@ -2392,7 +2488,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/184797648",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "DEC",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "lowenberger-residence",
@@ -2655,7 +2763,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/184703451",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "LOW",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "inniskillin-hall",
@@ -2760,7 +2880,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/1182288085",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "IH",
+          "verification": "source-backed"
+        }
+      ]
     },
     {
       "id": "international-centre",
@@ -2911,7 +3043,19 @@
             ]
           ]
         ]
-      }
+      },
+      "provenance": [
+        {
+          "sourceId": "osm-brock-2026-09",
+          "nativeId": "way/810640947",
+          "verification": "source-backed"
+        },
+        {
+          "sourceId": "brock-official-map-2025",
+          "nativeId": "IC",
+          "verification": "source-backed"
+        }
+      ]
     }
   ],
   "entrances": [

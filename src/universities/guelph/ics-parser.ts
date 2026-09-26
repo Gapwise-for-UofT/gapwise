@@ -145,6 +145,13 @@ export function parseIcs(
 
     const resolved = resolveLocation(rawLoc, locationKind, campus);
 
+    const termLabel =
+      dtstart.getUTCMonth() >= 8
+        ? `Fall ${dtstart.getUTCFullYear()}`
+        : dtstart.getUTCMonth() >= 4
+          ? `Summer ${dtstart.getUTCFullYear()}`
+          : `Winter ${dtstart.getUTCFullYear()}`;
+
     meetings.push({
       id: `ics-${ev["UID"] ?? Math.random().toString(36).slice(2)}`,
       institutionId: adapter.id,

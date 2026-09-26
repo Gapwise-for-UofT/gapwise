@@ -462,6 +462,14 @@
       "destination": "/_universities/laurier/index.html"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "/_seo/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/_seo/robots.txt"
+    },
+    {
       "source": "/about",
       "destination": "/_seo/about.html"
     },

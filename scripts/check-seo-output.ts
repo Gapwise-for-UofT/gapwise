@@ -32,10 +32,33 @@ function requireReference(
   }
 }
 
+// Ensure root dist/sitemap.xml and dist/robots.txt do not exist so they cannot shadow host-specific rewrites
+let rootSitemapExists = false;
+try {
+  await readFile("dist/sitemap.xml");
+  rootSitemapExists = true;
+} catch {
+  // expected
+}
+if (rootSitemapExists) {
+  throw new Error("dist/sitemap.xml must not exist (it shadows host-specific sitemap rewrites)");
+}
+
+let rootRobotsExists = false;
+try {
+  await readFile("dist/robots.txt");
+  rootRobotsExists = true;
+} catch {
+  // expected
+}
+if (rootRobotsExists) {
+  throw new Error("dist/robots.txt must not exist (it shadows host-specific robots.txt rewrites)");
+}
+
 const [home, sitemap, robots] = await Promise.all([
   readFile("dist/index.html", "utf8"),
-  readFile("dist/sitemap.xml", "utf8"),
-  readFile("dist/robots.txt", "utf8"),
+  readFile("dist/_seo/sitemap.xml", "utf8"),
+  readFile("dist/_seo/robots.txt", "utf8"),
 ]);
 
 for (const needle of [

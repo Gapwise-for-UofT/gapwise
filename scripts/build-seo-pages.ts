@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { PUBLIC_FEATURE_PAGES } from "../src/content/public-feature-pages";
 
@@ -547,8 +547,14 @@ const committedSitemap = await readFile(join("public", "sitemap.xml"), "utf8");
 if (committedSitemap !== expectedSitemap) {
   throw new Error("public/sitemap.xml is out of sync with the production SEO page inventory.");
 }
-await writeFile(join("dist", "sitemap.xml"), expectedSitemap);
-await writeFile(join("dist", "robots.txt"), await readFile(join("public", "robots.txt"), "utf8"));
+// Remove root sitemap and robots so they do not shadow host-specific rewrites on Vercel
+await rm(join("dist", "sitemap.xml"), { force: true });
+await rm(join("dist", "robots.txt"), { force: true });
+await writeFile(join("dist", "_seo", "sitemap.xml"), expectedSitemap);
+await writeFile(
+  join("dist", "_seo", "robots.txt"),
+  await readFile(join("public", "robots.txt"), "utf8"),
+);
 
 const universitiesManifest = JSON.parse(await readFile("universities.json", "utf8"));
 let universityCount = 0;

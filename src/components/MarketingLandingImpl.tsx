@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { UploadPanel } from "@/components/UploadPanel";
 import type { MarketingLandingProps } from "./MarketingLanding";
 import {
@@ -50,8 +51,39 @@ export function MarketingLandingImpl({
     INSTITUTION_MARKETING_METRICS[university?.id ?? "uoft"] ??
     INSTITUTION_MARKETING_METRICS["uoft"]!;
 
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState<string>("capabilities");
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !("IntersectionObserver" in window)) return;
+
+    const entriesBySection = new Map<Element, IntersectionObserverEntry>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) entriesBySection.set(entry.target, entry);
+        const viewportCenter = window.innerHeight * 0.42;
+        const visible = [...entriesBySection.values()]
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => {
+            const aCenter = a.boundingClientRect.top + a.boundingClientRect.height / 2;
+            const bCenter = b.boundingClientRect.top + b.boundingClientRect.height / 2;
+            return Math.abs(aCenter - viewportCenter) - Math.abs(bCenter - viewportCenter);
+          });
+        const next = visible[0]?.target.getAttribute("data-section");
+        if (next) setActiveSection(next);
+      },
+      { rootMargin: "-25% 0px -40% 0px", threshold: 0 },
+    );
+
+    root.querySelectorAll<HTMLElement>("[data-section]").forEach((section) => {
+      observer.observe(section);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="marketing-home">
+    <div ref={rootRef} className="marketing-home" data-active-section={activeSection}>
       <section className="marketing-hero" aria-labelledby="marketing-title">
         <div className="marketing-hero-copy">
           <p className="marketing-eyebrow">For {university?.name ?? "your campus"}</p>
@@ -63,8 +95,9 @@ export function MarketingLandingImpl({
             between classes, and source-backed campus context where available.
           </p>
           <div className="marketing-hero-links">
+            <a href="#capabilities">Platform</a>
             <a href="#universities">Supported Universities</a>
-            <Link to="/developers">Developers</Link>
+            <a href="#ecosystem">Ecosystem</a>
           </div>
         </div>
 
@@ -90,13 +123,23 @@ export function MarketingLandingImpl({
       <nav className="product-story-nav" aria-label="Gapwise platform navigation">
         <span>Explore</span>
         <div>
-          <a href="#universities" data-active="true">
+          <a
+            href="#capabilities"
+            data-active={activeSection === "capabilities" ? "true" : undefined}
+          >
+            <i aria-hidden="true" />
+            Platform
+          </a>
+          <a
+            href="#universities"
+            data-active={activeSection === "universities" ? "true" : undefined}
+          >
             <i aria-hidden="true" />
             Universities
           </a>
-          <a href="#capabilities">
+          <a href="#ecosystem" data-active={activeSection === "ecosystem" ? "true" : undefined}>
             <i aria-hidden="true" />
-            Platform
+            Ecosystem
           </a>
           <a href="https://ai.gapwise.ca" target="_blank" rel="noreferrer">
             <i aria-hidden="true" />
@@ -115,6 +158,7 @@ export function MarketingLandingImpl({
 
       <section
         id="capabilities"
+        data-section="capabilities"
         className="product-story-section product-story-core"
         aria-labelledby="capabilities-heading"
       >
@@ -180,6 +224,7 @@ export function MarketingLandingImpl({
 
       <section
         id="universities"
+        data-section="universities"
         className="marketing-universities-section"
         aria-labelledby="universities-title"
       >
@@ -232,6 +277,7 @@ export function MarketingLandingImpl({
 
       <section
         id="ecosystem"
+        data-section="ecosystem"
         className="marketing-ecosystem-section"
         aria-labelledby="ecosystem-title"
       >
@@ -245,7 +291,12 @@ export function MarketingLandingImpl({
         </div>
 
         <div className="ecosystem-grid">
-          <div className="ecosystem-card">
+          <div
+            className="ecosystem-card"
+            data-ecosystem="ai"
+            style={{ "--eco-accent": "#a78bfa" } as React.CSSProperties}
+          >
+            <div className="ecosystem-card-indicator" aria-hidden="true" />
             <div className="ecosystem-card-header">
               <span className="ecosystem-card-badge">AI</span>
               <h3>Gapwise AI</h3>
@@ -256,7 +307,12 @@ export function MarketingLandingImpl({
             <ExternalProductLink href="https://ai.gapwise.ca">Gapwise AI</ExternalProductLink>
           </div>
 
-          <div className="ecosystem-card">
+          <div
+            className="ecosystem-card"
+            data-ecosystem="docs"
+            style={{ "--eco-accent": "#38bdf8" } as React.CSSProperties}
+          >
+            <div className="ecosystem-card-indicator" aria-hidden="true" />
             <div className="ecosystem-card-header">
               <span className="ecosystem-card-badge">Docs</span>
               <h3>Gapwise Docs</h3>
@@ -273,7 +329,12 @@ export function MarketingLandingImpl({
             </div>
           </div>
 
-          <div className="ecosystem-card">
+          <div
+            className="ecosystem-card"
+            data-ecosystem="data"
+            style={{ "--eco-accent": "#ff5a66" } as React.CSSProperties}
+          >
+            <div className="ecosystem-card-indicator" aria-hidden="true" />
             <div className="ecosystem-card-header">
               <span className="ecosystem-card-badge">Data</span>
               <h3>Gapwise Data</h3>
@@ -285,7 +346,12 @@ export function MarketingLandingImpl({
             <ExternalProductLink href="https://data.gapwise.ca">Explore Data</ExternalProductLink>
           </div>
 
-          <div className="ecosystem-card">
+          <div
+            className="ecosystem-card"
+            data-ecosystem="status"
+            style={{ "--eco-accent": "#39cf97" } as React.CSSProperties}
+          >
+            <div className="ecosystem-card-indicator" aria-hidden="true" />
             <div className="ecosystem-card-header">
               <span className="ecosystem-card-badge">Status</span>
               <h3>Gapwise Status</h3>

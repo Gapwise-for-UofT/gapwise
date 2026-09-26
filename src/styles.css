@@ -711,6 +711,46 @@
       0 10px 24px -14px color-mix(in oklab, var(--meeting-accent) 55%, transparent);
   }
 
+  /* Adaptive Timetable Card Density & Container Queries */
+  .meeting-card-slot {
+    container-type: size;
+    container-name: meeting-slot;
+  }
+
+  .meeting-card {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .meeting-card[data-density="dense"] {
+    border-left-width: 3px;
+  }
+
+  .meeting-card[data-density="micro"] {
+    border-left-width: 3px;
+    border-radius: 0.35rem;
+    line-height: 1.15;
+  }
+
+  .meeting-card[data-width-mode="compact"] .card-pin,
+  .meeting-card[data-width-mode="narrow"] .card-pin {
+    display: none !important;
+  }
+
+  @container meeting-slot (max-height: 42px) {
+    .meeting-card {
+      padding-top: 0.15rem !important;
+      padding-bottom: 0.15rem !important;
+      padding-inline: 0.45rem !important;
+    }
+  }
+
+  @container meeting-slot (max-width: 110px) {
+    .meeting-card .card-pin {
+      display: none !important;
+    }
+  }
+
   .activity-badge {
     background: color-mix(in oklab, var(--meeting-accent) var(--meeting-badge-tint), transparent);
     color: var(--meeting-accent);

@@ -93,7 +93,7 @@ describe("Gapwise marketing system", () => {
         id: "uoft",
         name: "University of Toronto",
         url: "https://gapwise.ca",
-        scope: "UTM, St. George, and Scarborough",
+        scope: "Mississauga, St. George, and Scarborough",
       },
       {
         id: "carleton",

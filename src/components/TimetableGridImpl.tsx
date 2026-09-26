@@ -36,6 +36,7 @@ import {
 import {
   buildTimetableModel,
   buildTimetableScale,
+  getTimetableCardLayout,
   isCompactMeetingCard,
 } from "@/lib/timetable-layout";
 import "./assessment-window.css";
@@ -59,11 +60,21 @@ function displayActivityType(meeting: Meeting): TimetableActivityLabel {
   return isAssessmentWindow(meeting) ? "RES" : meeting.activityType;
 }
 
-export function ActivityBadge({ type }: { type: TimetableActivityLabel }) {
+export function ActivityBadge({
+  type,
+  compact = false,
+}: {
+  type: TimetableActivityLabel;
+  compact?: boolean;
+}) {
   return (
     <span
       data-activity={type}
-      className="activity-badge rounded-md px-1.5 py-0.5 text-[0.68rem] font-bold tracking-[0.08em]"
+      className={`activity-badge shrink-0 rounded-md font-bold ${
+        compact
+          ? "px-1 py-0.5 text-[0.58rem] tracking-tight"
+          : "px-1.5 py-0.5 text-[0.68rem] tracking-[0.08em]"
+      }`}
     >
       {type}
     </span>
@@ -138,67 +149,161 @@ function useCurrentTime() {
 
 function MeetingCard({
   meeting,
+  cardHeight,
+  laneCount = 1,
   compact,
   onSelect,
 }: {
   meeting: Meeting;
+  cardHeight?: number;
+  laneCount?: number;
   compact?: boolean;
   onSelect: (meeting: Meeting) => void;
 }) {
   const isStudy = meeting.sectionCode === "STUDY";
   const reserved = isAssessmentWindow(meeting);
   const activityType = displayActivityType(meeting);
-  const accessibleDescription = reserved ? "reserved assessment window" : meeting.courseName;
+
+  const layout = useMemo(() => {
+    if (cardHeight !== undefined) {
+      return getTimetableCardLayout(cardHeight, laneCount);
+    }
+    const isComp = compact ?? (meeting.endTime - meeting.startTime <= 60 || laneCount > 1);
+    return {
+      density: isComp ? ("compact" as const) : ("full" as const),
+      widthMode:
+        laneCount >= 3
+          ? ("narrow" as const)
+          : laneCount === 2
+            ? ("compact" as const)
+            : ("normal" as const),
+      showIcon: laneCount === 1 && !isComp,
+      showTitle: !isComp && laneCount === 1,
+      inlineTimeLocation: false,
+      compactTime: laneCount > 1,
+      compactBadge: laneCount > 1,
+    };
+  }, [cardHeight, laneCount, compact, meeting.endTime, meeting.startTime]);
+
+  const { density, widthMode, showIcon, showTitle, inlineTimeLocation, compactBadge } = layout;
+
+  const accessibleTime = `${formatTime(meeting.startTime)} to ${formatTime(meeting.endTime)}`;
+  const accessibleLocation = isStudy
+    ? meeting.notes || "Study block"
+    : reserved
+      ? "Reserved assessment window · location TBA"
+      : locationLabel(meeting);
+  const fullAccessibleLabel = `View details for ${meeting.courseCode} ${activityType}, ${accessibleTime}, ${accessibleLocation}${
+    meeting.courseName ? `, ${meeting.courseName}` : ""
+  }`;
+
+  const locationText = isStudy
+    ? meeting.notes || "Study"
+    : reserved
+      ? "Reserved"
+      : locationLabel(meeting);
+
+  const paddingClass =
+    density === "micro"
+      ? "px-2 py-0.5"
+      : density === "dense"
+        ? "px-2.5 py-1"
+        : density === "compact"
+          ? "px-2.5 py-1.5"
+          : "px-2.5 py-2";
 
   return (
     <div
       role="button"
       onClick={() => onSelect(meeting)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(meeting);
+        }
+      }}
       tabIndex={0}
       aria-haspopup="dialog"
-      aria-label={`View details for ${meeting.courseCode}, ${accessibleDescription}`}
+      aria-label={fullAccessibleLabel}
       title={`${meeting.courseCode} · ${reserved ? "Reserved assessment window" : meeting.courseName}`}
       data-activity={activityType}
+      data-density={density}
+      data-width-mode={widthMode}
       data-assessment-window={reserved ? "true" : undefined}
       data-planned-work={isStudy ? "true" : undefined}
       style={meeting.color ? ({ "--meeting-accent": meeting.color } as CSSProperties) : undefined}
-      className={`meeting-card group relative flex h-full w-full touch-manipulation flex-col items-stretch justify-start overflow-hidden rounded-lg px-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 active:scale-[0.99] ${
-        compact ? "py-1.5" : "py-2"
-      }`}
+      className={`meeting-card group relative flex h-full w-full touch-manipulation flex-col items-stretch justify-start overflow-hidden rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 active:scale-[0.99] ${paddingClass}`}
     >
-      <div className="flex min-w-0 items-center gap-1.5">
+      <span className="sr-only">{fullAccessibleLabel}</span>
+
+      {/* Row 1: Course code + Activity badge */}
+      <div className="flex min-w-0 items-center justify-between gap-1">
+        <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+          {showIcon ? (
+            isStudy ? (
+              <BookOpen className="card-pin h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+            ) : reserved ? (
+              <Clock3 className="card-pin h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            ) : (
+              <MapPin
+                className="card-pin h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                aria-hidden="true"
+              />
+            )
+          ) : null}
+          <span
+            className={`truncate font-extrabold tracking-[-0.01em] text-foreground ${
+              density === "micro" ? "text-[0.68rem] leading-tight" : "text-xs"
+            }`}
+          >
+            {meeting.courseCode}
+          </span>
+        </div>
         {isStudy ? (
-          <BookOpen className="card-pin h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
-        ) : reserved ? (
-          <Clock3 className="card-pin h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-        ) : (
-          <MapPin
-            className="card-pin h-3.5 w-3.5 shrink-0 text-muted-foreground"
-            aria-hidden="true"
-          />
-        )}
-        <span className="truncate text-xs font-extrabold tracking-[-0.01em] text-foreground">
-          {meeting.courseCode}
-        </span>
-        {isStudy ? (
-          <span className="activity-badge rounded-md px-1.5 py-0.5 text-[0.6rem] font-bold">
+          <span
+            className={`activity-badge shrink-0 rounded font-bold ${
+              compactBadge ? "px-1 py-0 text-[0.56rem]" : "px-1.5 py-0.5 text-[0.6rem]"
+            }`}
+          >
             STUDY
           </span>
         ) : (
-          <ActivityBadge type={activityType} />
+          <ActivityBadge type={activityType} compact={compactBadge} />
         )}
       </div>
-      <p
-        className={`truncate text-[0.7rem] font-medium tabular-nums text-muted-foreground ${
-          compact ? "" : "mt-0.5"
-        }`}
-      >
-        {formatTime(meeting.startTime)} – {formatTime(meeting.endTime)}
-      </p>
-      <p className="truncate text-[0.7rem] font-semibold text-foreground">
-        {isStudy ? meeting.notes : reserved ? "Reserved assessment window" : locationLabel(meeting)}
-      </p>
-      {!compact ? (
+
+      {/* Row 2: Time and Location */}
+      {inlineTimeLocation ? (
+        <p
+          className={`truncate font-medium tabular-nums ${
+            density === "micro"
+              ? "mt-0.5 text-[0.62rem] leading-tight"
+              : "mt-0.5 text-[0.68rem] leading-normal"
+          }`}
+        >
+          <span className="text-muted-foreground">
+            {formatTime(meeting.startTime)}–{formatTime(meeting.endTime)}
+          </span>
+          <span className="mx-1 text-muted-foreground/60" aria-hidden="true">
+            ·
+          </span>
+          <span className="font-semibold text-foreground">{locationText}</span>
+        </p>
+      ) : (
+        <>
+          <p
+            className={`truncate text-[0.7rem] font-medium tabular-nums text-muted-foreground ${
+              density === "compact" ? "" : "mt-0.5"
+            }`}
+          >
+            {formatTime(meeting.startTime)} – {formatTime(meeting.endTime)}
+          </p>
+          <p className="truncate text-[0.7rem] font-semibold text-foreground">{locationText}</p>
+        </>
+      )}
+
+      {/* Row 3 (optional): Descriptive course title */}
+      {showTitle ? (
         <p
           className={`mt-0.5 line-clamp-2 text-[0.7rem] leading-[1.25] ${
             reserved ? "reserved-window-note" : "text-muted-foreground"
@@ -573,22 +678,24 @@ export const TimetableGrid = memo(function TimetableGrid({
 
                   {sorted.map((meeting) => {
                     const lane = placement.get(meeting.id) ?? 0;
+                    const cardHeight =
+                      scale.minuteToTop(meeting.endTime) - scale.minuteToTop(meeting.startTime);
                     return (
                       <div
                         key={meeting.id}
                         data-meeting-id={meeting.id}
-                        className="absolute z-10 px-1 py-0.5"
+                        className="meeting-card-slot absolute z-10 px-1 py-0.5"
                         style={{
                           top: scale.minuteToTop(meeting.startTime),
-                          height:
-                            scale.minuteToTop(meeting.endTime) -
-                            scale.minuteToTop(meeting.startTime),
+                          height: cardHeight,
                           left: `${(lane / laneCount) * 100}%`,
                           width: `${(1 / laneCount) * 100}%`,
                         }}
                       >
                         <MeetingCard
                           meeting={meeting}
+                          cardHeight={cardHeight}
+                          laneCount={laneCount}
                           compact={isCompactMeetingCard(meeting, laneCount)}
                           onSelect={selectMeeting}
                         />

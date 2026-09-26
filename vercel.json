@@ -542,6 +542,146 @@
       "destination": "/_universities/laurier/index.html"
     },
     {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/york/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/york/og-card.png"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/york/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/york/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/york/_seo/$1.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/york/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "york.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/york/index.html"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/mcmaster/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/mcmaster/og-card.png"
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/mcmaster/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/mcmaster/robots.txt"
+    },
+    {
+      "source": "/(about|campus-map|gap-planner|campus-routing|developers|ai|support|trust|privacy|security|accessibility)",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/mcmaster/_seo/$1.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/mcmaster/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "mcmaster.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/mcmaster/index.html"
+    },
+    {
       "source": "/(og-card.png|og-gapwise.png)",
       "destination": "/universities/uoft/og-card.png"
     },

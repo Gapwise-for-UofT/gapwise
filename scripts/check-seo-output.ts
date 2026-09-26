@@ -308,7 +308,15 @@ for (const uniId of UNIVERSITY_IDS) {
 
 // ── Per-university social preview metadata and OG card regression checks ───────
 
-const ALL_UNIVERSITY_IDS = ["uoft", "carleton", "tmu", "queens", "laurier"] as const;
+const ALL_UNIVERSITY_IDS = [
+  "uoft",
+  "carleton",
+  "tmu",
+  "queens",
+  "laurier",
+  "york",
+  "mcmaster",
+] as const;
 type AnyUniversityId = (typeof ALL_UNIVERSITY_IDS)[number];
 const ALL_UNIVERSITY_NAMES: Record<AnyUniversityId, string> = {
   uoft: "University of Toronto",
@@ -316,6 +324,8 @@ const ALL_UNIVERSITY_NAMES: Record<AnyUniversityId, string> = {
   tmu: "Toronto Metropolitan University",
   queens: "Queen's University",
   laurier: "Wilfrid Laurier University",
+  york: "York University",
+  mcmaster: "McMaster University",
 };
 const ALL_UNIVERSITY_ORIGINS: Record<AnyUniversityId, string> = {
   uoft: "https://gapwise.ca",
@@ -323,6 +333,8 @@ const ALL_UNIVERSITY_ORIGINS: Record<AnyUniversityId, string> = {
   tmu: "https://tmu.gapwise.ca",
   queens: "https://queens.gapwise.ca",
   laurier: "https://laurier.gapwise.ca",
+  york: "https://york.gapwise.ca",
+  mcmaster: "https://mcmaster.gapwise.ca",
 };
 
 function pngDimensions(bytes: Buffer) {

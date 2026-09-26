@@ -43,12 +43,22 @@ export default defineConfig({
           if (!req.url) return next();
           const parsed = new URL(req.url, "http://localhost");
           const host = (req.headers.host || "").toLowerCase();
-          const KNOWN_UNIVERSITIES = new Set(["uoft", "carleton", "tmu", "queens", "laurier"]);
+          const KNOWN_UNIVERSITIES = new Set([
+            "uoft",
+            "carleton",
+            "tmu",
+            "queens",
+            "laurier",
+            "york",
+            "mcmaster",
+          ]);
           let uniId = "uoft";
           if (host.includes("carleton")) uniId = "carleton";
           else if (host.includes("tmu")) uniId = "tmu";
           else if (host.includes("queens")) uniId = "queens";
           else if (host.includes("laurier")) uniId = "laurier";
+          else if (host.includes("york")) uniId = "york";
+          else if (host.includes("mcmaster")) uniId = "mcmaster";
           else {
             const queryUni = parsed.searchParams.get("university");
             if (queryUni && KNOWN_UNIVERSITIES.has(queryUni)) {

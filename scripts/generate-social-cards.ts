@@ -12,7 +12,7 @@ type CardConfig = {
 };
 
 const DEER_PATH = `
-<g transform="translate(140, 245) scale(0.24)">
+<g transform="translate(90, 188) scale(${220 / 554}) translate(-350, -315)">
   <defs>
     <path id="upper-left" d="M627 638 540 534c-21-19-47-32-75-49-47-29-68-77-68-132h31c2 32 13 63 34 87 6 6 12 12 20 18-3-14-3-27-1-39 2-13 6-24 12-33l25 13c-7 15-10 30-8 42 1 17 7 29 15 37 7 8 13 12 19 15l83 37Z"/>
     <path id="lower-left" d="M627 692 522 558c-18-19-40-33-59-39-15-1-31-1-48-1 0 30 11 56 36 76 17 12 35 16 74 16v120c0 8 3 14 8 20l72 100c5 7 12 10 22 10Z"/>
@@ -37,14 +37,17 @@ function escapeXml(unsafe: string): string {
 
 function renderSvg(config: CardConfig): string {
   const deer = DEER_PATH.replace("%%ACCENT_COLOR%%", config.accentColor);
+  const titleSize = config.title.length > 14 ? 70 : config.title.length > 8 ? 78 : 92;
+  const titleY = config.title.length > 14 ? 250 : config.title.length > 8 ? 256 : 264;
+
   return `
 <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#0b1118"/>
-  <rect x="0" y="0" width="1200" height="9" fill="${config.accentColor}"/>
+  <rect width="1200" height="630" fill="#0B1118"/>
+  <rect x="0" y="0" width="1200" height="8" fill="${config.accentColor}"/>
   ${deer}
-  <text x="360" y="290" fill="#ffffff" font-family="Liberation Sans, DejaVu Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="76" font-weight="700" letter-spacing="-1">${escapeXml(config.title)}</text>
-  <text x="360" y="352" fill="#cbd5e1" font-family="Liberation Sans, DejaVu Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="34" font-weight="400">${escapeXml(config.tagline)}</text>
-  <text x="360" y="418" fill="${config.textColor}" font-family="Liberation Sans, DejaVu Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="28" font-weight="600">${escapeXml(config.detail)}</text>
+  <text x="365" y="${titleY}" fill="#F7FAFC" font-family="DejaVu Sans, Liberation Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="${titleSize}" font-weight="700" letter-spacing="-1">${escapeXml(config.title)}</text>
+  <text x="370" y="338" fill="#B7C3D0" font-family="DejaVu Sans, Liberation Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="34" font-weight="400">${escapeXml(config.tagline)}</text>
+  <text x="372" y="404" fill="${config.textColor}" font-family="DejaVu Sans, Liberation Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="26" font-weight="600">${escapeXml(config.detail)}</text>
 </svg>
 `;
 }
@@ -90,6 +93,22 @@ const CARDS: CardConfig[] = [
     title: "Gapwise",
     tagline: "Make the time between classes count.",
     detail: "Wilfrid Laurier University",
+  },
+  {
+    outputPath: "public/universities/york/og-card.png",
+    accentColor: "#E31837",
+    textColor: "#fca5a5",
+    title: "Gapwise",
+    tagline: "Make the time between classes count.",
+    detail: "York University",
+  },
+  {
+    outputPath: "public/universities/mcmaster/og-card.png",
+    accentColor: "#7A003C",
+    textColor: "#f472b6",
+    title: "Gapwise",
+    tagline: "Make the time between classes count.",
+    detail: "McMaster University",
   },
   // ── Root fallbacks (U of T default) ──────────────────────
   {

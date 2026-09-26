@@ -36,6 +36,45 @@ export default defineConfig({
       },
     }),
     lovableAssetsProxyPlugin(),
+    {
+      name: "gapwise-preview-routing",
+      configurePreviewServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (!req.url) return next();
+          const parsed = new URL(req.url, "http://localhost");
+          const host = (req.headers.host || "").toLowerCase();
+          const KNOWN_UNIVERSITIES = new Set(["uoft", "carleton", "tmu", "queens", "laurier"]);
+          let uniId = "uoft";
+          if (host.includes("carleton")) uniId = "carleton";
+          else if (host.includes("tmu")) uniId = "tmu";
+          else if (host.includes("queens")) uniId = "queens";
+          else if (host.includes("laurier")) uniId = "laurier";
+          else {
+            const queryUni = parsed.searchParams.get("university");
+            if (queryUni && KNOWN_UNIVERSITIES.has(queryUni)) {
+              uniId = queryUni;
+            }
+          }
+
+          if (
+            parsed.pathname === "/" ||
+            parsed.pathname === "" ||
+            parsed.pathname === "/index.html"
+          ) {
+            req.url = `/_universities/${uniId}/index.html`;
+          } else if (parsed.pathname === "/og-card.png" || parsed.pathname === "/og-gapwise.png") {
+            req.url = `/universities/${uniId}/og-card.png`;
+          } else if (
+            !parsed.pathname.includes(".") &&
+            !parsed.pathname.startsWith("/api") &&
+            !parsed.pathname.startsWith("/v1")
+          ) {
+            req.url = `/_universities/${uniId}/index.html`;
+          }
+          next();
+        });
+      },
+    },
   ],
   resolve: {
     tsconfigPaths: true,

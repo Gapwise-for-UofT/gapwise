@@ -134,7 +134,7 @@
       ]
     },
     {
-      "source": "/(favicon.svg|favicon-16x16.png|favicon-32x32.png|favicon-192x192.png|og-gapwise.png|apple-touch-icon.png|icon-192.png|icon-512.png|site.webmanifest|robots.txt|sitemap.xml)",
+      "source": "/(favicon.svg|favicon-16x16.png|favicon-32x32.png|favicon-192x192.png|og-gapwise.png|og-card.png|apple-touch-icon.png|icon-192.png|icon-512.png|site.webmanifest|robots.txt|sitemap.xml)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -272,6 +272,16 @@
       "destination": "/universities/carleton/$1"
     },
     {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/carleton/og-card.png"
+    },
+    {
       "source": "/sitemap.xml",
       "has": [
         {
@@ -302,6 +312,16 @@
       "destination": "/_universities/carleton/_seo/$1.html"
     },
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "carleton.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/carleton/index.html"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -320,6 +340,16 @@
         }
       ],
       "destination": "/universities/tmu/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/tmu/og-card.png"
     },
     {
       "source": "/sitemap.xml",
@@ -352,6 +382,16 @@
       "destination": "/_universities/tmu/_seo/$1.html"
     },
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "tmu.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/tmu/index.html"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -370,6 +410,16 @@
         }
       ],
       "destination": "/universities/queens/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/queens/og-card.png"
     },
     {
       "source": "/sitemap.xml",
@@ -402,6 +452,16 @@
       "destination": "/_universities/queens/_seo/$1.html"
     },
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "queens.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/queens/index.html"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -420,6 +480,16 @@
         }
       ],
       "destination": "/universities/laurier/$1"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/universities/laurier/og-card.png"
     },
     {
       "source": "/sitemap.xml",
@@ -452,6 +522,16 @@
       "destination": "/_universities/laurier/_seo/$1.html"
     },
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "laurier.gapwise.ca"
+        }
+      ],
+      "destination": "/_universities/laurier/index.html"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -460,6 +540,14 @@
         }
       ],
       "destination": "/_universities/laurier/index.html"
+    },
+    {
+      "source": "/(og-card.png|og-gapwise.png)",
+      "destination": "/universities/uoft/og-card.png"
+    },
+    {
+      "source": "/(logo-mark.svg|favicon.*|apple-touch-icon.png|site.webmanifest)",
+      "destination": "/universities/uoft/$1"
     },
     {
       "source": "/sitemap.xml",
@@ -542,8 +630,12 @@
       "destination": "/_seo/terms.html"
     },
     {
+      "source": "/",
+      "destination": "/_universities/uoft/index.html"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/_universities/uoft/index.html"
     }
   ]
 }

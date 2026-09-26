@@ -32,31 +32,31 @@ function requireReference(
   }
 }
 
-// Ensure root dist/sitemap.xml and dist/robots.txt do not exist so they cannot shadow host-specific rewrites
-let rootSitemapExists = false;
-try {
-  await readFile("dist/sitemap.xml");
-  rootSitemapExists = true;
-} catch {
-  // expected
-}
-if (rootSitemapExists) {
-  throw new Error("dist/sitemap.xml must not exist (it shadows host-specific sitemap rewrites)");
-}
-
-let rootRobotsExists = false;
-try {
-  await readFile("dist/robots.txt");
-  rootRobotsExists = true;
-} catch {
-  // expected
-}
-if (rootRobotsExists) {
-  throw new Error("dist/robots.txt must not exist (it shadows host-specific robots.txt rewrites)");
+// Ensure root dist/index.html, dist/sitemap.xml, dist/robots.txt, dist/og-gapwise.png, dist/og-card.png
+// do not exist so they cannot shadow host-specific rewrites on Vercel
+for (const rootFile of [
+  "index.html",
+  "sitemap.xml",
+  "robots.txt",
+  "og-gapwise.png",
+  "og-card.png",
+]) {
+  let fileExists = false;
+  try {
+    await readFile(`dist/${rootFile}`);
+    fileExists = true;
+  } catch {
+    // expected
+  }
+  if (fileExists) {
+    throw new Error(
+      `dist/${rootFile} must not exist at root (it shadows host-specific rewrites on Vercel)`,
+    );
+  }
 }
 
 const [home, sitemap, robots] = await Promise.all([
-  readFile("dist/index.html", "utf8"),
+  readFile("dist/_universities/uoft/index.html", "utf8"),
   readFile("dist/_seo/sitemap.xml", "utf8"),
   readFile("dist/_seo/robots.txt", "utf8"),
 ]);
@@ -296,7 +296,6 @@ for (const uniId of UNIVERSITY_IDS) {
       );
     }
 
-    // No U of T navigation leaks in fallback
     for (const uoftPath of UOFT_ONLY_PATHS) {
       if (pageHtml.includes(`href="${uoftPath}"`)) {
         throw new Error(
@@ -307,7 +306,107 @@ for (const uniId of UNIVERSITY_IDS) {
   }
 }
 
+// ── Per-university social preview metadata and OG card regression checks ───────
+
+const ALL_UNIVERSITY_IDS = ["uoft", "carleton", "tmu", "queens", "laurier"] as const;
+type AnyUniversityId = (typeof ALL_UNIVERSITY_IDS)[number];
+const ALL_UNIVERSITY_NAMES: Record<AnyUniversityId, string> = {
+  uoft: "University of Toronto",
+  carleton: "Carleton University",
+  tmu: "Toronto Metropolitan University",
+  queens: "Queen's University",
+  laurier: "Wilfrid Laurier University",
+};
+const ALL_UNIVERSITY_ORIGINS: Record<AnyUniversityId, string> = {
+  uoft: "https://gapwise.ca",
+  carleton: "https://carleton.gapwise.ca",
+  tmu: "https://tmu.gapwise.ca",
+  queens: "https://queens.gapwise.ca",
+  laurier: "https://laurier.gapwise.ca",
+};
+
+function pngDimensions(bytes: Buffer) {
+  if (bytes.subarray(1, 4).toString() !== "PNG") {
+    throw new Error("File is not a valid PNG");
+  }
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
+for (const uniId of ALL_UNIVERSITY_IDS) {
+  const name = ALL_UNIVERSITY_NAMES[uniId];
+  const origin = ALL_UNIVERSITY_ORIGINS[uniId];
+  const cardPath = `dist/universities/${uniId}/og-card.png`;
+  const cardBytes = await readFile(cardPath);
+  const dims = pngDimensions(cardBytes);
+  if (dims.width !== 1200 || dims.height !== 630) {
+    throw new Error(
+      `${cardPath} has invalid dimensions: ${dims.width}x${dims.height}, expected 1200x630`,
+    );
+  }
+
+  const htmlPath = `dist/_universities/${uniId}/index.html`;
+  const html = await readFile(htmlPath, "utf8");
+  const expectedImage = `${origin}/universities/${uniId}/og-card.png`;
+  const escapedName = name
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+  const expectedAlt = `Gapwise — ${escapedName}`;
+
+  requireText(html, `<meta property="og:image" content="${expectedImage}" />`, `${uniId} og:image`);
+  requireText(
+    html,
+    `<meta property="og:image:secure_url" content="${expectedImage}" />`,
+    `${uniId} og:image:secure_url`,
+  );
+  requireText(
+    html,
+    `<meta property="og:image:alt" content="${expectedAlt}" />`,
+    `${uniId} og:image:alt`,
+  );
+  requireText(
+    html,
+    `<meta name="twitter:image" content="${expectedImage}" />`,
+    `${uniId} twitter:image`,
+  );
+  requireText(
+    html,
+    `<meta name="twitter:image:alt" content="${expectedAlt}" />`,
+    `${uniId} twitter:image:alt`,
+  );
+  requireText(
+    html,
+    `<meta property="og:title" content="Gapwise — ${escapedName}" />`,
+    `${uniId} og:title`,
+  );
+  requireText(html, `<title>Gapwise — ${escapedName}</title>`, `${uniId} title`);
+
+  if (uniId !== "uoft") {
+    const titleMatch = html.match(/<title>([^<]+)<\/title>/)?.[1] || "";
+    const ogTitleMatch = html.match(/<meta property="og:title" content="([^"]+)"/)?.[1] || "";
+    const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1] || "";
+    const twitterTitleMatch = html.match(/<meta name="twitter:title" content="([^"]+)"/)?.[1] || "";
+
+    if (titleMatch.includes("University of Toronto")) {
+      throw new Error(`${uniId} leaks University of Toronto in title: ${titleMatch}`);
+    }
+    if (ogTitleMatch.includes("University of Toronto")) {
+      throw new Error(`${uniId} leaks University of Toronto in og:title: ${ogTitleMatch}`);
+    }
+    if (twitterTitleMatch.includes("University of Toronto")) {
+      throw new Error(
+        `${uniId} leaks University of Toronto in twitter:title: ${twitterTitleMatch}`,
+      );
+    }
+    if (ogImageMatch.includes("gapwise.ca/og-gapwise.png")) {
+      throw new Error(`${uniId} leaks U of T og-gapwise.png in og:image: ${ogImageMatch}`);
+    }
+  }
+}
+
 console.log("Generated SEO output verified.");
 console.log(
-  `Verified per-university sitemaps, robots.txt, canonical URLs, OG URLs, JSON-LD, and ${COMMON_SEO_PATHS.length + 1} SEO pages for: ${UNIVERSITY_IDS.join(", ")}.`,
+  `Verified per-university sitemaps, robots.txt, canonical URLs, OG URLs, JSON-LD, social cards (1200x630), and ${COMMON_SEO_PATHS.length + 1} SEO pages for: ${ALL_UNIVERSITY_IDS.join(", ")}.`,
 );

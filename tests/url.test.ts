@@ -61,8 +61,13 @@ describe("first-class route deployment fallbacks", () => {
     const vercel = JSON.parse(vercelSource) as {
       rewrites?: Array<{ source: string; destination: string }>;
     };
-
-    expect(vercel.rewrites).toContainEqual({ source: "/(.*)", destination: "/index.html" });
+    const fallbackRewrite = vercel.rewrites?.find(
+      (entry) =>
+        entry.source === "/(.*)" &&
+        (entry.destination === "/_universities/uoft/index.html" ||
+          entry.destination === "/index.html"),
+    );
+    expect(fallbackRewrite).toBeDefined();
     expect(viteSource).toContain('navigateFallback: "/index.html"');
     for (const path of ["/", "/today", "/timetable", "/gaps", "/route"]) {
       expect(routeTree).toContain(`'${path}'`);

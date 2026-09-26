@@ -98,6 +98,8 @@ export function meetingPrintStyle(
     LEC: palette.eventSurface,
     TUT: palette.alternateEventSurface,
     PRA: palette.practiceEventSurface,
+    LAB: palette.practiceEventSurface,
+    SEM: palette.alternateEventSurface,
     OTHER: palette.alternateEventSurface,
   };
   return {
@@ -109,7 +111,13 @@ export function meetingPrintStyle(
     border: reserved || study || personal ? palette.strongBorder : palette.border,
     badge: reserved ? palette.eventSurface : palette.badgeSurface,
     dashed: reserved || study,
-    label: reserved ? "RES" : study ? "STUDY" : personal ? "PERSONAL" : meeting.activityType,
+    label: reserved
+      ? "RES"
+      : study
+        ? "STUDY"
+        : personal
+          ? "PERSONAL"
+          : (meeting.nativeComponentType ?? meeting.activityType),
     strokeWidth: reserved ? 1.7 : personal ? 1.7 : study ? 1.35 : 1.1,
     reserved,
   };

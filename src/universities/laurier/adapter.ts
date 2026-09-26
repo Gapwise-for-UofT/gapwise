@@ -26,10 +26,12 @@ export function normalizeLaurierMeeting(source: LaurierMeeting): Meeting[] {
   const building = laurierCampus.buildings.find((item) => item.id === source.location.buildingId);
   const component = source.nativeComponentType.toUpperCase();
   const activityType =
-    component === "LEC" || component === "TUT" || component === "PRA" || component === "LAB"
-      ? component === "LAB"
-        ? "PRA"
-        : component
+    component === "LEC" ||
+    component === "TUT" ||
+    component === "PRA" ||
+    component === "LAB" ||
+    component === "SEM"
+      ? component
       : "OTHER";
   const term = source.termLabel.startsWith("Winter")
     ? "Winter"

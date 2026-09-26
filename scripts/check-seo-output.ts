@@ -141,8 +141,28 @@ const UNIVERSITY_ORIGINS: Record<UniversityId, string> = {
   laurier: "https://laurier.gapwise.ca",
 };
 
+function getUniversityOrigin(uniId: UniversityId): string {
+  const origin = UNIVERSITY_ORIGINS[uniId];
+  if (!origin) throw new Error(`Missing origin configuration for university: ${uniId}`);
+  return origin;
+}
+
+const COMMON_SEO_PATHS = [
+  "/about",
+  "/campus-map",
+  "/gap-planner",
+  "/campus-routing",
+  "/developers",
+  "/ai",
+  "/support",
+  "/trust",
+  "/privacy",
+  "/security",
+  "/accessibility",
+] as const;
+
 for (const uniId of UNIVERSITY_IDS) {
-  const uniOrigin = UNIVERSITY_ORIGINS[uniId];
+  const uniOrigin = getUniversityOrigin(uniId);
   const uniSitemapPath = `dist/_universities/${uniId}/sitemap.xml`;
   const uniRobotsPath = `dist/_universities/${uniId}/robots.txt`;
   const uniHtmlPath = `dist/_universities/${uniId}/index.html`;
@@ -171,7 +191,7 @@ for (const uniId of UNIVERSITY_IDS) {
   // Sitemap must NOT contain other universities' hostnames
   for (const otherId of UNIVERSITY_IDS) {
     if (otherId === uniId) continue;
-    if (uniSitemap.includes(UNIVERSITY_ORIGINS[otherId])) {
+    if (uniSitemap.includes(getUniversityOrigin(otherId))) {
       throw new Error(
         `${uniId} sitemap contains ${otherId} hostname — each sitemap must only contain its own university URLs`,
       );
@@ -190,6 +210,11 @@ for (const uniId of UNIVERSITY_IDS) {
   // Sitemap must contain at least the homepage URL
   requireText(uniSitemap, `<loc>${uniOrigin}/</loc>`, `${uniId} sitemap`);
 
+  // Sitemap must contain each of the common SEO paths with the university origin
+  for (const path of COMMON_SEO_PATHS) {
+    requireText(uniSitemap, `<loc>${uniOrigin}${path}</loc>`, `${uniId} sitemap`);
+  }
+
   // Robots.txt must reference the university's own sitemap
   requireText(uniRobots, `Sitemap: ${uniOrigin}/sitemap.xml`, `${uniId} robots.txt`);
 
@@ -199,6 +224,7 @@ for (const uniId of UNIVERSITY_IDS) {
       `${uniId} index.html has canonical URL pointing to gapwise.ca — must use ${uniOrigin}`,
     );
   }
+  requireText(uniHtml, `rel="canonical" href="${uniOrigin}/"`, `${uniId} index canonical`);
 
   // University HTML must have OG URL pointing to the university origin
   if (uniHtml.includes(`property="og:url" content="https://gapwise.ca`)) {
@@ -206,6 +232,7 @@ for (const uniId of UNIVERSITY_IDS) {
       `${uniId} index.html has og:url pointing to gapwise.ca — must use ${uniOrigin}`,
     );
   }
+  requireText(uniHtml, `property="og:url" content="${uniOrigin}/"`, `${uniId} index og:url`);
 
   // University HTML must have JSON-LD with the university origin (not gapwise.ca/#organization etc.)
   if (uniHtml.includes(`"https://gapwise.ca/#`)) {
@@ -213,9 +240,51 @@ for (const uniId of UNIVERSITY_IDS) {
       `${uniId} index.html has JSON-LD entity IDs still pointing to gapwise.ca — must use ${uniOrigin}`,
     );
   }
+
+  // University HTML must not leak U of T fallback navigation links
+  for (const path of UOFT_ONLY_PATHS) {
+    if (uniHtml.includes(`href="${path}"`)) {
+      throw new Error(`${uniId} index.html fallback links contain U of T-specific path ${path}`);
+    }
+  }
+
+  // Check each university _seo/*.html page
+  for (const path of COMMON_SEO_PATHS) {
+    const fileName = `${path.slice(1).replaceAll("/", "--")}.html`;
+    const seoPagePath = `dist/_universities/${uniId}/_seo/${fileName}`;
+    const pageHtml = await readFile(seoPagePath, "utf8");
+
+    // Canonical and OG URLs must use the university origin
+    requireText(
+      pageHtml,
+      `rel="canonical" href="${uniOrigin}${path}"`,
+      `${uniId} ${path} canonical`,
+    );
+    requireText(
+      pageHtml,
+      `property="og:url" content="${uniOrigin}${path}"`,
+      `${uniId} ${path} og:url`,
+    );
+
+    // No gapwise.ca canonical leak
+    if (pageHtml.includes(`rel="canonical" href="https://gapwise.ca`)) {
+      throw new Error(
+        `${uniId} ${fileName} has canonical URL pointing to gapwise.ca — must use ${uniOrigin}`,
+      );
+    }
+
+    // No U of T navigation leaks in fallback
+    for (const uoftPath of UOFT_ONLY_PATHS) {
+      if (pageHtml.includes(`href="${uoftPath}"`)) {
+        throw new Error(
+          `${uniId} ${fileName} fallback navigation contains U of T-specific path ${uoftPath}`,
+        );
+      }
+    }
+  }
 }
 
 console.log("Generated SEO output verified.");
 console.log(
-  `Verified per-university sitemaps, robots.txt, canonical URLs, OG URLs, and JSON-LD for: ${UNIVERSITY_IDS.join(", ")}.`,
+  `Verified per-university sitemaps, robots.txt, canonical URLs, OG URLs, JSON-LD, and ${COMMON_SEO_PATHS.length + 1} SEO pages for: ${UNIVERSITY_IDS.join(", ")}.`,
 );

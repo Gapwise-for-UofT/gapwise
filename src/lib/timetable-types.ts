@@ -1,4 +1,4 @@
-export type ActivityType = "LEC" | "TUT" | "PRA" | "OTHER";
+export type ActivityType = "LEC" | "TUT" | "PRA" | "LAB" | "SEM" | "OTHER";
 export type Term = "Fall" | "Winter" | "Summer";
 export type Campus =
   "UTSG" | "UTM" | "UTSC" | "CARLETON" | "TMU" | "QUEENS" | "WATERLOO" | "UNKNOWN" | (string & {});

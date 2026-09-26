@@ -363,12 +363,16 @@
 }
 
 .mobile-integrated-app .meeting-card[data-activity="TUT"],
-.mobile-integrated-app .day-route-stop-card[data-activity="TUT"] {
+.mobile-integrated-app .meeting-card[data-activity="SEM"],
+.mobile-integrated-app .day-route-stop-card[data-activity="TUT"],
+.mobile-integrated-app .day-route-stop-card[data-activity="SEM"] {
   --meeting-accent: var(--color-tut) !important;
 }
 
 .mobile-integrated-app .meeting-card[data-activity="PRA"],
-.mobile-integrated-app .day-route-stop-card[data-activity="PRA"] {
+.mobile-integrated-app .meeting-card[data-activity="LAB"],
+.mobile-integrated-app .day-route-stop-card[data-activity="PRA"],
+.mobile-integrated-app .day-route-stop-card[data-activity="LAB"] {
   --meeting-accent: var(--color-pra) !important;
 }
 

@@ -9,12 +9,16 @@
 }
 
 .map-time-marker[data-activity="TUT"],
-.map-meeting-popover[data-activity="TUT"] {
+.map-time-marker[data-activity="SEM"],
+.map-meeting-popover[data-activity="TUT"],
+.map-meeting-popover[data-activity="SEM"] {
   --map-stop-color: var(--color-tut);
 }
 
 .map-time-marker[data-activity="PRA"],
-.map-meeting-popover[data-activity="PRA"] {
+.map-time-marker[data-activity="LAB"],
+.map-meeting-popover[data-activity="PRA"],
+.map-meeting-popover[data-activity="LAB"] {
   --map-stop-color: var(--color-pra);
 }
 

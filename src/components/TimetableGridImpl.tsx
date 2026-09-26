@@ -49,6 +49,8 @@ const ACTIVITY_LABELS: Record<TimetableActivityLabel, string> = {
   LEC: "Lecture",
   TUT: "Tutorial",
   PRA: "Practical",
+  LAB: "Laboratory",
+  SEM: "Seminar",
   RES: "Reserved",
   OTHER: "Other",
 };

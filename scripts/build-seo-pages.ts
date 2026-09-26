@@ -409,7 +409,7 @@ function fallback(page: SeoPage, uniContext?: UniversityContext) {
         <h2 id="supported-universities-heading">Supported Canadian Universities</h2>
         <p>Gapwise provides dedicated editions with university-specific timetable import, campus data, and verified destinations:</p>
         <ul>
-          <li><a href="https://gapwise.ca">University of Toronto</a> — St. George, UTM, Scarborough</li>
+          <li><a href="https://gapwise.ca">University of Toronto</a> — Mississauga, St. George, and Scarborough</li>
           <li><a href="https://carleton.gapwise.ca">Carleton University</a> — Ottawa campus</li>
           <li><a href="https://tmu.gapwise.ca">Toronto Metropolitan University</a> — Downtown Toronto campus</li>
           <li><a href="https://queens.gapwise.ca">Queen's University</a> — Kingston campus</li>

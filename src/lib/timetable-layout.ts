@@ -7,6 +7,63 @@ type DayLayout = {
   sorted: Meeting[];
 };
 
+export type TimetableCardDensity = "full" | "compact" | "dense" | "micro";
+export type TimetableCardWidthMode = "normal" | "compact" | "narrow";
+
+export interface TimetableCardLayoutInfo {
+  density: TimetableCardDensity;
+  widthMode: TimetableCardWidthMode;
+  showIcon: boolean;
+  showTitle: boolean;
+  inlineTimeLocation: boolean;
+  compactTime: boolean;
+  compactBadge: boolean;
+}
+
+/**
+ * Computes deliberate density and width modes for timetable event cards based on
+ * the physical rendered dimensions (height in px and horizontal lane count).
+ *
+ * Density hierarchy:
+ * - full: ample vertical room (>=85px) and single lane; displays code+badge, time, location, title
+ * - compact: moderate height (58px-84px, e.g. 60 min at 66px); displays code+badge, time, location (title hidden first)
+ * - dense: short height (38px-57px, e.g. 50 min at 55px or narrow 60 min); displays code+badge, time · location on single line
+ * - micro: very short (<38px, e.g. 30 min at 33px); micro 2-row layout: code, time · room
+ */
+export function getTimetableCardLayout(
+  height: number,
+  laneCount: number = 1,
+): TimetableCardLayoutInfo {
+  const widthMode: TimetableCardWidthMode =
+    laneCount >= 3 ? "narrow" : laneCount === 2 ? "compact" : "normal";
+
+  let density: TimetableCardDensity;
+  if (laneCount >= 3) {
+    if (height >= 95) density = "compact";
+    else if (height >= 48) density = "dense";
+    else density = "micro";
+  } else if (laneCount === 2) {
+    if (height >= 85) density = "compact";
+    else if (height >= 44) density = "dense";
+    else density = "micro";
+  } else {
+    if (height >= 85) density = "full";
+    else if (height >= 58) density = "compact";
+    else if (height >= 38) density = "dense";
+    else density = "micro";
+  }
+
+  return {
+    density,
+    widthMode,
+    showIcon: widthMode === "normal" && density !== "micro",
+    showTitle: density === "full" && widthMode === "normal",
+    inlineTimeLocation: density === "dense" || density === "micro",
+    compactTime: widthMode !== "normal" || density === "micro",
+    compactBadge: widthMode !== "normal" || density === "micro",
+  };
+}
+
 /** Hides optional detail when a short or narrow card cannot display four readable lines. */
 export function isCompactMeetingCard(meeting: Meeting, laneCount: number): boolean {
   return laneCount > 1 || meeting.endTime - meeting.startTime <= 60;

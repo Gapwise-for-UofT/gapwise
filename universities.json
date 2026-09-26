@@ -6,7 +6,7 @@
       "name": "University of Toronto",
       "shortName": "U of T",
       "accentColor": "#4EA7FE",
-      "campusScope": "UTM, St. George, and Scarborough",
+      "campusScope": "Mississauga, St. George, and Scarborough",
       "hosts": ["gapwise.ca", "www.gapwise.ca"],
       "campuses": ["utm", "utsg", "utsc"],
       "defaultCampus": "utm",

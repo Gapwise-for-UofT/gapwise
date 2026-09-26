@@ -102,7 +102,7 @@ Do not add ACORN scraping, automated enrolment, background location tracking, pa
 
 ## Campus data
 
-Campus-data changes belong in [`Gapwise-for-UofT/data`](https://github.com/Gapwise-for-UofT/data), not in the core compatibility mirror. For a missing or incorrect UTM entrance, use the visual [Gapwise Data entrance contributor](https://data.gapwise.ca/contribute); it creates reviewable evidence without requiring a GeoJSON edit. Use Data repository pull requests for validators, schemas, data-production tooling, or other maintainer-owned changes. Follow the public [Gapwise Data contribution guide](https://docs.gapwise.ca/data/contributing/) for the evidence and review rules.
+Campus-data changes belong in [`GapwiseHQ/data`](https://github.com/GapwiseHQ/data), not in the core compatibility mirror. For a missing or incorrect UTM entrance, use the visual [Gapwise Data entrance contributor](https://data.gapwise.ca/contribute); it creates reviewable evidence without requiring a GeoJSON edit. Use Data repository pull requests for validators, schemas, data-production tooling, or other maintainer-owned changes. Follow the public [Gapwise Data contribution guide](https://docs.gapwise.ca/data/contributing/) for the evidence and review rules.
 
 Core keeps a tested snapshot for runtime reliability. Do not promote an estimate or inferred approach to a verified entrance/route without provenance and review. Unknown accessibility is not equivalent to step-free accessibility.
 

@@ -198,7 +198,7 @@ jobs:
         run: npx --yes jsr@0.14.3 publish
 
   publish-github:
-    name: Publish @gapwise-for-uoft/sdk to GitHub Packages
+    name: Publish @gapwisehq/sdk to GitHub Packages
     if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && (inputs.target == 'github' || inputs.target == 'all') }}
     needs: verify
     runs-on: ubuntu-latest
@@ -216,7 +216,7 @@ jobs:
         with:
           node-version: "24"
           registry-url: "https://npm.pkg.github.com"
-          scope: "@gapwise"
+          scope: "@gapwisehq"
           package-manager-cache: false
       - run: bun install --frozen-lockfile
       - name: Build JavaScript SDK
@@ -230,10 +230,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm pkg set name="@gapwise-for-uoft/sdk"
+          npm pkg set name="@gapwisehq/sdk"
           VERSION="$(node -p "require('./package.json').version")"
-          if npm view "@gapwise-for-uoft/sdk@$VERSION" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
-            echo "@gapwise-for-uoft/sdk@$VERSION is already published; nothing to do."
+          if npm view "@gapwisehq/sdk@$VERSION" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "@gapwisehq/sdk@$VERSION is already published; nothing to do."
             exit 0
           fi
           npm publish --registry=https://npm.pkg.github.com --provenance=false

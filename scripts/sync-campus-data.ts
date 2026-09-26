@@ -68,7 +68,7 @@ if ([checkOnly, write, publish].filter(Boolean).length !== 1) {
 if (!existsSync(sourceRoot)) {
   console.error(
     `Canonical campus data was not found at ${sourceRoot}. ` +
-      "Check out Gapwise-for-UofT/data next to gapwise, or pass --source=<path>.",
+      "Check out GapwiseHQ/data next to gapwise, or pass --source=<path>.",
   );
   process.exit(2);
 }
@@ -214,7 +214,7 @@ for (const snapshot of universitySnapshots) {
 
 if (checkOnly) {
   if (differences.length > 0) {
-    console.error("Campus data mirror differs from Gapwise-for-UofT/data:");
+    console.error("Campus data mirror differs from GapwiseHQ/data:");
     for (const difference of differences) console.error(`- ${difference}`);
     process.exit(1);
   }

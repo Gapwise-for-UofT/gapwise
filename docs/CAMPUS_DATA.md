@@ -1,6 +1,6 @@
 # Campus data and documentation boundaries
 
-Canonical public University of Toronto campus facts, geometry, provenance, and data-maintenance guidance live in [`Gapwise-for-UofT/data`](https://github.com/Gapwise-for-UofT/data). The compatibility snapshot and reviewed routing graph mirrored by this repository currently cover UTM.
+Canonical public University of Toronto campus facts, geometry, provenance, and data-maintenance guidance live in [`GapwiseHQ/data`](https://github.com/GapwiseHQ/data). The compatibility snapshot and reviewed routing graph mirrored by this repository currently cover UTM.
 
 Public human-readable data documentation lives at **https://docs.gapwise.ca/data/**. The currently published raw UTM distribution lives at **https://data.gapwise.ca/datasets/utm/latest/**.
 
@@ -11,7 +11,7 @@ This repository intentionally retains only:
 - consumer-side tests and integration contracts;
 - the transitional data-maintenance adapters that are still coupled to core routing types.
 
-Do not add new source-of-truth campus facts or public data documentation here. Change canonical campus facts in `Gapwise-for-UofT/data`, run the consumer sync once, and change released public documentation in `docs`.
+Do not add new source-of-truth campus facts or public data documentation here. Change canonical campus facts in `GapwiseHQ/data`, run the consumer sync once, and change released public documentation in `docs`.
 
 The runtime app does **not** fetch `data.gapwise.ca` or GitHub on student requests. The snapshot is pinned and tested at build time for reliability.
 

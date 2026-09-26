@@ -124,10 +124,7 @@ function SupportPage() {
           public Gapwise GitHub repository. Remove account data, timetable details, tokens, and
           security-sensitive reproduction information before posting publicly.
         </p>
-        <a
-          className="text-accent underline"
-          href="https://github.com/Gapwise-for-UofT/gapwise/issues"
-        >
+        <a className="text-accent underline" href="https://github.com/GapwiseHQ/gapwise/issues">
           Gapwise issues
         </a>
       </section>

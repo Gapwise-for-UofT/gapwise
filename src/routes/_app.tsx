@@ -970,7 +970,7 @@ function AppLayout() {
                   Support
                 </Link>
                 <a
-                  href="https://github.com/Gapwise-for-UofT/gapwise"
+                  href="https://github.com/GapwiseHQ/gapwise"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-foreground"

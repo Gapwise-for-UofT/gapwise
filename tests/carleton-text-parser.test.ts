@@ -109,4 +109,40 @@ Tory Building 208
     expect(result.meetings[0]!.weekday).toBe("Tuesday");
     expect(result.meetings[1]!.weekday).toBe("Thursday");
   });
+
+  test("parseCarletonTimetable parses Carleton iCalendar schedules", () => {
+    const sampleIcs = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Test Calendar App//Synthetic Fixture//EN",
+      "BEGIN:VEVENT",
+      "UID:comp-1405-2026",
+      "SUMMARY:COMP 1405 A LEC - Intro to Computer Science",
+      "LOCATION:TB 208",
+      "DTSTART:20260909T100500",
+      "DTEND:20260909T112500",
+      "RRULE:FREQ=WEEKLY;BYDAY=MO,WE;UNTIL=20261209T235959",
+      "END:VEVENT",
+      "BEGIN:VEVENT",
+      "UID:busi-1004-2026",
+      "SUMMARY:BUSI 1004 A Financial Accounting",
+      "LOCATION:DT 2203",
+      "DTSTART:20260909T143500",
+      "DTEND:20260909T155500",
+      "RRULE:FREQ=WEEKLY;BYDAY=MO,WE;UNTIL=20261209T235959",
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+
+    const result = parseCarletonTimetable(sampleIcs);
+    expect(result.warnings.length).toBe(0);
+    expect(result.meetings.length).toBe(4);
+
+    const compMeetings = result.meetings.filter((m) => m.courseCode === "COMP 1405");
+    expect(compMeetings.length).toBe(2);
+    expect(compMeetings[0]!.buildingCode).toBe("TB");
+    expect(compMeetings[0]!.room).toBe("208");
+    expect(compMeetings[0]!.startTime).toBe(10 * 60 + 5);
+    expect(compMeetings[0]!.endTime).toBe(11 * 60 + 25);
+  });
 });
